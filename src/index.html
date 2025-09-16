@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AA NFT Minting</title>
+  <!-- Load ethers.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js"></script>
+</head>
+<body>
+  <h1>AA NFT Minting Platform</h1>
+  <button id="connectBtn">Connect Wallet</button>
+  <button id="mintBtn" disabled>Mint Free NFT</button>
+  <div id="status"></div>
+  <div id="nfts"></div>
+
+  <script>
+    // ✅ Test if ethers is available
+    console.log("Ethers type:", typeof ethers);
+    console.log("Ethers version:", ethers.version);
+    console.log("Ethereum available:", typeof window.ethereum !== "undefined");
+
+    let provider, signer, nftContract;
+    const contractAddress = "0x0497885e7756c5bB77B64A94793aA3bAC9783C06"; 
+    const abi = [
+        "function safeMint(address to) public",
+        "function balanceOf(address owner) view returns (uint256)",
+        "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)",
+        "function tokenURI(uint256 tokenId) view returns (string memory)"
+    ];
+
+    // Scroll Sepolia network configuration
+    const SCROLL_SEPOLIA = {
+        chainId: "0x8274F", // 534351 in hexadecimal
+        chainName: "Scroll Sepolia",
+        rpcUrls: ["https://sepolia-rpc.scroll.io/"],
+        blockExplorerUrls: ["https://sepolia.scroll.io/"],
+        nativeCurrency: {
+            name: "Ether",
+            symbol: "ETH",
+            decimals: 18
+        }
+    };
+
+    document.getElementById('connectBtn').onclick = connectWallet;
+    document.getElementById('mintBtn').onclick = mintNFT;
+
+    async function connectWallet() {
+        if (typeof window.ethereum !== 'undefined') {
+            try {
+                // Request account access
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                
+                // Check if Scroll Sepolia is already added, if not add it
+                await switchToScrollSepolia();
+                
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+                document.getElementById('mintBtn').disabled = false;
+                document.getElementById('status').textContent = "Connected to Scroll Sepolia!";
+                await loadNFTs();
+            } catch (error) {
+                console.error("Connection error:", error);
+                document.getElementById('status').textContent = "Error: " + error.message;
+            }
+        } else {
+            document.getElementById('status').textContent = "Please install MetaMask!";
+        }
+    }
+
+    async function switchToScrollSepolia() {
+        try {
+            // Try to switch to Scroll Sepolia
+            await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: SCROLL_SEPOLIA.chainId }],
+            });
+        } catch (switchError) {
+            // This error code indicates that the chain has not been added to MetaMask
+            if (switchError.code === 4902) {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [SCROLL_SEPOLIA],
+                    });
+                } catch (addError) {
+                    throw new Error("Could not add Scroll Sepolia network");
+                }
+            } else {
+                throw new Error("Could not switch to Scroll Sepolia network");
+            }
+        }
+    }
+
+    async function mintNFT() {
+        try {
+            // Double-check we're on the right network
+            await switchToScrollSepolia();
+            
+            const address = await signer.getAddress();
+            const tx = await nftContract.safeMint(address);
+            document.getElementById('status').textContent = "Minting...";
+            await tx.wait();
+            document.getElementById('status').textContent = "NFT Minted!";
+            await loadNFTs();
+        } catch (error) {
+            console.error(error);
+            document.getElementById('status').textContent = "Error: " + error.message;
+        }
+    }
+
+    async function loadNFTs() {
+        try {
+            const address = await signer.getAddress();
+            const balance = await nftContract.balanceOf(address);
+
+            let html = "<h2>Your NFTs:</h2>";
+            for (let i = 0; i < balance; i++) {
+                const tokenId = await nftContract.tokenOfOwnerByIndex(address, i);
+                html += `<div>Token ID: ${tokenId.toString()}</div>`;
+            }
+            document.getElementById('nfts').innerHTML = html;
+        } catch (error) {
+            console.error("Error loading NFTs:", error);
+        }
+    }
+</script>
+</body>
+</html> 
