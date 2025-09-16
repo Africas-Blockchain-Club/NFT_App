@@ -7,20 +7,14 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract MyNFT is ERC721, Ownable {
     using Counters for Counters.Counter;
-    
     Counters.Counter private _tokenIdCounter;
-    uint256 public constant MINT_PRICE = 0.001 ether;
 
-    constructor() ERC721("MyNFT", "MNFT") {}
 
-    function safeMint(address to) public payable {
-        require(msg.value >= MINT_PRICE, "Insufficient funds");
+    constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {}
+
+    function safeMint(address to) public {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
-    }
-
-    function withdraw() public onlyOwner {
-        payable(owner()).transfer(address(this).balance);
     }
 }
