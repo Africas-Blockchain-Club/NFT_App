@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Script, console} from "../lib/forge-std/src/Script.sol";
-import {MyNFT} from "../src/MyNFT.sol";
+import "../lib/forge-std/src/Script.sol";
+import "../src/MyNFT.sol";
 
-contract DeployScript is Script {
+contract DeployLocal is Script {
     function run() external {
+        // Use the first account from Anvil for deployment
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        
         vm.startBroadcast(deployerPrivateKey);
         
-        MyNFT nft = new MyNFT("NewNFT", "NNFT");
+        // Deploy NFT contract
+        MyNFT nft = new MyNFT("LocalNFT", "LNFT");
         
         vm.stopBroadcast();
         
