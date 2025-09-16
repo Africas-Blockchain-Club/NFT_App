@@ -6,9 +6,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract MyNFT is ERC721, Ownable {
+    // create unique ids for the nft
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
-
 
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {}
 
