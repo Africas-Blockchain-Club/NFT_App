@@ -15,7 +15,6 @@ contract DeployLocal is Script {
         MyNFT nft = new MyNFT("LocalNFT", "LNFT");
         
         vm.stopBroadcast();
-        
         console.log("MyNFT deployed at:", address(nft));
     }
 }

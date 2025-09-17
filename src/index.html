@@ -11,12 +11,13 @@
   <div id="networkStatus">Network: Not connected</div>
   <div id="status"></div>
   <div id="nfts"></div>
-
+  <script src="https://unpkg.com/userop@latest/dist/userop.js"></script>
+    <script src="https://unpkg.com/@account-abstraction/utils@latest/dist/index.js"></script>
   <script>
     let provider, signer, nftContract;
     const LOCAL_RPC_URL = "http://127.0.0.1:8545";
     const LOCAL_CHAIN_ID = "0x7a69"; // 31337 in hex
-    const contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+    const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
     
     const nftAbi = [
         "function safeMint(address to) public",
@@ -165,6 +166,73 @@
     if (typeof window.ethereum !== 'undefined') {
         checkNetworkAndUpdateUI();
     }
+</script>
+<script>
+// AA Implementation using ethers.js
+class SimpleAA {
+    constructor(provider, entryPointAddress, factoryAddress) {
+        this.provider = provider;
+        this.entryPointAddress = entryPointAddress;
+        this.factoryAddress = factoryAddress;
+    }
+    
+    async createSmartAccount() {
+        // Create a simple smart account
+        const factory = new ethers.Contract(this.factoryAddress, [
+            "function createAccount(address owner, uint256 salt) returns (address)"
+        ], this.provider);
+        
+        // Use a random salt for account creation
+        const salt = Date.now();
+        const ownerAddress = await this.provider.getSigner().getAddress();
+        
+        // Predict the smart account address
+        const predictedAddress = await factory.createAccount.staticCall(ownerAddress, salt);
+        
+        return {
+            address: predictedAddress,
+            factory: factory,
+            salt: salt,
+            owner: ownerAddress
+        };
+    }
+    
+    async createUserOp(target, data, value = 0) {
+        // Simple UserOperation creation
+        return {
+            sender: this.smartAccount.address,
+            nonce: await this.getNonce(),
+            initCode: this.getInitCode(),
+            callData: this.encodeCallData(target, data, value),
+            callGasLimit: 1000000,
+            verificationGasLimit: 1000000,
+            preVerificationGas: 100000,
+            maxFeePerGas: await this.getGasPrice(),
+            maxPriorityFeePerGas: await this.getPriorityFee(),
+            paymasterAndData: "0x",
+            signature: "0x"
+        };
+    }
+    
+    // ... additional helper methods
+}
+
+// Initialize AA
+let aaClient;
+
+async function initAA() {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    
+    // For local development, use these test addresses
+    aaClient = new SimpleAA(
+        provider,
+        "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789", // EntryPoint
+        "0x9406Cc6185a346906296840746125a0E44976454"  // Factory
+    );
+    
+    return aaClient;
+}
 </script>
   <div style="margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
     <p><strong>Troubleshooting:</strong> If automatic network switch fails:</p>
