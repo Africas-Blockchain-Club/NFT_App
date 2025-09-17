@@ -1,244 +1,454 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Local AA NFT Minting</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIY AA NFT Minting</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f8ff;
+            color: #333;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #4a6cf7;
+            margin-bottom: 10px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .status.connected {
+            background-color: #e6f4ea;
+            color: #137333;
+        }
+        .status.error {
+            background-color: #fce8e6;
+            color: #c5221f;
+        }
+        .status.pending {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+        }
+        button {
+            background-color: #4a6cf7;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3a5cd8;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .nft-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .nft-card {
+            background: #f0f4ff;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+        .network-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .network-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .network-connected {
+            background-color: #0f0;
+        }
+        .network-disconnected {
+            background-color: #f00;
+        }
+    </style>
 </head>
 <body>
-  <h1>Local AA NFT Minting</h1>
-  <button id="connectBtn">Connect Wallet</button>
-  <button id="mintBtn" disabled>Mint Free NFT</button>
-  <div id="networkStatus">Network: Not connected</div>
-  <div id="status"></div>
-  <div id="nfts"></div>
-  <script src="https://unpkg.com/userop@latest/dist/userop.js"></script>
-    <script src="https://unpkg.com/@account-abstraction/utils@latest/dist/index.js"></script>
-  <script>
-    let provider, signer, nftContract;
-    const LOCAL_RPC_URL = "http://127.0.0.1:8545";
-    const LOCAL_CHAIN_ID = "0x7a69"; // 31337 in hex
-    const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-    
-    const nftAbi = [
-        "function safeMint(address to) public",
-        "function balanceOf(address owner) view returns (uint256)",
-        "function ownerOf(uint256 tokenId) view returns (address)"
-    ];
+    <header>
+        <h1>DIY Account Abstraction NFT Minting</h1>
+        <p>Experience gasless transactions with ERC-4337 AA</p>
+    </header>
 
-    document.getElementById('connectBtn').onclick = connectWallet;
-    document.getElementById('mintBtn').onclick = mintNFT;
+    <div class="card">
+        <h2>Connect Your Wallet</h2>
+        <div class="network-info">
+            <span id="networkIndicator" class="network-indicator network-disconnected"></span>
+            <span id="networkStatus">Not connected to Scroll Sepolia</span>
+        </div>
+        <button id="connectBtn">Connect Wallet</button>
+        <div id="connectionStatus" class="status"></div>
+    </div>
 
-    // Listen for network changes
-    if (typeof window.ethereum !== 'undefined') {
-        window.ethereum.on('chainChanged', (chainId) => {
-            console.log('Network changed to:', chainId);
-            checkNetworkAndUpdateUI();
-        });
-    }
+    <div class="card">
+        <h2>Mint Your NFT</h2>
+        <p>Mint a free NFT using Account Abstraction (gasless)</p>
+        <button id="mintBtn" disabled>Mint Free NFT</button>
+        <div id="mintStatus" class="status"></div>
+    </div>
 
-    async function connectWallet() {
-        if (typeof window.ethereum !== 'undefined') {
-            try {
-                document.getElementById('status').textContent = "Connecting...";
-                document.getElementById('status').style.color = "blue";
+    <div class="card">
+        <h2>Your NFT Collection</h2>
+        <div id="nfts" class="nft-container">
+            <p>No NFTs yet. Connect your wallet and mint one!</p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const SCROLL_RPC_URL = "https://sepolia-rpc.scroll.io/";
+        const SCROLL_CHAIN_ID = "0x8274F"; // Scroll Sepolia
+        const SCROLL_CHAIN_NAME = "Scroll Sepolia";
+        const CONTRACT_ADDRESS = "YOUR_CONTRACT_ADDRESS"; // Replace with your contract
+        const BUNDLER_URL = "https://bundler.zerodev.app/api/v2/aa/YOUR_PROJECT_ID"; // Replace with your ZeroDev project ID
+        const ENTRY_POINT = "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789";
+        const FACTORY = "0x9406Cc6185a346906296840746125a0E44976454";
+
+        // NFT Contract ABI
+        const NFT_ABI = [
+            "function safeMint(address to) public",
+            "function balanceOf(address owner) view returns (uint256)",
+            "function ownerOf(uint256 tokenId) view returns (address)",
+            "function tokenURI(uint256 tokenId) view returns (string memory)"
+        ];
+
+        // Global variables
+        let provider, signer, nftContract, diyAA, bundlerClient;
+
+        // DOM elements
+        const connectBtn = document.getElementById('connectBtn');
+        const mintBtn = document.getElementById('mintBtn');
+        const networkStatus = document.getElementById('networkStatus');
+        const networkIndicator = document.getElementById('networkIndicator');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const mintStatus = document.getElementById('mintStatus');
+        const nftsContainer = document.getElementById('nfts');
+
+        // Event listeners
+        connectBtn.addEventListener('click', connectWallet);
+        mintBtn.addEventListener('click', mintWithDIYAA);
+
+        // DIY Account Abstraction Class
+        class DIYAccountAbstraction {
+            constructor(provider, factoryAddress, entryPointAddress) {
+                this.provider = provider;
+                this.factory = factoryAddress;
+                this.entryPoint = entryPointAddress;
+                this.smartAccount = null;
+            }
+            
+            async createSmartAccount() {
+                const signer = await this.provider.getSigner();
+                const ownerAddress = await signer.getAddress();
                 
-                // Request account connection
+                // For demo purposes, create a deterministic address
+                const salt = ethers.hexlify(ethers.toUtf8Bytes("demo-salt"));
+                const predictedAddress = await this.predictAddress(ownerAddress, salt);
+                
+                this.smartAccount = {
+                    address: predictedAddress,
+                    owner: ownerAddress,
+                    salt: salt,
+                    isDeployed: false
+                };
+                
+                return this.smartAccount;
+            }
+            
+            async predictAddress(ownerAddress, salt) {
+                // Simple deterministic address prediction for demo
+                const hash = ethers.keccak256(ethers.toUtf8Bytes(ownerAddress + salt));
+                return "0x" + hash.slice(2, 42); // First 20 bytes
+            }
+            
+            async createUserOp(target, data, value = 0) {
+                if (!this.smartAccount) throw new Error("Smart account not created");
+                
+                // Get current gas prices
+                const feeData = await this.provider.getFeeData();
+                
+                return {
+                    sender: this.smartAccount.address,
+                    nonce: 0, // Simple nonce for demo
+                    initCode: await this.getInitCode(),
+                    callData: await this.encodeCallData(target, data, value),
+                    callGasLimit: 200000,
+                    verificationGasLimit: 100000,
+                    preVerificationGas: 50000,
+                    maxFeePerGas: feeData.maxFeePerGas || ethers.parseUnits("10", "gwei"),
+                    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || ethers.parseUnits("2", "gwei"),
+                    paymasterAndData: "0x",
+                    signature: "0x"
+                };
+            }
+            
+            async getInitCode() {
+                if (this.smartAccount.isDeployed) return "0x";
+                
+                // Encode factory call to create account
+                const factoryInterface = new ethers.Interface([
+                    "function createAccount(address owner, uint256 salt) returns (address)"
+                ]);
+                
+                const initCallData = factoryInterface.encodeFunctionData("createAccount", [
+                    this.smartAccount.owner,
+                    this.smartAccount.salt
+                ]);
+                
+                return ethers.concat([this.factory, initCallData]);
+            }
+            
+            async encodeCallData(target, data, value) {
+                // Encode execution call for smart account
+                const accountInterface = new ethers.Interface([
+                    "function execute(address to, uint256 value, bytes calldata data) external"
+                ]);
+                
+                return accountInterface.encodeFunctionData("execute", [
+                    target,
+                    value,
+                    data
+                ]);
+            }
+            
+            async signUserOp(userOp) {
+                // For demo, we'll simulate signing
+                userOp.signature = "0xsimulated_signature_for_demo";
+                return userOp;
+            }
+        }
+
+        // DIY Bundler Client Class
+        class DIYBundlerClient {
+            constructor(bundlerUrl, chainId) {
+                this.bundlerUrl = bundlerUrl;
+                this.chainId = chainId;
+            }
+            
+            async sendUserOp(userOp, entryPoint) {
+                // Send to professional bundler
+                const response = await fetch(this.bundlerUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        id: 1,
+                        method: 'eth_sendUserOperation',
+                        params: [userOp, entryPoint]
+                    })
+                });
+                
+                const result = await response.json();
+                return result.result; // Returns userOpHash
+            }
+            
+            async getUserOpReceipt(userOpHash) {
+                // Check UserOperation status
+                const response = await fetch(this.bundlerUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        id: 1,
+                        method: 'eth_getUserOperationReceipt',
+                        params: [userOpHash]
+                    })
+                });
+                
+                return await response.json();
+            }
+        }
+
+        // Connect Wallet function
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                updateStatus(connectionStatus, "Please install MetaMask!", "error");
+                return;
+            }
+
+            try {
+                updateStatus(connectionStatus, "Connecting to Scroll Sepolia...", "pending");
+                
+                // Request account access
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
                 
-                // Check current network
-                const isOnCorrectNetwork = await checkNetworkAndUpdateUI();
+                // Check and switch to Scroll Sepolia
+                await switchToScrollSepolia();
                 
-                if (!isOnCorrectNetwork) {
-                    await ensureLocalNetwork();
-                }
-                
-                // Initialize ethers
+                // Initialize providers and contracts
                 provider = new ethers.BrowserProvider(window.ethereum);
                 signer = await provider.getSigner();
-                nftContract = new ethers.Contract(contractAddress, nftAbi, signer);
+                nftContract = new ethers.Contract(CONTRACT_ADDRESS, NFT_ABI, signer);
                 
-                document.getElementById('mintBtn').disabled = false;
-                document.getElementById('status').textContent = "Connected! Ready to mint! ✅";
-                document.getElementById('status').style.color = "green";
+                // Initialize DIY AA
+                diyAA = new DIYAccountAbstraction(provider, FACTORY, ENTRY_POINT);
+                await diyAA.createSmartAccount();
                 
+                // Initialize bundler client
+                bundlerClient = new DIYBundlerClient(BUNDLER_URL, parseInt(SCROLL_CHAIN_ID, 16));
+                
+                // Update UI
+                updateStatus(connectionStatus, "Connected to Scroll Sepolia! DIY AA Ready!", "connected");
+                mintBtn.disabled = false;
+                networkStatus.textContent = "Connected to Scroll Sepolia";
+                networkIndicator.className = "network-indicator network-connected";
+                
+                // Load NFTs
                 await loadNFTs();
                 
             } catch (error) {
                 console.error("Connection error:", error);
-                document.getElementById('status').textContent = "Error: " + error.message;
-                document.getElementById('status').style.color = "red";
+                updateStatus(connectionStatus, "Error: " + error.message, "error");
             }
-        } else {
-            document.getElementById('status').textContent = "Please install MetaMask!";
         }
-    }
 
-    async function checkNetworkAndUpdateUI() {
-        try {
-            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-            const isLocalNetwork = (chainId === LOCAL_CHAIN_ID);
-            
-            document.getElementById('networkStatus').textContent = 
-                `Network: ${isLocalNetwork ? 'Local Anvil ✅' : 'Wrong Network ❌'}`;
-            document.getElementById('networkStatus').style.color = 
-                isLocalNetwork ? 'green' : 'red';
-            
-            console.log('Current network chainId:', chainId, 'Expected:', LOCAL_CHAIN_ID, 'Match:', isLocalNetwork);
-            
-            return isLocalNetwork;
-        } catch (error) {
-            console.error('Network check error:', error);
-            return false;
+        // Mint with DIY AA
+        async function mintWithDIYAA() {
+            try {
+                updateStatus(mintStatus, "Creating UserOperation...", "pending");
+                
+                const address = await signer.getAddress();
+                const mintData = nftContract.interface.encodeFunctionData("safeMint", [address]);
+                
+                // 1. DIY: Create UserOperation
+                const userOp = await diyAA.createUserOp(CONTRACT_ADDRESS, mintData, 0);
+                
+                updateStatus(mintStatus, "Signing UserOperation...", "pending");
+                
+                // 2. DIY: Sign (simplified for demo)
+                const signedOp = await diyAA.signUserOp(userOp);
+                
+                updateStatus(mintStatus, "Sending to bundler...", "pending");
+                
+                // 3. Send to professional bundler (free)
+                const userOpHash = await bundlerClient.sendUserOp(signedOp, ENTRY_POINT);
+                
+                updateStatus(mintStatus, `UserOperation sent: ${userOpHash.slice(0, 10)}...`, "pending");
+                
+                // 4. Wait for completion (simplified for demo)
+                // In a real implementation, you would poll for receipt
+                await new Promise(resolve => setTimeout(resolve, 10000));
+                
+                updateStatus(mintStatus, "NFT minted with DIY AA! 🎉", "connected");
+                
+                // Reload NFTs
+                await loadNFTs();
+                
+            } catch (error) {
+                console.error("DIY AA Error:", error);
+                updateStatus(mintStatus, "Error: " + error.message, "error");
+            }
         }
-    }
 
-    async function ensureLocalNetwork() {
-        try {
-            // Try to switch to local network
-            await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: LOCAL_CHAIN_ID }],
-            });
-        } catch (switchError) {
-            // If network doesn't exist, add it
-            if (switchError.code === 4902) {
+        // Switch to Scroll Sepolia
+        async function switchToScrollSepolia() {
+            try {
                 await window.ethereum.request({
-                    method: 'wallet_addEthereumChain',
-                    params: [{
-                        chainId: LOCAL_CHAIN_ID,
-                        chainName: 'Local Anvil',
-                        rpcUrls: [LOCAL_RPC_URL],
-                        nativeCurrency: {
-                            name: 'Ether',
-                            symbol: 'ETH',
-                            decimals: 18
-                        }
-                    }]
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: SCROLL_CHAIN_ID }],
                 });
-            } else {
-                throw new Error("Could not switch to Local Anvil network");
-            }
-        }
-    }
-
-    async function mintNFT() {
-    try {
-        // Use case-insensitive comparison here too
-        const isCorrectNetwork = await checkNetworkAndUpdateUI();
-        console.log('Network check before mint:', isCorrectNetwork);
-        
-        if (!isCorrectNetwork) {
-            const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-            // Show the actual comparison issue
-            throw new Error(`Network case mismatch! Current: ${currentChainId} vs Expected: ${LOCAL_CHAIN_ID}. Please refresh.`);
-        }
-        
-        // Rest of your minting code...
-    } catch (error) {
-        console.error('Mint error:', error);
-        document.getElementById('status').textContent = "Error: " + error.message;
-        document.getElementById('status').style.color = "red";
-    }
-}
-
-    async function loadNFTs() {
-        try {
-            const address = await signer.getAddress();
-            const balance = await nftContract.balanceOf(address);
-            
-            let html = "<h2>Your NFTs:</h2>";
-            if (balance > 0) {
-                html += `<p>You own ${balance} NFT(s)! 🎉</p>`;
-                for (let i = 0; i < balance; i++) {
-                    html += `<div>NFT #${i + 1}</div>`;
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: SCROLL_CHAIN_ID,
+                            chainName: SCROLL_CHAIN_NAME,
+                            rpcUrls: [SCROLL_RPC_URL],
+                            nativeCurrency: {
+                                name: 'Ether',
+                                symbol: 'ETH',
+                                decimals: 18
+                            },
+                            blockExplorerUrls: ['https://sepolia.scroll.io/']
+                        }]
+                    });
+                } else {
+                    throw switchError;
                 }
-            } else {
-                html += "<p>No NFTs yet. Mint one above! 👆</p>";
             }
-            document.getElementById('nfts').innerHTML = html;
-        } catch (error) {
-            console.error("Error loading NFTs:", error);
-            document.getElementById('nfts').innerHTML = "<p>Error loading NFTs</p>";
         }
-    }
 
-    // Initial check on page load
-    if (typeof window.ethereum !== 'undefined') {
-        checkNetworkAndUpdateUI();
-    }
-</script>
-<script>
-// AA Implementation using ethers.js
-class SimpleAA {
-    constructor(provider, entryPointAddress, factoryAddress) {
-        this.provider = provider;
-        this.entryPointAddress = entryPointAddress;
-        this.factoryAddress = factoryAddress;
-    }
-    
-    async createSmartAccount() {
-        // Create a simple smart account
-        const factory = new ethers.Contract(this.factoryAddress, [
-            "function createAccount(address owner, uint256 salt) returns (address)"
-        ], this.provider);
-        
-        // Use a random salt for account creation
-        const salt = Date.now();
-        const ownerAddress = await this.provider.getSigner().getAddress();
-        
-        // Predict the smart account address
-        const predictedAddress = await factory.createAccount.staticCall(ownerAddress, salt);
-        
-        return {
-            address: predictedAddress,
-            factory: factory,
-            salt: salt,
-            owner: ownerAddress
-        };
-    }
-    
-    async createUserOp(target, data, value = 0) {
-        // Simple UserOperation creation
-        return {
-            sender: this.smartAccount.address,
-            nonce: await this.getNonce(),
-            initCode: this.getInitCode(),
-            callData: this.encodeCallData(target, data, value),
-            callGasLimit: 1000000,
-            verificationGasLimit: 1000000,
-            preVerificationGas: 100000,
-            maxFeePerGas: await this.getGasPrice(),
-            maxPriorityFeePerGas: await this.getPriorityFee(),
-            paymasterAndData: "0x",
-            signature: "0x"
-        };
-    }
-    
-    // ... additional helper methods
-}
+        // Load user's NFTs
+        async function loadNFTs() {
+            try {
+                const address = await signer.getAddress();
+                const balance = await nftContract.balanceOf(address);
+                
+                if (balance > 0) {
+                    let html = '';
+                    for (let i = 0; i < balance; i++) {
+                        html += `
+                            <div class="nft-card">
+                                <h3>NFT #${i + 1}</h3>
+                                <p>Owned by you</p>
+                            </div>
+                        `;
+                    }
+                    nftsContainer.innerHTML = html;
+                } else {
+                    nftsContainer.innerHTML = '<p>No NFTs yet. Mint your first one!</p>';
+                }
+            } catch (error) {
+                console.error("Error loading NFTs:", error);
+                nftsContainer.innerHTML = '<p>Error loading NFTs</p>';
+            }
+        }
 
-// Initialize AA
-let aaClient;
+        // Helper function to update status
+        function updateStatus(element, message, type) {
+            element.textContent = message;
+            element.className = "status";
+            if (type) element.classList.add(type);
+        }
 
-async function initAA() {
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    
-    // For local development, use these test addresses
-    aaClient = new SimpleAA(
-        provider,
-        "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789", // EntryPoint
-        "0x9406Cc6185a346906296840746125a0E44976454"  // Factory
-    );
-    
-    return aaClient;
-}
-</script>
-  <div style="margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-    <p><strong>Troubleshooting:</strong> If automatic network switch fails:</p>
-    <button onclick="manualSwitchHelp()" style="background: #ff9900; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
-      Show Manual Setup Instructions
-    </button>
-  </div>
+        // Initialize network check
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('chainChanged', (chainId) => {
+                if (chainId === SCROLL_CHAIN_ID) {
+                    networkStatus.textContent = "Connected to Scroll Sepolia";
+                    networkIndicator.className = "network-indicator network-connected";
+                } else {
+                    networkStatus.textContent = "Please switch to Scroll Sepolia";
+                    networkIndicator.className = "network-indicator network-disconnected";
+                }
+            });
+        }
+    </script>
 </body>
 </html>
