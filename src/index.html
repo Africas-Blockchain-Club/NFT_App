@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step 2: AA Setup</title>
+    <title>Step 3: NFT Minting</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js"></script>
     <style>
         :root {
@@ -252,12 +252,33 @@
             margin-top: 0;
             color: #e67700;
         }
+
+        .nft-preview {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #f0f4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .nft-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>AA NFT Minting - Step 2: AA Setup</h1>
-        <p>Now let's set up Account Abstraction for gasless transactions.</p>
+        <h1>AA NFT Minting - Step 3: Mint NFT</h1>
+        <p>Now let's mint your NFT using Account Abstraction for gasless transactions.</p>
     </header>
     
     <div class="step-progress">
@@ -269,7 +290,7 @@
             <div class="step-number">2</div>
             <div class="step-text">AA Setup</div>
         </div>
-        <div class="step">
+        <div class="step active">
             <div class="step-number">3</div>
             <div class="step-text">Mint NFT</div>
         </div>
@@ -365,37 +386,65 @@
         </div>
     </div>
 
-    <div class="card">
-        <h2>What's Next?</h2>
-        <p>After successfully setting up Account Abstraction, we'll move to step 3:</p>
-        <ul>
-            <li>Connect to your NFT contract</li>
-            <li>Prepare the minting transaction</li>
-            <li>Execute a gasless NFT mint</li>
-            <li>View your new NFT</li>
-        </ul>
+    <div class="card" id="mintCard">
+        <h2>Step 3: Mint Your NFT</h2>
+        <p>Now that your smart account is set up, you can mint an NFT without paying gas fees.</p>
         
-        <button id="nextStepBtn" disabled>Proceed to Step 3: Mint NFT</button>
+        <div class="nft-preview" id="nftPreview">
+            Your NFT Preview
+        </div>
+        
+        <div class="info-box">
+            <h3>NFT Details</h3>
+            <p><strong>Name:</strong> AA Demo NFT</p>
+            <p><strong>Description:</strong> A special NFT minted with Account Abstraction</p>
+            <p><strong>Gasless:</strong> Yes, powered by ZeroDev</p>
+        </div>
+        
+        <button id="mintBtn" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Mint My Free NFT
+        </button>
+        
+        <div id="mintStatus" class="status">Complete AA setup first to enable minting.</div>
+        
+        <div id="mintSuccess" style="display: none;">
+            <div class="status connected">
+                NFT minted successfully! Transaction Hash: <span id="transactionHash"></span>
+            </div>
+            <div class="account-details">
+                <h3>Your New NFT</h3>
+                <p><strong>Token ID:</strong> <span id="tokenId">1234</span></p>
+                <p><strong>View on Explorer:</strong> <a id="explorerLink" href="#" target="_blank">View Transaction</a></p>
+            </div>
+        </div>
     </div>
 
     <footer>
-        <p>Built for your Hackathon Project | Step 2 of 3</p>
+        <p>Built for your Hackathon Project | Step 3 of 3</p>
     </footer>
 
     <script>
-        // Configuration
-        const SCROLL_RPC_URL = "https://sepolia-rpc.scroll.io/";
-        const SCROLL_CHAIN_ID = "0x8274F"; // Scroll Sepolia in hexadecimal
-        const SCROLL_CHAIN_ID_DECIMAL = 534351; // Scroll Sepolia in decimal
+        // Network configuration
+        const SCROLL_CHAIN_ID = "0x8274f"; // Scroll Sepolia Testnet
         const SCROLL_CHAIN_NAME = "Scroll Sepolia";
-        const BUNDLER_URL = "https://bundler.zerodev.app/api/v2/aa/3752311b-fb60-4900-ac94-66d92b19b675";
-        const ENTRY_POINT = "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789";
-        const FACTORY = "0x9406Cc6185a346906296840746125a0E44976454";
+        const SCROLL_RPC_URL = "https://sepolia-rpc.scroll.io/";
+        const SCROLL_EXPLORER = "https://sepolia.scroll.io/";
+        
+        // Sample NFT contract details (replace with your actual contract)
+        const NFT_CONTRACT_ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
+        const NFT_ABI = [
+            "function safeMint(address to) external returns (uint256)",
+            "function ownerOf(uint256 tokenId) external view returns (address)",
+            "function tokenURI(uint256 tokenId) external view returns (string)"
+        ];
 
         // DOM elements
         const connectBtn = document.getElementById('connectBtn');
         const setupAABtn = document.getElementById('setupAABtn');
-        const nextStepBtn = document.getElementById('nextStepBtn');
+        const mintBtn = document.getElementById('mintBtn');
         const networkStatus = document.getElementById('networkStatus');
         const networkIndicator = document.getElementById('networkIndicator');
         const connectionStatus = document.getElementById('connectionStatus');
@@ -407,11 +456,20 @@
         const smartAccountAddress = document.getElementById('smartAccountAddress');
         const bundlerStatus = document.getElementById('bundlerStatus');
         const paymasterStatus = document.getElementById('paymasterStatus');
+        const mintStatus = document.getElementById('mintStatus');
+        const mintSuccess = document.getElementById('mintSuccess');
+        const transactionHash = document.getElementById('transactionHash');
+        const tokenId = document.getElementById('tokenId');
+        const explorerLink = document.getElementById('explorerLink');
+        const nftPreview = document.getElementById('nftPreview');
+
+        // State variables
+        let provider, signer, userAddress, smartAccount;
 
         // Event listeners
         connectBtn.addEventListener('click', connectWallet);
         setupAABtn.addEventListener('click', setupAccountAbstraction);
-        nextStepBtn.addEventListener('click', proceedToNextStep);
+        mintBtn.addEventListener('click', mintNFT);
 
         // Connect Wallet function
         async function connectWallet() {
@@ -433,13 +491,13 @@
                 await switchToScrollSepolia();
                 
                 // Initialize provider
-                const provider = new ethers.BrowserProvider(window.ethereum);
-                const signer = await provider.getSigner();
-                const address = await signer.getAddress();
-                const balance = await provider.getBalance(address);
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                userAddress = await signer.getAddress();
+                const balance = await provider.getBalance(userAddress);
                 
                 // Format the address for display
-                const formattedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+                const formattedAddress = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
                 
                 // Display account info
                 accountAddress.textContent = `Address: ${formattedAddress}`;
@@ -531,7 +589,8 @@
                 // Update UI
                 updateStatus(setupAAStatus, "Account Abstraction setup complete! Ready for gasless transactions.", "connected");
                 aaDetails.style.display = 'block';
-                nextStepBtn.disabled = false;
+                mintBtn.disabled = false;
+                updateStatus(mintStatus, "Ready to mint your NFT. Click the button above.", "pending");
                 
             } catch (error) {
                 console.error("AA Setup error:", error);
@@ -562,15 +621,70 @@
                         // Set mock smart account address (in a real app, this would come from the AA SDK)
                         const mockAddress = "0x" + Math.random().toString(16).substr(2, 40);
                         smartAccountAddress.textContent = `${mockAddress.substring(0, 6)}...${mockAddress.substring(mockAddress.length - 4)}`;
+                        smartAccount = mockAddress; // Store for later use
                         resolve();
                     }, 4000);
                 }, 500);
             });
         }
 
-        // Next step button handler
-        function proceedToNextStep() {
-            alert("This would proceed to Step 3: Mint NFT. In a real application, you would navigate to the next page or load the next module.");
+        // Mint NFT function
+        async function mintNFT() {
+            try {
+                updateStatus(mintStatus, "Preparing minting transaction...", "pending");
+                mintBtn.disabled = true;
+                
+                // In a real implementation, you would use the AA SDK to create a user operation
+                // For this demo, we'll simulate the process
+                
+                // Simulate the minting process
+                await simulateMinting();
+                
+            } catch (error) {
+                console.error("Minting error:", error);
+                updateStatus(mintStatus, "Error: " + error.message, "error");
+                mintBtn.disabled = false;
+            }
+        }
+
+        // Simulate minting process
+        async function simulateMinting() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    updateStatus(mintStatus, "Creating user operation...", "pending");
+                    
+                    setTimeout(() => {
+                        updateStatus(mintStatus, "Sending to bundler...", "pending");
+                        
+                        setTimeout(() => {
+                            updateStatus(mintStatus, "Transaction confirmed!", "pending");
+                            
+                            // Generate a mock transaction hash
+                            const mockTxHash = "0x" + Math.random().toString(16).substr(2, 64);
+                            const mockTokenId = Math.floor(Math.random() * 10000);
+                            
+                            // Update UI with success
+                            transactionHash.textContent = `${mockTxHash.substring(0, 10)}...`;
+                            tokenId.textContent = mockTokenId;
+                            explorerLink.href = `${SCROLL_EXPLORER}tx/${mockTxHash}`;
+                            
+                            // Show success section
+                            mintSuccess.style.display = 'block';
+                            updateStatus(mintStatus, "NFT minted successfully!", "connected");
+                            
+                            // Update NFT preview
+                            nftPreview.innerHTML = `
+                                <div style="text-align: center; padding: 20px;">
+                                    <h3>AA Demo NFT #${mockTokenId}</h3>
+                                    <p>Minted with Account Abstraction</p>
+                                </div>
+                            `;
+                            
+                            resolve();
+                        }, 2000);
+                    }, 2000);
+                }, 1000);
+            });
         }
 
         // Helper function to update status
@@ -591,6 +705,8 @@
                     accountInfo.style.display = 'none';
                     setupAABtn.disabled = true;
                     updateStatus(setupAAStatus, "Connect your wallet first to enable AA setup.", "error");
+                    mintBtn.disabled = true;
+                    updateStatus(mintStatus, "Complete AA setup first to enable minting.", "error");
                 } else {
                     connectWallet(); // Reconnect if accounts change
                 }
