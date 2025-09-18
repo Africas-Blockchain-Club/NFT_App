@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step 1: Wallet Connection</title>
+    <title>Step 2: AA Setup</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js"></script>
-    <script src="WalletConnect.js" defer></script>
     <style>
         :root {
             --primary: #4a6cf7;
@@ -131,6 +130,54 @@
             box-shadow: 0 0 0 3px rgba(197, 34, 31, 0.2);
         }
         
+        .step-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .step-progress::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .step.active .step-number {
+            background-color: var(--success);
+        }
+        
+        .step-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
         .instructions {
             background-color: #f9fafc;
             border-left: 4px solid var(--primary);
@@ -160,57 +207,220 @@
             font-size: 14px;
         }
         
-        .troubleshooting {
-            background-color: #fff4e6;
-            border-left: 4px solid #ffa94d;
+        .info-box {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
             padding: 15px 20px;
             margin: 20px 0;
             border-radius: 0 8px 8px 0;
         }
         
-        .troubleshooting h3 {
+        .info-box h3 {
             margin-top: 0;
-            color: #e67700;
+            color: #0ea5e9;
+        }
+        
+        .account-details {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .account-details h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        code {
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #334155;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>AA NFT Minting - Step 1: Wallet Connection</h1>
+        <h1>AA NFT Minting - Step 2: AA Setup</h1>
+        <p>Now let's set up Account Abstraction for gasless transactions.</p>
     </header>
-
-    <div class="card">
-        <h2>Connect Your Wallet</h2>
-        
-        
-        <div class="network-info">
-            <span id="networkIndicator" class="network-indicator network-disconnected"></span>
-            <span id="networkStatus">Not connected to Scroll Sepolia</span>
+    
+    <div class="step-progress">
+        <div class="step active">
+            <div class="step-number">1</div>
+            <div class="step-text">Wallet Connected</div>
         </div>
-        
-        <button id="connectBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 16H12V19H13V16Z" fill="currentColor"/>
-                <path d="M9 16H8V19H9V16Z" fill="currentColor"/>
-                <path d="M17 16H16V19H17V16Z" fill="currentColor"/>
-                <path d="M3 4C3 2.89543 3.89543 2 5 2H19C20.1046 2 21 2.89543 21 4V9C21 9.55228 20.5523 10 20 10H4C3.44772 10 3 9.55228 3 9V4Z" fill="currentColor"/>
-                <path d="M4 12H20C20.5523 12 21 12.4477 21 13V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V13C3 12.4477 3.44772 12 4 12Z" fill="currentColor"/>
-            </svg>
-            Connect Wallet
-        </button>
-        
-        <div id="connectionStatus" class="status">
-            Wallet not connected yet. Click the button above to get started.
+        <div class="step active">
+            <div class="step-number">2</div>
+            <div class="step-text">AA Setup</div>
         </div>
-        
-        <div id="accountInfo" style="display: none;">
-            <h3>Connected Account</h3>
-            <p id="accountAddress"></p>
-            <p id="accountBalance"></p>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-text">Mint NFT</div>
         </div>
     </div>
 
+    <div class="card">
+        <h2>Wallet Connection Status</h2>
+        
+        <div class="network-info">
+            <span id="networkIndicator" class="network-indicator network-connected"></span>
+            <span id="networkStatus">Connected to Scroll Sepolia</span>
+        </div>
+        
+        <div id="accountInfo">
+            <h3>Connected Account</h3>
+            <p id="accountAddress">0x47dcd1...36626</p>
+            <p id="accountBalance">Balance: 0.5 ETH</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Account Abstraction Setup</h2>
+        
+        <div class="info-box">
+            <h3>What is Account Abstraction?</h3>
+            <p>Account Abstraction (ERC-4337) allows users to use smart contracts as their primary accounts, enabling features like gasless transactions, social recovery, and more.</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>Setup Process:</h3>
+            <ol>
+                <li>Initialize ZeroDev for Account Abstraction</li>
+                <li>Create a smart account for the user</li>
+                <li>Connect to the bundler for gasless transactions</li>
+                <li>Verify the setup is working correctly</li>
+            </ol>
+        </div>
+        
+        <button id="setupAABtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 16V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Setup Account Abstraction
+        </button>
+        
+        <div id="setupAAStatus" class="status">
+            Account Abstraction not yet configured.
+        </div>
+        
+        <div id="aaDetails" style="display: none;">
+            <div class="account-details">
+                <h3>Smart Account Details</h3>
+                <p><strong>Smart Account Address:</strong> <code id="smartAccountAddress">0x1234...abcd</code></p>
+                <p><strong>Bundler Connected:</strong> <span id="bundlerStatus">Connected</span></p>
+                <p><strong>Paymaster Status:</strong> <span id="paymasterStatus">Ready for gasless transactions</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>What's Next?</h2>
+        <p>After successfully setting up Account Abstraction, we'll move to step 3:</p>
+        <ul>
+            <li>Connect to your NFT contract</li>
+            <li>Prepare the minting transaction</li>
+            <li>Execute a gasless NFT mint</li>
+            <li>View your new NFT</li>
+        </ul>
+        
+        <button id="nextStepBtn" disabled>Proceed to Step 3: Mint NFT</button>
+    </div>
+
     <footer>
+        <p>Built for your Hackathon Project | Step 2 of 3</p>
     </footer>
+
+    <script>
+        // Configuration
+        const SCROLL_RPC_URL = "https://sepolia-rpc.scroll.io/";
+        const SCROLL_CHAIN_ID = "0x8274F";
+        const BUNDLER_URL = "https://bundler.zerodev.app/api/v2/aa/3752311b-fb60-4900-ac94-66d92b19b675";
+        const ENTRY_POINT = "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789";
+        const FACTORY = "0x9406Cc6185a346906296840746125a0E44976454";
+
+        // DOM elements
+        const setupAABtn = document.getElementById('setupAABtn');
+        const nextStepBtn = document.getElementById('nextStepBtn');
+        const setupAAStatus = document.getElementById('setupAAStatus');
+        const aaDetails = document.getElementById('aaDetails');
+        const smartAccountAddress = document.getElementById('smartAccountAddress');
+        const bundlerStatus = document.getElementById('bundlerStatus');
+        const paymasterStatus = document.getElementById('paymasterStatus');
+
+        // Event listeners
+        setupAABtn.addEventListener('click', setupAccountAbstraction);
+
+        // Account Abstraction Setup
+        async function setupAccountAbstraction() {
+            try {
+                updateStatus(setupAAStatus, "Initializing Account Abstraction...", "pending");
+                setupAABtn.disabled = true;
+                
+                // Simulate AA setup process
+                await simulateAASetup();
+                
+                // Update UI
+                updateStatus(setupAAStatus, "Account Abstraction setup complete! Ready for gasless transactions.", "connected");
+                aaDetails.style.display = 'block';
+                nextStepBtn.disabled = false;
+                
+            } catch (error) {
+                console.error("AA Setup error:", error);
+                updateStatus(setupAAStatus, "Error: " + error.message, "error");
+                setupAABtn.disabled = false;
+            }
+        }
+
+        // Simulate AA Setup process
+        async function simulateAASetup() {
+            // This would be replaced with actual AA setup code
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Simulate different steps in the process
+                    setTimeout(() => {
+                        updateStatus(setupAAStatus, "Connecting to ZeroDev...", "pending");
+                    }, 1000);
+                    
+                    setTimeout(() => {
+                        updateStatus(setupAAStatus, "Creating smart account...", "pending");
+                    }, 2000);
+                    
+                    setTimeout(() => {
+                        updateStatus(setupAAStatus, "Configuring paymaster...", "pending");
+                    }, 3000);
+                    
+                    setTimeout(() => {
+                        // Set mock smart account address (in a real app, this would come from the AA SDK)
+                        const mockAddress = "0x" + Math.random().toString(16).substr(2, 40);
+                        smartAccountAddress.textContent = `${mockAddress.substring(0, 6)}...${mockAddress.substring(mockAddress.length - 4)}`;
+                        resolve();
+                    }, 4000);
+                }, 500);
+            });
+        }
+
+        // Helper function to update status
+        function updateStatus(element, message, type) {
+            element.textContent = message;
+            element.className = "status";
+            if (type) element.classList.add(type);
+        }
+
+        // Next step button handler
+        nextStepBtn.addEventListener('click', () => {
+            alert("This would proceed to Step 3: Mint NFT. In a real application, you would navigate to the next page or load the next module.");
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Simulate already being connected from Step 1
+            updateStatus(setupAAStatus, "Ready to set up Account Abstraction", "pending");
+        });
+    </script>
 </body>
 </html>
