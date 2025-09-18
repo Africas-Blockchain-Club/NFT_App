@@ -239,6 +239,19 @@
             font-family: monospace;
             color: #334155;
         }
+        
+        .troubleshooting {
+            background-color: #fff4e6;
+            border-left: 4px solid #ffa94d;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .troubleshooting h3 {
+            margin-top: 0;
+            color: #e67700;
+        }
     </style>
 </head>
 <body>
@@ -250,7 +263,7 @@
     <div class="step-progress">
         <div class="step active">
             <div class="step-number">1</div>
-            <div class="step-text">Wallet Connected</div>
+            <div class="step-text">Wallet Connect</div>
         </div>
         <div class="step active">
             <div class="step-number">2</div>
@@ -263,17 +276,41 @@
     </div>
 
     <div class="card">
-        <h2>Wallet Connection Status</h2>
+        <h2>Connect Your Wallet</h2>
         
-        <div class="network-info">
-            <span id="networkIndicator" class="network-indicator network-connected"></span>
-            <span id="networkStatus">Connected to Scroll Sepolia</span>
+        <div class="instructions">
+            <h3>Before you start:</h3>
+            <ol>
+                <li>Make sure you have MetaMask installed</li>
+                <li>Ensure you're connected to Scroll Sepolia testnet</li>
+                <li>Get some test ETH from the Scroll Sepolia faucet if needed</li>
+            </ol>
         </div>
         
-        <div id="accountInfo">
+        <div class="network-info">
+            <span id="networkIndicator" class="network-indicator network-disconnected"></span>
+            <span id="networkStatus">Not connected to Scroll Sepolia</span>
+        </div>
+        
+        <button id="connectBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 16H12V19H13V16Z" fill="currentColor"/>
+                <path d="M9 16H8V19H9V16Z" fill="currentColor"/>
+                <path d="M17 16H16V19H17V16Z" fill="currentColor"/>
+                <path d="M3 4C3 2.89543 3.89543 2 5 2H19C20.1046 2 21 2.89543 21 4V9C21 9.55228 20.5523 10 20 10H4C3.44772 10 3 9.55228 3 9V4Z" fill="currentColor"/>
+                <path d="M4 12H20C20.5523 12 21 12.4477 21 13V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V13C3 12.4477 3.44772 12 4 12Z" fill="currentColor"/>
+            </svg>
+            Connect Wallet
+        </button>
+        
+        <div id="connectionStatus" class="status">
+            Wallet not connected yet. Click the button above to get started.
+        </div>
+        
+        <div id="accountInfo" style="display: none;">
             <h3>Connected Account</h3>
-            <p id="accountAddress">0x47dcd1...36626</p>
-            <p id="accountBalance">Balance: 0.5 ETH</p>
+            <p id="accountAddress"></p>
+            <p id="accountBalance"></p>
         </div>
     </div>
 
@@ -295,7 +332,17 @@
             </ol>
         </div>
         
-        <button id="setupAABtn">
+        <div class="troubleshooting">
+            <h3>Troubleshooting Tips:</h3>
+            <p>If you encounter errors, try these steps:</p>
+            <ol>
+                <li>Make sure your wallet is connected first</li>
+                <li>Check if you're on the Scroll Sepolia network</li>
+                <li>Refresh the page and try again</li>
+            </ol>
+        </div>
+        
+        <button id="setupAABtn" disabled>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
                 <path d="M12 16V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -305,7 +352,7 @@
         </button>
         
         <div id="setupAAStatus" class="status">
-            Account Abstraction not yet configured.
+            Connect your wallet first to enable AA setup.
         </div>
         
         <div id="aaDetails" style="display: none;">
@@ -338,22 +385,139 @@
     <script>
         // Configuration
         const SCROLL_RPC_URL = "https://sepolia-rpc.scroll.io/";
-        const SCROLL_CHAIN_ID = "0x8274F";
+        const SCROLL_CHAIN_ID = "0x8274F"; // Scroll Sepolia in hexadecimal
+        const SCROLL_CHAIN_ID_DECIMAL = 534351; // Scroll Sepolia in decimal
+        const SCROLL_CHAIN_NAME = "Scroll Sepolia";
         const BUNDLER_URL = "https://bundler.zerodev.app/api/v2/aa/3752311b-fb60-4900-ac94-66d92b19b675";
         const ENTRY_POINT = "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789";
         const FACTORY = "0x9406Cc6185a346906296840746125a0E44976454";
 
         // DOM elements
+        const connectBtn = document.getElementById('connectBtn');
         const setupAABtn = document.getElementById('setupAABtn');
         const nextStepBtn = document.getElementById('nextStepBtn');
+        const networkStatus = document.getElementById('networkStatus');
+        const networkIndicator = document.getElementById('networkIndicator');
+        const connectionStatus = document.getElementById('connectionStatus');
         const setupAAStatus = document.getElementById('setupAAStatus');
+        const accountInfo = document.getElementById('accountInfo');
+        const accountAddress = document.getElementById('accountAddress');
+        const accountBalance = document.getElementById('accountBalance');
         const aaDetails = document.getElementById('aaDetails');
         const smartAccountAddress = document.getElementById('smartAccountAddress');
         const bundlerStatus = document.getElementById('bundlerStatus');
         const paymasterStatus = document.getElementById('paymasterStatus');
 
         // Event listeners
+        connectBtn.addEventListener('click', connectWallet);
         setupAABtn.addEventListener('click', setupAccountAbstraction);
+        nextStepBtn.addEventListener('click', proceedToNextStep);
+
+        // Connect Wallet function
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                updateStatus(connectionStatus, "Please install MetaMask to continue!", "error");
+                return;
+            }
+
+            try {
+                updateStatus(connectionStatus, "Connecting to your wallet...", "pending");
+                connectBtn.disabled = true;
+                
+                // Request account access
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                // Check and switch to Scroll Sepolia
+                await switchToScrollSepolia();
+                
+                // Initialize provider
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
+                const address = await signer.getAddress();
+                const balance = await provider.getBalance(address);
+                
+                // Format the address for display
+                const formattedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+                
+                // Display account info
+                accountAddress.textContent = `Address: ${formattedAddress}`;
+                accountBalance.textContent = `Balance: ${ethers.formatEther(balance)} ETH`;
+                accountInfo.style.display = 'block';
+                
+                // Update UI
+                updateStatus(connectionStatus, "Successfully connected to Scroll Sepolia!", "connected");
+                networkStatus.textContent = "Connected to Scroll Sepolia";
+                networkIndicator.className = "network-indicator network-connected";
+                
+                // Enable AA setup button
+                setupAABtn.disabled = false;
+                updateStatus(setupAAStatus, "Ready to set up Account Abstraction", "pending");
+                
+            } catch (error) {
+                console.error("Connection error:", error);
+                
+                if (error.message.includes('Request timeout')) {
+                    updateStatus(connectionStatus, "Connection timeout. Please check MetaMask and try again.", "error");
+                } else if (error.message.includes('User rejected')) {
+                    updateStatus(connectionStatus, "Connection cancelled. Please try again and approve the connection.", "error");
+                } else {
+                    updateStatus(connectionStatus, "Error: " + error.message, "error");
+                }
+                
+                networkStatus.textContent = "Not connected to Scroll Sepolia";
+                networkIndicator.className = "network-indicator network-disconnected";
+                connectBtn.disabled = false;
+            }
+        }
+
+        // Switch to Scroll Sepolia
+        async function switchToScrollSepolia() {
+            try {
+                // Check current chain
+                const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+                
+                if (currentChainId !== SCROLL_CHAIN_ID) {
+                    // Try to switch to Scroll Sepolia
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: SCROLL_CHAIN_ID }],
+                        });
+                    } catch (switchError) {
+                        // This error code indicates that the chain has not been added to MetaMask
+                        if (switchError.code === 4902) {
+                            try {
+                                await window.ethereum.request({
+                                    method: 'wallet_addEthereumChain',
+                                    params: [{
+                                        chainId: SCROLL_CHAIN_ID,
+                                        chainName: SCROLL_CHAIN_NAME,
+                                        rpcUrls: [SCROLL_RPC_URL],
+                                        nativeCurrency: {
+                                            name: 'Ether',
+                                            symbol: 'ETH',
+                                            decimals: 18
+                                        },
+                                        blockExplorerUrls: ['https://sepolia.scroll.io/']
+                                    }]
+                                });
+                            } catch (addError) {
+                                throw new Error("Failed to add Scroll Sepolia network to MetaMask. Please add it manually.");
+                            }
+                        } else if (switchError.code === 4001) {
+                            throw new Error("You rejected the network switch. Please switch to Scroll Sepolia manually.");
+                        } else {
+                            throw switchError;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Network switch error:", error);
+                throw error;
+            }
+        }
 
         // Account Abstraction Setup
         async function setupAccountAbstraction() {
@@ -404,6 +568,11 @@
             });
         }
 
+        // Next step button handler
+        function proceedToNextStep() {
+            alert("This would proceed to Step 3: Mint NFT. In a real application, you would navigate to the next page or load the next module.");
+        }
+
         // Helper function to update status
         function updateStatus(element, message, type) {
             element.textContent = message;
@@ -411,16 +580,54 @@
             if (type) element.classList.add(type);
         }
 
-        // Next step button handler
-        nextStepBtn.addEventListener('click', () => {
-            alert("This would proceed to Step 3: Mint NFT. In a real application, you would navigate to the next page or load the next module.");
-        });
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Simulate already being connected from Step 1
-            updateStatus(setupAAStatus, "Ready to set up Account Abstraction", "pending");
-        });
+        // Initialize network check
+        if (typeof window.ethereum !== 'undefined') {
+            // Listen for account changes
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    updateStatus(connectionStatus, "Wallet disconnected", "error");
+                    networkStatus.textContent = "Not connected to Scroll Sepolia";
+                    networkIndicator.className = "network-indicator network-disconnected";
+                    accountInfo.style.display = 'none';
+                    setupAABtn.disabled = true;
+                    updateStatus(setupAAStatus, "Connect your wallet first to enable AA setup.", "error");
+                } else {
+                    connectWallet(); // Reconnect if accounts change
+                }
+            });
+            
+            // Listen for chain changes
+            window.ethereum.on('chainChanged', (chainId) => {
+                if (chainId === SCROLL_CHAIN_ID) {
+                    networkStatus.textContent = "Connected to Scroll Sepolia";
+                    networkIndicator.className = "network-indicator network-connected";
+                    updateStatus(connectionStatus, "Connected to Scroll Sepolia", "connected");
+                    // Refresh account info
+                    if (accountInfo.style.display === 'block') {
+                        connectWallet();
+                    }
+                } else {
+                    networkStatus.textContent = "Please switch to Scroll Sepolia";
+                    networkIndicator.className = "network-indicator network-disconnected";
+                    updateStatus(connectionStatus, "Wrong network detected", "error");
+                }
+            });
+            
+            // Try to auto-connect if already connected
+            window.addEventListener('load', async () => {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                        if (chainId === SCROLL_CHAIN_ID) {
+                            connectWallet();
+                        }
+                    }
+                } catch (error) {
+                    console.log("No auto-connection possible:", error);
+                }
+            });
+        }
     </script>
 </body>
 </html>
