@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { createPublicClient, encodeFunctionData, http, parseAbi } from "viem";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { privateKeyToAccount } from "viem/accounts";
 import { scrollSepolia } from "viem/chains";
 import { signerToEcdsaValidator } from "@zerodev/ecdsa-validator";
 import {
@@ -10,18 +10,27 @@ import {
 } from "@zerodev/sdk";
 import { getEntryPoint, KERNEL_V3_1 } from "@zerodev/sdk/constants";
 
+// Check environment variables
 if (!process.env.ZERODEV_RPC) {
   throw new Error("ZERODEV_RPC is not set");
 }
 
+if (!process.env.APP_PRIVATE_KEY) {
+  throw new Error("APP_PRIVATE_KEY is not set. Add your private key to .env file");
+}
 
+const ZERODEV_RPC = process.env.ZERODEV_RPC;
+const APP_PRIVATE_KEY = process.env.APP_PRIVATE_KEY;
 
-const ZERODEV_RPC = process.env.ZERODEV_RPC
+// Validate private key format
+if (!APP_PRIVATE_KEY.startsWith('0x') || APP_PRIVATE_KEY.length !== 66) {
+  throw new Error("Invalid private key format. Must start with 0x and be 66 characters long");
+}
 
 // The NFT contract we will be interacting with
 const contractAddress = "0xC9FEefAe44ddbA865e57209b6139a114662F4C81";
 const contractABI = parseAbi([
-  "function mint(address _to) public",
+  "function safeMint(address _to) public",
   "function balanceOf(address owner) external view returns (uint256 balance)",
 ]);
 
@@ -34,9 +43,9 @@ const publicClient = createPublicClient({
 const entryPoint = getEntryPoint("0.7");
 
 const main = async () => {
-  // Construct a signer
-  const privateKey = generatePrivateKey();
-  const signer = privateKeyToAccount(privateKey);
+  // Use the PERSISTENT private key from environment variables
+  const signer = privateKeyToAccount(APP_PRIVATE_KEY as `0x${string}`);
+  console.log("Using persistent signer address:", signer.address);
 
   // Construct a validator
   const ecdsaValidator = await signerToEcdsaValidator(publicClient, {
@@ -45,7 +54,7 @@ const main = async () => {
     kernelVersion: KERNEL_V3_1,
   });
 
-  // Construct a Kernel account
+  // Construct a Kernel account (SAME address every time)
   const account = await createKernelAccount(publicClient, {
     entryPoint,
     plugins: {
@@ -72,9 +81,19 @@ const main = async () => {
   });
 
   const accountAddress = kernelClient.account.address;
-  console.log("My account:", accountAddress);
+  console.log("My smart account:", accountAddress);
 
-  // Send a UserOp
+  // Check current NFT balance first
+  const currentBalance = await publicClient.readContract({
+    address: contractAddress,
+    abi: contractABI,
+    functionName: "balanceOf",
+    args: [accountAddress],
+  });
+
+  console.log(`Current NFT balance: ${currentBalance}`);
+
+  // Send a UserOp to mint NFT
   const userOpHash = await kernelClient.sendUserOperation({
     callData: await kernelClient.account.encodeCalls([
       {
@@ -82,7 +101,7 @@ const main = async () => {
         value: BigInt(0),
         data: encodeFunctionData({
           abi: contractABI,
-          functionName: "mint",
+          functionName: "safeMint",
           args: [accountAddress],
         }),
       },
@@ -97,14 +116,14 @@ const main = async () => {
   console.log("UserOp confirmed:", receipt.userOpHash);
   console.log("TxHash:", receipt.receipt.transactionHash);
 
-  // Print NFT balance
-  const nftBalance = await publicClient.readContract({
+  // Print new NFT balance
+  const newBalance = await publicClient.readContract({
     address: contractAddress,
     abi: contractABI,
     functionName: "balanceOf",
     args: [accountAddress],
   });
-  console.log(`NFT balance: ${nftBalance}`);
+  console.log(`New NFT balance: ${newBalance}`);
 
   process.exit(0);
 };
