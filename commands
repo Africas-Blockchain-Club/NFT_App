@@ -11,7 +11,11 @@
 # pc.scroll.io/
 
 # Check if your contract was actually deployed
-# cast code 0x1966dc8ff30Bc4AeDEd27178642253b3cCC9AA3f --rpc-url https://sepolia-rpc.scroll.io/
+# cast code 0xC9FEefAe44ddbA865e57209b6139a114662F4C81 --rpc-url https://sepolia-rpc.scroll.io/
 
 # Check real time gas prices
 # cast gas-price --rpc-url https://sepolia-rpc.scroll.io/
+
+
+# For node modules ZeoroDev
+# npm i @zerodev/sdk viem

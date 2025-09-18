@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step 3: NFT Minting</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js"></script>
+    <title>MyNFT Minting DApp</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2/umd/ethers.min.js"></script>
     <style>
         :root {
             --primary: #4a6cf7;
@@ -18,6 +18,13 @@
             --card-bg: #ffffff;
             --background: #f5f8ff;
             --text: #333333;
+            --border-radius: 12px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         
         body {
@@ -28,25 +35,58 @@
             background-color: var(--background);
             color: var(--text);
             line-height: 1.6;
+            background: linear-gradient(135deg, #f5f8ff 0%, #e0e8ff 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
         
         header {
             text-align: center;
-            margin-bottom: 30px;
             padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
         h1 {
             color: var(--primary);
             margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
         }
         
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             padding: 25px;
-            margin-bottom: 25px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title svg {
+            width: 24px;
+            height: 24px;
         }
         
         .status {
@@ -88,6 +128,8 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            width: 100%;
+            justify-content: center;
         }
         
         button:hover {
@@ -130,73 +172,82 @@
             box-shadow: 0 0 0 3px rgba(197, 34, 31, 0.2);
         }
         
-        .step-progress {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            position: relative;
+        .account-info {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
         }
         
-        .step-progress::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background-color: #e0e0e0;
-            z-index: 1;
+        .account-info h3 {
+            margin-top: 0;
+            color: var(--primary);
         }
         
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .step-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        
-        .step.active .step-number {
-            background-color: var(--success);
-        }
-        
-        .step-text {
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        .instructions {
-            background-color: #f9fafc;
-            border-left: 4px solid var(--primary);
+        .contract-info {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
             padding: 15px 20px;
             margin: 20px 0;
             border-radius: 0 8px 8px 0;
         }
         
-        .instructions h3 {
+        .contract-info h3 {
             margin-top: 0;
-            color: var(--primary);
+            color: #0ea5e9;
         }
         
-        .instructions ol {
-            padding-left: 20px;
+        code {
+            background-color: #f1f5f9;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #334155;
+            display: block;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9rem;
         }
         
-        .instructions li {
-            margin-bottom: 8px;
+        .nft-preview {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(45deg, #4a6cf7, #3a5cd8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .success-card {
+            background-color: var(--success-bg);
+            border-left: 4px solid var(--success);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         footer {
@@ -207,268 +258,165 @@
             font-size: 14px;
         }
         
-        .info-box {
-            background-color: #f0f9ff;
-            border-left: 4px solid #0ea5e9;
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        
-        .info-box h3 {
-            margin-top: 0;
-            color: #0ea5e9;
-        }
-        
-        .account-details {
-            background-color: #f8fafc;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .account-details h3 {
-            margin-top: 0;
+        .transaction-link {
             color: var(--primary);
-        }
-        
-        code {
-            background-color: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            color: #334155;
-        }
-        
-        .troubleshooting {
-            background-color: #fff4e6;
-            border-left: 4px solid #ffa94d;
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        
-        .troubleshooting h3 {
-            margin-top: 0;
-            color: #e67700;
-        }
-
-        .nft-preview {
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            background-color: #f0f4ff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
+            text-decoration: none;
             font-weight: 500;
         }
         
-        .nft-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .transaction-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>AA NFT Minting - Step 3: Mint NFT</h1>
-        <p>Now let's mint your NFT using Account Abstraction for gasless transactions.</p>
-    </header>
-    
-    <div class="step-progress">
-        <div class="step active">
-            <div class="step-number">1</div>
-            <div class="step-text">Wallet Connect</div>
-        </div>
-        <div class="step active">
-            <div class="step-number">2</div>
-            <div class="step-text">AA Setup</div>
-        </div>
-        <div class="step active">
-            <div class="step-number">3</div>
-            <div class="step-text">Mint NFT</div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Connect Your Wallet</h2>
+    <div class="container">
+        <header>
+            <h1>MyNFT Minting DApp</h1>
+            <p class="subtitle">Mint your unique NFTs on Scroll Sepolia</p>
+        </header>
         
-        <div class="instructions">
-            <h3>Before you start:</h3>
-            <ol>
-                <li>Make sure you have MetaMask installed</li>
-                <li>Ensure you're connected to Scroll Sepolia testnet</li>
-                <li>Get some test ETH from the Scroll Sepolia faucet if needed</li>
-            </ol>
-        </div>
-        
-        <div class="network-info">
-            <span id="networkIndicator" class="network-indicator network-disconnected"></span>
-            <span id="networkStatus">Not connected to Scroll Sepolia</span>
-        </div>
-        
-        <button id="connectBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 16H12V19H13V16Z" fill="currentColor"/>
-                <path d="M9 16H8V19H9V16Z" fill="currentColor"/>
-                <path d="M17 16H16V19H17V16Z" fill="currentColor"/>
-                <path d="M3 4C3 2.89543 3.89543 2 5 2H19C20.1046 2 21 2.89543 21 4V9C21 9.55228 20.5523 10 20 10H4C3.44772 10 3 9.55228 3 9V4Z" fill="currentColor"/>
-                <path d="M4 12H20C20.5523 12 21 12.4477 21 13V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V13C3 12.4477 3.44772 12 4 12Z" fill="currentColor"/>
-            </svg>
-            Connect Wallet
-        </button>
-        
-        <div id="connectionStatus" class="status">
-            Wallet not connected yet. Click the button above to get started.
-        </div>
-        
-        <div id="accountInfo" style="display: none;">
-            <h3>Connected Account</h3>
-            <p id="accountAddress"></p>
-            <p id="accountBalance"></p>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Account Abstraction Setup</h2>
-        
-        <div class="info-box">
-            <h3>What is Account Abstraction?</h3>
-            <p>Account Abstraction (ERC-4337) allows users to use smart contracts as their primary accounts, enabling features like gasless transactions, social recovery, and more.</p>
-        </div>
-        
-        <div class="instructions">
-            <h3>Setup Process:</h3>
-            <ol>
-                <li>Initialize ZeroDev for Account Abstraction</li>
-                <li>Create a smart account for the user</li>
-                <li>Connect to the bundler for gasless transactions</li>
-                <li>Verify the setup is working correctly</li>
-            </ol>
-        </div>
-        
-        <div class="troubleshooting">
-            <h3>Troubleshooting Tips:</h3>
-            <p>If you encounter errors, try these steps:</p>
-            <ol>
-                <li>Make sure your wallet is connected first</li>
-                <li>Check if you're on the Scroll Sepolia network</li>
-                <li>Refresh the page and try again</li>
-            </ol>
-        </div>
-        
-        <button id="setupAABtn" disabled>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
-                <path d="M12 16V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <path d="M12 8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Setup Account Abstraction
-        </button>
-        
-        <div id="setupAAStatus" class="status">
-            Connect your wallet first to enable AA setup.
-        </div>
-        
-        <div id="aaDetails" style="display: none;">
-            <div class="account-details">
-                <h3>Smart Account Details</h3>
-                <p><strong>Smart Account Address:</strong> <code id="smartAccountAddress">0x1234...abcd</code></p>
-                <p><strong>Bundler Connected:</strong> <span id="bundlerStatus">Connected</span></p>
-                <p><strong>Paymaster Status:</strong> <span id="paymasterStatus">Ready for gasless transactions</span></p>
+        <div class="card">
+            <h2 class="card-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 16H12V19H13V16Z" fill="currentColor"/>
+                    <path d="M9 16H8V19H9V16Z" fill="currentColor"/>
+                    <path d="M17 16H16V19H17V16Z" fill="currentColor"/>
+                    <path d="M3 4C3 2.89543 3.89543 2 5 2H19C20.1046 2 21 2.89543 21 4V9C21 9.55228 20.5523 10 20 10H4C3.44772 10 3 9.55228 3 9V4Z" fill="currentColor"/>
+                    <path d="M4 12H20C20.5523 12 21 12.4477 21 13V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V13C3 12.4477 3.44772 12 4 12Z" fill="currentColor"/>
+                </svg>
+                Connect Your Wallet
+            </h2>
+            
+            <div class="network-info">
+                <span id="networkIndicator" class="network-indicator network-disconnected"></span>
+                <span id="networkStatus">Not connected to Scroll Sepolia</span>
+            </div>
+            
+            <button id="connectBtn">
+                Connect Wallet
+            </button>
+            
+            <div id="connectionStatus" class="status">
+                Wallet not connected yet. Click the button above to get started.
+            </div>
+            
+            <div id="accountInfo" style="display: none;">
+                <div class="account-info">
+                    <h3>Connected Account</h3>
+                    <p id="accountAddress"></p>
+                    <p id="accountBalance"></p>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="card" id="mintCard">
-        <h2>Step 3: Mint Your NFT</h2>
-        <p>Now that your smart account is set up, you can mint an NFT without paying gas fees.</p>
         
-        <div class="nft-preview" id="nftPreview">
-            Your NFT Preview
-        </div>
-        
-        <div class="info-box">
-            <h3>NFT Details</h3>
-            <p><strong>Name:</strong> AA Demo NFT</p>
-            <p><strong>Description:</strong> A special NFT minted with Account Abstraction</p>
-            <p><strong>Gasless:</strong> Yes, powered by ZeroDev</p>
-        </div>
-        
-        <button id="mintBtn" disabled>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Mint My Free NFT
-        </button>
-        
-        <div id="mintStatus" class="status">Complete AA setup first to enable minting.</div>
-        
-        <div id="mintSuccess" style="display: none;">
-            <div class="status connected">
-                NFT minted successfully! Transaction Hash: <span id="transactionHash"></span>
-            </div>
-            <div class="account-details">
-                <h3>Your New NFT</h3>
-                <p><strong>Token ID:</strong> <span id="tokenId">1234</span></p>
-                <p><strong>View on Explorer:</strong> <a id="explorerLink" href="#" target="_blank">View Transaction</a></p>
+        <div class="card">
+            <h2 class="card-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 16V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M12 8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Contract Information
+            </h2>
+            
+            <div class="contract-info">
+                <h3>MyNFT Contract</h3>
+                <p>Your NFT contract has been successfully deployed to Scroll Sepolia:</p>
+                <code id="contractAddress">0xC9FEefAe44ddbA865e57209b6139a114662F4C81</code>
+                <p>You can view it on <a href="https://sepolia.scrollscan.com/address/0xC9FEefAe44ddbA865e57209b6139a114662F4C81" target="_blank" class="transaction-link">ScrollScan</a>.</p>
             </div>
         </div>
+        
+        <div class="card">
+            <h2 class="card-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Mint Your NFT
+            </h2>
+            
+            <div class="nft-preview" id="nftPreview">
+                MyNFT #<span id="nextTokenId">0</span>
+            </div>
+            
+            <button id="mintBtn" disabled>
+                Mint NFT
+            </button>
+            
+            <div id="mintStatus" class="status">
+                Connect your wallet first to enable minting.
+            </div>
+            
+            <div id="mintSuccess" style="display: none;">
+                <div class="success-card">
+                    <h3>NFT Minted Successfully!</h3>
+                    <p>Transaction Hash: <span id="transactionHash"></span></p>
+                    <p>Token ID: <span id="tokenId"></span></p>
+                    <p>View on <a id="explorerLink" href="#" target="_blank" class="transaction-link">ScrollScan</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Powered by Scroll Sepolia | Contract: 0xC9FEefAe44ddbA865e57209b6139a114662F4C81</p>
+        </footer>
     </div>
-
-    <footer>
-        <p>Built for your Hackathon Project | Step 3 of 3</p>
-    </footer>
 
     <script>
         // Network configuration
         const SCROLL_CHAIN_ID = "0x8274f"; // Scroll Sepolia Testnet
         const SCROLL_CHAIN_NAME = "Scroll Sepolia";
         const SCROLL_RPC_URL = "https://sepolia-rpc.scroll.io/";
-        const SCROLL_EXPLORER = "https://sepolia.scroll.io/";
+        const SCROLL_EXPLORER = "https://sepolia.scrollscan.com/tx/";
         
-        // Sample NFT contract details (replace with your actual contract)
-        const NFT_CONTRACT_ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
+        // Your deployed NFT contract
+        const NFT_CONTRACT_ADDRESS = "0xC9FEefAe44ddbA865e57209b6139a114662F4C81";
         const NFT_ABI = [
             "function safeMint(address to) external returns (uint256)",
-            "function ownerOf(uint256 tokenId) external view returns (address)",
-            "function tokenURI(uint256 tokenId) external view returns (string)"
+            "function balanceOf(address owner) external view returns (uint256 balance)",
+            "function ownerOf(uint256 tokenId) external view returns (address owner)",
+            "function tokenURI(uint256 tokenId) public view returns (string memory)",
+            "function totalSupply() public view returns (uint256)"
         ];
 
         // DOM elements
         const connectBtn = document.getElementById('connectBtn');
-        const setupAABtn = document.getElementById('setupAABtn');
         const mintBtn = document.getElementById('mintBtn');
         const networkStatus = document.getElementById('networkStatus');
         const networkIndicator = document.getElementById('networkIndicator');
         const connectionStatus = document.getElementById('connectionStatus');
-        const setupAAStatus = document.getElementById('setupAAStatus');
         const accountInfo = document.getElementById('accountInfo');
         const accountAddress = document.getElementById('accountAddress');
         const accountBalance = document.getElementById('accountBalance');
-        const aaDetails = document.getElementById('aaDetails');
-        const smartAccountAddress = document.getElementById('smartAccountAddress');
-        const bundlerStatus = document.getElementById('bundlerStatus');
-        const paymasterStatus = document.getElementById('paymasterStatus');
         const mintStatus = document.getElementById('mintStatus');
         const mintSuccess = document.getElementById('mintSuccess');
         const transactionHash = document.getElementById('transactionHash');
         const tokenId = document.getElementById('tokenId');
         const explorerLink = document.getElementById('explorerLink');
         const nftPreview = document.getElementById('nftPreview');
+        const nextTokenId = document.getElementById('nextTokenId');
+        const contractAddress = document.getElementById('contractAddress');
 
         // State variables
-        let provider, signer, userAddress, smartAccount;
+        let provider, signer, userAddress, nftContract;
 
         // Event listeners
         connectBtn.addEventListener('click', connectWallet);
-        setupAABtn.addEventListener('click', setupAccountAbstraction);
         mintBtn.addEventListener('click', mintNFT);
 
         // Connect Wallet function
@@ -491,8 +439,8 @@
                 await switchToScrollSepolia();
                 
                 // Initialize provider
-                provider = new ethers.BrowserProvider(window.ethereum);
-                signer = await provider.getSigner();
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
                 userAddress = await signer.getAddress();
                 const balance = await provider.getBalance(userAddress);
                 
@@ -501,27 +449,39 @@
                 
                 // Display account info
                 accountAddress.textContent = `Address: ${formattedAddress}`;
-                accountBalance.textContent = `Balance: ${ethers.formatEther(balance)} ETH`;
+                accountBalance.textContent = `Balance: ${ethers.utils.formatEther(balance)} ETH`;
                 accountInfo.style.display = 'block';
+                
+                // Initialize NFT contract
+                nftContract = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_ABI, signer);
+                
+                // Get next token ID
+                try {
+                    const totalSupply = await nftContract.totalSupply();
+                    nextTokenId.textContent = parseInt(totalSupply) + 1;
+                } catch (e) {
+                    console.log("Could not get total supply, using default");
+                    nextTokenId.textContent = "1";
+                }
                 
                 // Update UI
                 updateStatus(connectionStatus, "Successfully connected to Scroll Sepolia!", "connected");
                 networkStatus.textContent = "Connected to Scroll Sepolia";
                 networkIndicator.className = "network-indicator network-connected";
                 
-                // Enable AA setup button
-                setupAABtn.disabled = false;
-                updateStatus(setupAAStatus, "Ready to set up Account Abstraction", "pending");
+                // Enable mint button
+                mintBtn.disabled = false;
+                updateStatus(mintStatus, "Ready to mint your NFT. Click the button above.", "pending");
                 
             } catch (error) {
                 console.error("Connection error:", error);
                 
-                if (error.message.includes('Request timeout')) {
+                if (error.message && error.message.includes('Request timeout')) {
                     updateStatus(connectionStatus, "Connection timeout. Please check MetaMask and try again.", "error");
-                } else if (error.message.includes('User rejected')) {
+                } else if (error.message && error.message.includes('User rejected')) {
                     updateStatus(connectionStatus, "Connection cancelled. Please try again and approve the connection.", "error");
                 } else {
-                    updateStatus(connectionStatus, "Error: " + error.message, "error");
+                    updateStatus(connectionStatus, "Error: " + (error.message || error), "error");
                 }
                 
                 networkStatus.textContent = "Not connected to Scroll Sepolia";
@@ -558,7 +518,7 @@
                                             symbol: 'ETH',
                                             decimals: 18
                                         },
-                                        blockExplorerUrls: ['https://sepolia.scroll.io/']
+                                        blockExplorerUrls: ['https://sepolia.scrollscan.com/']
                                     }]
                                 });
                             } catch (addError) {
@@ -577,114 +537,62 @@
             }
         }
 
-        // Account Abstraction Setup
-        async function setupAccountAbstraction() {
-            try {
-                updateStatus(setupAAStatus, "Initializing Account Abstraction...", "pending");
-                setupAABtn.disabled = true;
-                
-                // Simulate AA setup process
-                await simulateAASetup();
-                
-                // Update UI
-                updateStatus(setupAAStatus, "Account Abstraction setup complete! Ready for gasless transactions.", "connected");
-                aaDetails.style.display = 'block';
-                mintBtn.disabled = false;
-                updateStatus(mintStatus, "Ready to mint your NFT. Click the button above.", "pending");
-                
-            } catch (error) {
-                console.error("AA Setup error:", error);
-                updateStatus(setupAAStatus, "Error: " + error.message, "error");
-                setupAABtn.disabled = false;
-            }
-        }
-
-        // Simulate AA Setup process
-        async function simulateAASetup() {
-            // This would be replaced with actual AA setup code
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    // Simulate different steps in the process
-                    setTimeout(() => {
-                        updateStatus(setupAAStatus, "Connecting to ZeroDev...", "pending");
-                    }, 1000);
-                    
-                    setTimeout(() => {
-                        updateStatus(setupAAStatus, "Creating smart account...", "pending");
-                    }, 2000);
-                    
-                    setTimeout(() => {
-                        updateStatus(setupAAStatus, "Configuring paymaster...", "pending");
-                    }, 3000);
-                    
-                    setTimeout(() => {
-                        // Set mock smart account address (in a real app, this would come from the AA SDK)
-                        const mockAddress = "0x" + Math.random().toString(16).substr(2, 40);
-                        smartAccountAddress.textContent = `${mockAddress.substring(0, 6)}...${mockAddress.substring(mockAddress.length - 4)}`;
-                        smartAccount = mockAddress; // Store for later use
-                        resolve();
-                    }, 4000);
-                }, 500);
-            });
-        }
-
         // Mint NFT function
         async function mintNFT() {
             try {
                 updateStatus(mintStatus, "Preparing minting transaction...", "pending");
                 mintBtn.disabled = true;
                 
-                // In a real implementation, you would use the AA SDK to create a user operation
-                // For this demo, we'll simulate the process
+                if (!nftContract) {
+                    throw new Error("NFT contract not initialized");
+                }
                 
-                // Simulate the minting process
-                await simulateMinting();
+                // Execute the mint transaction
+                updateStatus(mintStatus, "Sending transaction...", "pending");
+                
+                const mintTx = await nftContract.safeMint(userAddress);
+                updateStatus(mintStatus, "Transaction sent! Waiting for confirmation...", "pending");
+                
+                // Wait for the transaction to be mined
+                const receipt = await mintTx.wait();
+                
+                // Get the transaction hash
+                const txHash = receipt.transactionHash;
+                
+                // Try to extract token ID from transaction events
+                let mintedTokenId = "1"; // Default fallback
+                
+                if (receipt.events && receipt.events.length > 0) {
+                    for (const event of receipt.events) {
+                        if (event.event === "Transfer") {
+                            mintedTokenId = event.args.tokenId.toString();
+                            break;
+                        }
+                    }
+                }
+                
+                // Update UI with success
+                transactionHash.textContent = `${txHash.substring(0, 10)}...`;
+                tokenId.textContent = mintedTokenId;
+                explorerLink.href = `${SCROLL_EXPLORER}${txHash}`;
+                
+                // Show success section
+                mintSuccess.style.display = 'block';
+                updateStatus(mintStatus, "NFT minted successfully!", "connected");
+                
+                // Update NFT preview
+                nftPreview.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h3>MyNFT #${mintedTokenId}</h3>
+                        <p>Successfully Minted!</p>
+                    </div>
+                `;
                 
             } catch (error) {
                 console.error("Minting error:", error);
-                updateStatus(mintStatus, "Error: " + error.message, "error");
+                updateStatus(mintStatus, "Error: " + (error.message || error), "error");
                 mintBtn.disabled = false;
             }
-        }
-
-        // Simulate minting process
-        async function simulateMinting() {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    updateStatus(mintStatus, "Creating user operation...", "pending");
-                    
-                    setTimeout(() => {
-                        updateStatus(mintStatus, "Sending to bundler...", "pending");
-                        
-                        setTimeout(() => {
-                            updateStatus(mintStatus, "Transaction confirmed!", "pending");
-                            
-                            // Generate a mock transaction hash
-                            const mockTxHash = "0x" + Math.random().toString(16).substr(2, 64);
-                            const mockTokenId = Math.floor(Math.random() * 10000);
-                            
-                            // Update UI with success
-                            transactionHash.textContent = `${mockTxHash.substring(0, 10)}...`;
-                            tokenId.textContent = mockTokenId;
-                            explorerLink.href = `${SCROLL_EXPLORER}tx/${mockTxHash}`;
-                            
-                            // Show success section
-                            mintSuccess.style.display = 'block';
-                            updateStatus(mintStatus, "NFT minted successfully!", "connected");
-                            
-                            // Update NFT preview
-                            nftPreview.innerHTML = `
-                                <div style="text-align: center; padding: 20px;">
-                                    <h3>AA Demo NFT #${mockTokenId}</h3>
-                                    <p>Minted with Account Abstraction</p>
-                                </div>
-                            `;
-                            
-                            resolve();
-                        }, 2000);
-                    }, 2000);
-                }, 1000);
-            });
         }
 
         // Helper function to update status
@@ -703,10 +611,8 @@
                     networkStatus.textContent = "Not connected to Scroll Sepolia";
                     networkIndicator.className = "network-indicator network-disconnected";
                     accountInfo.style.display = 'none';
-                    setupAABtn.disabled = true;
-                    updateStatus(setupAAStatus, "Connect your wallet first to enable AA setup.", "error");
                     mintBtn.disabled = true;
-                    updateStatus(mintStatus, "Complete AA setup first to enable minting.", "error");
+                    updateStatus(mintStatus, "Connect your wallet first to enable minting.", "error");
                 } else {
                     connectWallet(); // Reconnect if accounts change
                 }
