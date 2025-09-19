@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [userNfts, setUserNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const { currentUser, logout } = useUser();
   
   // Use the auth hook to protect this page
@@ -26,38 +27,27 @@ export default function Dashboard() {
   const BASE_URL = `https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/${CID}`;
   const IMAGE_BASE_URL = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx';
 
-  useEffect(() => {
+  const fetchNFTs = async () => {
     if (!currentUser) return;
 
-    // Fetch all NFT metadata from your CID
-    const fetchNFTs = async () => {
-      try {
-        const nftData: NFT[] = [];
-        
-        // Fetch metadata for NFTs 0 through 9
-        for (let i = 0; i < 10; i++) {
-          try {
-            const response = await fetch(`${BASE_URL}/${i}`);
-            if (response.ok) {
-              const metadata = await response.json();
-              nftData.push({
-                id: i,
-                name: metadata.name,
-                description: metadata.description,
-                image: `${IMAGE_BASE_URL}/${i}.jpg`
-              });
-            } else {
-              // If metadata not found, create a placeholder NFT
-              nftData.push({
-                id: i,
-                name: `Urban Snap ${i}`,
-                description: `This is a captivating piece of street photography, n.o ${i} of street photography, capturing the essence of urban life.`,
-                image: `${IMAGE_BASE_URL}/${i}.jpg`
-              });
-            }
-          } catch (error) {
-            console.log(`Metadata for NFT ${i} not available, using placeholder`);
-            // Create a placeholder if metadata fetch fails
+    setRefreshing(true);
+    try {
+      const nftData: NFT[] = [];
+      
+      // Fetch metadata for NFTs 0 through 9
+      for (let i = 0; i < 10; i++) {
+        try {
+          const response = await fetch(`${BASE_URL}/${i}`);
+          if (response.ok) {
+            const metadata = await response.json();
+            nftData.push({
+              id: i,
+              name: metadata.name,
+              description: metadata.description,
+              image: `${IMAGE_BASE_URL}/${i}.jpg`
+            });
+          } else {
+            // If metadata not found, create a placeholder NFT
             nftData.push({
               id: i,
               name: `Urban Snap ${i}`,
@@ -65,27 +55,43 @@ export default function Dashboard() {
               image: `${IMAGE_BASE_URL}/${i}.jpg`
             });
           }
+        } catch (error) {
+          console.log(`Metadata for NFT ${i} not available, using placeholder`);
+          // Create a placeholder if metadata fetch fails
+          nftData.push({
+            id: i,
+            name: `Urban Snap ${i}`,
+            description: `This is a captivating piece of street photography, n.o ${i} of street photography, capturing the essence of urban life.`,
+            image: `${IMAGE_BASE_URL}/${i}.jpg`
+          });
         }
-        
-        setNfts(nftData);
-        
-        // Get the NFTs that the user owns
-        if (currentUser.ownedNFTs) {
-          const ownedNfts = nftData.filter(nft => 
-            currentUser.ownedNFTs?.includes(nft.id)
-          );
-          setUserNfts(ownedNfts);
-        }
-        
-      } catch (error) {
-        console.error('Error fetching NFTs:', error);
-      } finally {
-        setLoading(false);
       }
-    };
+      
+      setNfts(nftData);
+      
+      // Get the NFTs that the user owns
+      if (currentUser.ownedNFTs) {
+        const ownedNfts = nftData.filter(nft => 
+          currentUser.ownedNFTs?.includes(nft.id)
+        );
+        setUserNfts(ownedNfts);
+      }
+      
+    } catch (error) {
+      console.error('Error fetching NFTs:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
+  useEffect(() => {
     fetchNFTs();
   }, [currentUser, BASE_URL, IMAGE_BASE_URL]);
+
+  const handleRefresh = () => {
+    fetchNFTs();
+  };
 
   if (loading) {
     return (
@@ -109,28 +115,62 @@ export default function Dashboard() {
             <p>Welcome, <span className="font-bold">{currentUser.username}</span></p>
             <p>{userNfts.length} NFTs owned</p>
             <p className="text-sm opacity-80 truncate max-w-xs">{currentUser.smartAccountAddress}</p>
-            <button 
-              onClick={logout}
-              className="mt-2 text-sm text-red-300 hover:text-red-100"
-            >
-              Logout
-            </button>
+            <div className="flex gap-2 mt-2">
+              <button 
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {refreshing ? 'Refreshing...' : '🔄 Refresh'}
+              </button>
+              <button 
+                onClick={logout}
+                className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <div className="mb-8">
+        <div className="mb-8 flex justify-between items-center">
           <Link 
             href="/"
             className="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-gray-100"
           >
             ← Back to Home
           </Link>
+          <button 
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {refreshing ? (
+              <>
+                <span className="animate-spin">⏳</span>
+                Refreshing...
+              </>
+            ) : (
+              <>
+                🔄 Refresh Data
+              </>
+            )}
+          </button>
         </div>
 
         {/* NFT Grid */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Available NFT Collection</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-white">Available NFT Collection</h2>
+            <button 
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="text-white text-sm bg-purple-500 px-3 py-1 rounded hover:bg-purple-600 disabled:opacity-50"
+            >
+              {refreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {nfts.map((nft) => {
               const isOwned = userNfts.some(owned => owned.id === nft.id);
@@ -172,7 +212,16 @@ export default function Dashboard() {
 
         {/* User's Owned NFTs Section */}
         <div>
-          <h2 className="text-2xl font-bold text-white mb-4">Your NFT Collection</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-white">Your NFT Collection</h2>
+            <button 
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="text-white text-sm bg-purple-500 px-3 py-1 rounded hover:bg-purple-600 disabled:opacity-50"
+            >
+              {refreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
+          </div>
           {userNfts.length > 0 ? (
             <div className="bg-white rounded-lg p-6">
               <p className="text-center text-gray-600 mb-4">
