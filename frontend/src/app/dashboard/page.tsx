@@ -17,55 +17,20 @@ export default function Dashboard() {
   const [userNfts, setUserNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { currentUser, logout } = useUser();
+  const [purchasing, setPurchasing] = useState<number | null>(null);
+  const { currentUser, logout, updateUserNFTs, refreshUsers } = useUser();
   
   // Use the auth hook to protect this page
   useAuth();
-
-  // Your IPFS CID and metadata
-  const CID = 'QmdnHnBXSe9okMiGYJCPMfLevi6rrsFfd6bNJ3HEchPHZU';
-  const BASE_URL = `https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/${CID}`;
-  const IMAGE_BASE_URL = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx';
 
   const fetchNFTs = async () => {
     if (!currentUser) return;
 
     setRefreshing(true);
     try {
-      const nftData: NFT[] = [];
-      
-      // Fetch metadata for NFTs 0 through 9
-      for (let i = 0; i < 10; i++) {
-        try {
-          const response = await fetch(`${BASE_URL}/${i}`);
-          if (response.ok) {
-            const metadata = await response.json();
-            nftData.push({
-              id: i,
-              name: metadata.name,
-              description: metadata.description,
-              image: `${IMAGE_BASE_URL}/${i}.jpg`
-            });
-          } else {
-            // If metadata not found, create a placeholder NFT
-            nftData.push({
-              id: i,
-              name: `Urban Snap ${i}`,
-              description: `This is a captivating piece of street photography, n.o ${i} of street photography, capturing the essence of urban life.`,
-              image: `${IMAGE_BASE_URL}/${i}.jpg`
-            });
-          }
-        } catch (error) {
-          console.log(`Metadata for NFT ${i} not available, using placeholder`);
-          // Create a placeholder if metadata fetch fails
-          nftData.push({
-            id: i,
-            name: `Urban Snap ${i}`,
-            description: `This is a captivating piece of street photography, n.o ${i} of street photography, capturing the essence of urban life.`,
-            image: `${IMAGE_BASE_URL}/${i}.jpg`
-          });
-        }
-      }
+      // Load NFT metadata from the JSON file
+      const response = await fetch('/nft_metadata.json');
+      const nftData: NFT[] = await response.json();
       
       setNfts(nftData);
       
@@ -79,6 +44,24 @@ export default function Dashboard() {
       
     } catch (error) {
       console.error('Error fetching NFTs:', error);
+      // Fallback: Create placeholder NFTs if JSON file fails
+      const fallbackNfts: NFT[] = [];
+      for (let i = 0; i < 10; i++) {
+        fallbackNfts.push({
+          id: i,
+          name: `Urban Snap ${i}`,
+          description: `This is a captivating piece of street photography, n.o ${i} of street photography, capturing the essence of urban life.`,
+          image: `https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/${i}.jpg`
+        });
+      }
+      setNfts(fallbackNfts);
+      
+      if (currentUser.ownedNFTs) {
+        const ownedNfts = fallbackNfts.filter(nft => 
+          currentUser.ownedNFTs?.includes(nft.id)
+        );
+        setUserNfts(ownedNfts);
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -87,10 +70,33 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchNFTs();
-  }, [currentUser, BASE_URL, IMAGE_BASE_URL]);
+  }, [currentUser]);
 
-  const handleRefresh = () => {
-    fetchNFTs();
+  const handleRefresh = async () => {
+    // Refresh both users data and NFTs
+    await refreshUsers();
+    await fetchNFTs();
+  };
+
+  const handlePurchase = async (nftId: number) => {
+    if (!currentUser) return;
+
+    setPurchasing(nftId);
+    try {
+      const success = await updateUserNFTs(nftId);
+      
+      if (success) {
+        // Update local UI state immediately
+        const purchasedNft = nfts.find(nft => nft.id === nftId);
+        if (purchasedNft) {
+          setUserNfts(prev => [...prev, purchasedNft]);
+        }
+      }
+    } catch (error) {
+      console.error('Purchase error:', error);
+    } finally {
+      setPurchasing(null);
+    }
   };
 
   if (loading) {
@@ -174,6 +180,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {nfts.map((nft) => {
               const isOwned = userNfts.some(owned => owned.id === nft.id);
+              const isPurchasing = purchasing === nft.id;
               
               return (
                 <div key={nft.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -183,6 +190,7 @@ export default function Dashboard() {
                       alt={nft.name}
                       className="object-cover w-full h-48"
                       onError={(e) => {
+                        // Fallback image if the main image fails
                         e.target.src = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/2.jpg';
                       }}
                     />
@@ -195,7 +203,7 @@ export default function Dashboard() {
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-2">{nft.name}</h3>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{nft.description}</p>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center mb-3">
                       <span className="text-sm text-gray-500">ID: #{nft.id}</span>
                       <span className={`px-3 py-1 rounded text-sm ${
                         isOwned ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'
@@ -203,6 +211,15 @@ export default function Dashboard() {
                         {isOwned ? 'Owned' : 'Not Owned'}
                       </span>
                     </div>
+                    {!isOwned && (
+                      <button
+                        onClick={() => handlePurchase(nft.id)}
+                        disabled={isPurchasing || purchasing !== null}
+                        className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isPurchasing ? 'Purchasing...' : 'Buy NFT'}
+                      </button>
+                    )}
                   </div>
                 </div>
               );
