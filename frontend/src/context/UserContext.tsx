@@ -29,7 +29,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        const response = await fetch('../data/users.json');
+        const response = await fetch('/users.json');
         const usersData = await response.json();
         setUsers(usersData);
         
