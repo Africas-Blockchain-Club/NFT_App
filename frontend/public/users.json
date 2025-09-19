@@ -5,7 +5,7 @@
     "privateKey": "0x89136ff124691c9ba24501575f854fd3fbcfac792f5ca57d7a14c569c4caac94",
     "smartAccountAddress": "0x2c85F380B26E4c82ff510FE5C33cF158DA50a438",
     "createdAt": "2025-09-19T03:34:57.056Z",
-    "ownedNFTs": [0, 2, 5]
+    "ownedNFTs": [ 2, 5]
   },
   {
     "username": "n",

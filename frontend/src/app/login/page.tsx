@@ -3,8 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '@/context/UserContext';
+import { useRouter } from 'next/navigation';
+
 
 export default function Login() {
+    const router = useRouter();
+
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -19,8 +23,7 @@ export default function Login() {
     const success = await login(formData.username, formData.password);
     
     if (success) {
-      alert('Login successful!');
-      window.location.href = '/dashboard';
+      router.push('/dashboard'); // ← Use this instead
     } else {
       setError('Invalid username or password');
     }

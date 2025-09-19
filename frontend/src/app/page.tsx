@@ -24,7 +24,7 @@ export default function Home() {
                 Sign Up
               </button>
               <button 
-                onClick={() => window.location.href = '/frontend/src/login.ts'}
+                onClick={() => window.location.href = '/login'}
                 className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
               >
                 Login
