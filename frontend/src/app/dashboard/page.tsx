@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import { useAuth } from '@/hooks/useAuth';
 
-// NFT data structure based on your CID metadata
 interface NFT {
   id: number;
   name: string;
@@ -12,152 +12,29 @@ interface NFT {
   image: string;
 }
 
-// User data structure
-interface User {
-  username: string;
-  password: string;
-  privateKey: string;
-  smartAccountAddress: string;
-  createdAt: string;
-  ownedNFTs?: number[];
-}
-
-// Your existing user data
-const userData = [
-  {
-    "username": "SANDILE",
-    "password": "NARUTO",
-    "privateKey": "0x89136ff124691c9ba24501575f854fd3fbcfac792f5ca57d7a14c569c4caac94",
-    "smartAccountAddress": "0x2c85F380B26E4c82ff510FE5C33cF158DA50a438",
-    "createdAt": "2025-09-19T03:34:57.056Z",
-    "ownedNFTs": [0, 2, 5]
-  },
-  {
-    "username": "n",
-    "password": "nat",
-    "privateKey": "0xd26f7a94ed51c024ad5623a48cf359a8d05e6f5fe12a6e17ed184b677d9b1934",
-    "smartAccountAddress": "0xE16C153C3F64870c014b9C26c33532f43F04cA6D",
-    "createdAt": "2025-09-19T03:51:41.697Z",
-    "ownedNFTs": [1, 3]
-  }
-];
-
 export default function Dashboard() {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [userNfts, setUserNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
-  const [minting, setMinting] = useState(false);
-  const [mintStatus, setMintStatus] = useState('');
-  const [user, setUser] = useState<User | null>(null);
-  const [transactionHash, setTransactionHash] = useState('');
-  const router = useRouter();
+  const { currentUser, logout } = useUser();
+  
+  // Use the auth hook to protect this page
+  useAuth();
 
   // Your IPFS CID and metadata
   const CID = 'QmdnHnBXSe9okMiGYJCPMfLevi6rrsFfd6bNJ3HEchPHZU';
   const BASE_URL = `https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/${CID}`;
   const IMAGE_BASE_URL = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx';
 
-  // Simulate verifyUser function (replace with your actual import)
-  const verifyUser = (username: string, password: string): User | undefined => {
-    return userData.find(u => u.username === username && u.password === password);
-  };
-
-  // Function to get the current authenticated user from URL params or localStorage
-  const getCurrentUser = (): User | null => {
-    if (typeof window === 'undefined') return null;
-    
-    try {
-      // Try to get from URL params first (for demo purposes)
-      const urlParams = new URLSearchParams(window.location.search);
-      const username = urlParams.get('username');
-      const password = urlParams.get('password');
-      
-      if (username && password) {
-        const user = verifyUser(username, password);
-        if (user) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          // Clean up URL
-          window.history.replaceState({}, '', '/dashboard');
-          return user;
-        }
-      }
-      
-      // Fall back to localStorage
-      const userData = localStorage.getItem('currentUser');
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error('Error getting current user:', error);
-      return null;
-    }
-  };
-
-  // Function to mint an NFT using the direct blockchain function
-  const mintNFT = async (tokenId: number) => {
-    if (!user) return;
-    
-    setMinting(true);
-    setMintStatus('Preparing transaction...');
-    
-    try {
-      // Import the blockchain functions directly
-      const { mintNFTForUser } = await import('@/lib/blockchain');
-      
-      setMintStatus('Connecting to blockchain...');
-      
-      // Call the blockchain minting function directly
-      const txHash = await mintNFTForUser(user);
-      
-      setMintStatus('Transaction confirmed!');
-      setTransactionHash(txHash);
-      
-      // Update user's owned NFTs
-      const updatedUser = {
-        ...user,
-        ownedNFTs: [...(user.ownedNFTs || []), tokenId]
-      };
-      
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-      setUser(updatedUser);
-      
-      // Update local state
-      const mintedNft = nfts.find(nft => nft.id === tokenId);
-      if (mintedNft) {
-        setUserNfts(prev => [...prev, mintedNft]);
-      }
-      
-      setMintStatus(`Successfully minted NFT #${tokenId}!`);
-      
-    } catch (error) {
-      console.error('Minting failed:', error);
-      setMintStatus(error instanceof Error ? error.message : 'Minting failed. Please try again.');
-    } finally {
-      setMinting(false);
-    }
-  };
-
-  // Function to logout
-  const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    router.push('/');
-  };
-
   useEffect(() => {
-    // Check if user is authenticated
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
-      // Redirect to login if not authenticated
-      router.push('/login');
-      return;
-    }
-    
-    setUser(currentUser);
-    
+    if (!currentUser) return;
+
     // Fetch all NFT metadata from your CID
     const fetchNFTs = async () => {
       try {
         const nftData: NFT[] = [];
         
-        // Fetch metadata for NFTs 0 through 9 (based on your CID)
+        // Fetch metadata for NFTs 0 through 9
         for (let i = 0; i < 10; i++) {
           try {
             const response = await fetch(`${BASE_URL}/${i}`);
@@ -208,7 +85,7 @@ export default function Dashboard() {
     };
 
     fetchNFTs();
-  }, [BASE_URL, IMAGE_BASE_URL, router]);
+  }, [currentUser, BASE_URL, IMAGE_BASE_URL]);
 
   if (loading) {
     return (
@@ -218,12 +95,8 @@ export default function Dashboard() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
-        <div className="text-white text-xl">Not authenticated. Redirecting...</div>
-      </div>
-    );
+  if (!currentUser) {
+    return null; // useAuth hook will handle redirect
   }
 
   return (
@@ -233,11 +106,11 @@ export default function Dashboard() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">🎨 Your NFT Dashboard</h1>
           <div className="text-white text-right">
-            <p>Welcome, <span className="font-bold">{user.username}</span></p>
+            <p>Welcome, <span className="font-bold">{currentUser.username}</span></p>
             <p>{userNfts.length} NFTs owned</p>
-            <p className="text-sm opacity-80 truncate max-w-xs">{user.smartAccountAddress}</p>
+            <p className="text-sm opacity-80 truncate max-w-xs">{currentUser.smartAccountAddress}</p>
             <button 
-              onClick={handleLogout}
+              onClick={logout}
               className="mt-2 text-sm text-red-300 hover:text-red-100"
             >
               Logout
@@ -254,25 +127,6 @@ export default function Dashboard() {
             ← Back to Home
           </Link>
         </div>
-
-        {/* Mint Status */}
-        {mintStatus && (
-          <div className="mb-4 p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg">
-            {mintStatus}
-            {transactionHash && (
-              <div className="mt-2">
-                <a 
-                  href={`https://sepolia.scrollscan.com/tx/${transactionHash}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline text-sm"
-                >
-                  View transaction on Scrollscan
-                </a>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* NFT Grid */}
         <div className="mb-8">
@@ -303,19 +157,11 @@ export default function Dashboard() {
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{nft.description}</p>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-500">ID: #{nft.id}</span>
-                      <button 
-                        onClick={() => mintNFT(nft.id)}
-                        disabled={minting || isOwned}
-                        className={`px-3 py-1 rounded text-sm ${
-                          isOwned
-                            ? 'bg-green-500 text-white cursor-default'
-                            : minting
-                              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                              : 'bg-purple-500 text-white hover:bg-purple-600'
-                        }`}
-                      >
-                        {isOwned ? 'Owned' : 'Mint NFT'}
-                      </button>
+                      <span className={`px-3 py-1 rounded text-sm ${
+                        isOwned ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'
+                      }`}>
+                        {isOwned ? 'Owned' : 'Not Owned'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -354,17 +200,6 @@ export default function Dashboard() {
           ) : (
             <div className="bg-white rounded-lg p-6 text-center">
               <p className="text-gray-600">You don&apos;t own any NFTs yet.</p>
-              <button 
-                onClick={() => mintNFT(0)} 
-                disabled={minting}
-                className={`mt-4 px-4 py-2 rounded ${
-                  minting 
-                    ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
-                    : 'bg-purple-500 text-white hover:bg-purple-600'
-                }`}
-              >
-                {minting ? 'Minting...' : 'Mint Your First NFT'}
-              </button>
             </div>
           )}
         </div>
