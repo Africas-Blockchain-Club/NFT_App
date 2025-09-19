@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 
 export default function Signup() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -11,9 +14,7 @@ export default function Signup() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would call your backend API
-    console.log('Signing up:', formData);
-    alert('Signup functionality would go here!');
+    router.push('/dashboard');
   };
 
   return (
@@ -49,6 +50,7 @@ export default function Signup() {
             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
           >
             Sign Up
+            
           </button>
         </form>
         
