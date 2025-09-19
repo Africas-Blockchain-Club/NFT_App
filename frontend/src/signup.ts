@@ -1,8 +1,21 @@
 import * as readline from 'readline';
 import { saveUser } from './database';
-import { User } from './types';
-import { createUserAccount, mintNFTForUser, getUserNFTBalance } from './blockchain'; 
+import { createUserAccount, mintNFTForUser, getUserNFTBalance } from './lib/blockchain'; 
 
+interface User {
+  username: string;
+  password: string;
+  privateKey: string;
+  smartAccountAddress: string;
+  createdAt: Date;
+}
+
+interface NFT {
+  tokenId: number;
+  imageUrl: string;
+  name: string;
+  description: string;
+}
 
 const rl = readline.createInterface({
   input: process.stdin,
