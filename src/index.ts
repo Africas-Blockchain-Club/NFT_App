@@ -1,86 +1,46 @@
-import { createKernelAccount, createKernelAccountClient, createZeroDevPaymasterClient } from "@zerodev/sdk"
-import { KERNEL_V3_1, getEntryPoint } from "@zerodev/sdk/constants"
-import { signerToEcdsaValidator } from "@zerodev/ecdsa-validator"
-import { http, createPublicClient, zeroAddress } from "viem"
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts"
-import { baseSepolia } from "viem/chains"
- 
-const ZERODEV_RPC = 'https://rpc.zerodev.app/api/v3/61016d2a-e0df-4350-929c-d5f2110700d1/chain/84532'
- 
-const chain = baseSepolia 
-const entryPoint = getEntryPoint("0.7")
-const kernelVersion = KERNEL_V3_1
- 
-const main = async () => {
-  // Construct a signer
-  const privateKey = generatePrivateKey()
-  const signer = privateKeyToAccount(privateKey)
- 
-  // Construct a public client
-  const publicClient = createPublicClient({
-    // Use your own RPC provider in production (e.g. Infura/Alchemy).
-    transport: http(ZERODEV_RPC),
-    chain
-  })
- 
-  // Construct a validator
-  const ecdsaValidator = await signerToEcdsaValidator(publicClient, {
-    signer,
-    entryPoint,
-    kernelVersion
-  })
- 
-  // Construct a Kernel account
-  const account = await createKernelAccount(publicClient, {
-    plugins: {
-      sudo: ecdsaValidator,
-    },
-    entryPoint,
-    kernelVersion
-  })
- 
-  const zerodevPaymaster = createZeroDevPaymasterClient({
-    chain,
-    transport: http(ZERODEV_RPC),
-  })
- 
-  // Construct a Kernel account client
-  const kernelClient = createKernelAccountClient({
-    account,
-    chain,
-    bundlerTransport: http(ZERODEV_RPC),
-    // Required - the public client
-    client: publicClient,
-    paymaster: {
-        getPaymasterData(userOperation) {
-            return zerodevPaymaster.sponsorUserOperation({userOperation})
-        }
-    },
-  })
- 
-  const accountAddress = kernelClient.account.address
-  console.log("My account:", accountAddress)
- 
-  // Send a UserOp
-  const userOpHash = await kernelClient.sendUserOperation({
-      callData: await kernelClient.account.encodeCalls([{
-        to: zeroAddress,
-        value: BigInt(0),
-        data: "0x",
-      }]),
-  })
- 
-  console.log("UserOp hash:", userOpHash)
-  console.log("Waiting for UserOp to complete...")
- 
-  await kernelClient.waitForUserOperationReceipt({
-    hash: userOpHash,
-    timeout: 1000 * 15,
-  })
- 
-  console.log("UserOp completed: https://base-sepolia.blockscout.com/op/" + userOpHash)
- 
-  process.exit()
+import "dotenv/config";
+import * as readline from 'readline';
+import { handleNewUser } from "./newUser";
+import { handleReturningUser } from "./returningUser";
+
+// Check environment variables
+if (!process.env.ZERODEV_RPC) {
+  throw new Error("ZERODEV_RPC is not set");
 }
- 
-main()
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+const askQuestion = (question: string): Promise<string> => {
+  return new Promise((resolve) => {
+    rl.question(question, resolve);
+  });
+};
+
+const main = async () => {
+  try {
+    console.log("🎨 NFT Minting System");
+    console.log("1. New User (Generate new wallet)");
+    console.log("2. Returning User (Use existing private key)");
+    
+    const choice = await askQuestion("Choose option (1 or 2): ");
+    
+    if (choice === '1') {
+      await handleNewUser();
+    } else if (choice === '2') {
+      await handleReturningUser();
+    } else {
+      throw new Error("Invalid choice. Please enter 1 or 2");
+    }
+    
+  } catch (error) {
+    console.error("❌ Error:", error instanceof Error ? error.message : error);
+  } finally {
+    rl.close();
+    process.exit(0);
+  }
+};
+
+main();
