@@ -18,7 +18,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold mb-4">Welcome!</h2>
             <div className="space-y-4">
               <button 
-                onClick={() => window.location.href = '/frontend/src/signup.ts'}
+                onClick={() => window.location.href = '/signup'}
                 className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
               >
                 Sign Up

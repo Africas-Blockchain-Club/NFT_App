@@ -3,25 +3,26 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-export default function Signup() {
+
+export default function Login() {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   });
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     // Here you would call your backend API
-    console.log('Signing up:', formData);
-    alert('Signup functionality would go here!');
+    console.log('Logging in:', formData);
+    alert('Login functionality would go here!');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h1 className="text-2xl font-bold mb-6 text-center">Create Account</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
         
-        <form onSubmit={handleSignup} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Username</label>
             <input
@@ -46,16 +47,16 @@ export default function Signup() {
           
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            className="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
           >
-            Sign Up
+            Login
           </button>
         </form>
         
         <p className="mt-4 text-center">
-          <Link href="/" className="text-blue-500 hover:text-blue-700">
+            <Link href="/" className="text-blue-500 hover:text-blue-700"> {/* ← CHANGE THIS */}
             ← Back to Home
-          </Link>
+          </Link> 
         </p>
       </div>
     </div>
