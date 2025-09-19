@@ -109,10 +109,10 @@ export const mintNFTForUser = async (user: User) => {
 // Get user's NFT balance
 export const getUserNFTBalance = async (user: User): Promise<number> => {
   const balance = await publicClient.readContract({
-    address: contractAddress,
+    address: contractAddress as `0x${string}`,
     abi: contractABI,
     functionName: "balanceOf",
-    args: [user.smartAccountAddress],
+    args: [user.smartAccountAddress as `0x${string}`], // <- Add type assertion here
   });
 
   return Number(balance);
