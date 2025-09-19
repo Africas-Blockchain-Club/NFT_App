@@ -1,9 +1,10 @@
 export interface User {
   username: string;
-  password: string; // In production, store hashed passwords!
+  password: string;
   privateKey: string;
   smartAccountAddress: string;
   createdAt: Date;
+  ownedNFTs?: number[];
 }
 
 export interface NFT {
