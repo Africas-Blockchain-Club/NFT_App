@@ -1,8 +1,21 @@
-import { User } from './types';
 import fs from 'fs';
 import path from 'path';
 
 const DB_PATH = path.join(process.cwd(), 'data', 'users.json');
+interface User {
+  username: string;
+  password: string;
+  privateKey: string;
+  smartAccountAddress: string;
+  createdAt: Date;
+}
+
+interface NFT {
+  tokenId: number;
+  imageUrl: string;
+  name: string;
+  description: string;
+}
 
 // Initialize database
 const initializeDB = () => {
