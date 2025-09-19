@@ -17,17 +17,14 @@ export default function Dashboard() {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [userNfts, setUserNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [purchasing, setPurchasing] = useState<number | null>(null);
   const [mintingStatus, setMintingStatus] = useState<{ [key: number]: string }>({});
-  const { currentUser, logout, updateUserNFTs, refreshUsers } = useUser();
+  const { currentUser, logout, updateUserNFTs } = useUser();
   
   useAuth();
 
   const fetchNFTs = async () => {
     if (!currentUser) return;
 
-    setRefreshing(true);
     try {
       const response = await fetch('/nft_metadata.json');
       const nftData: NFT[] = await response.json();
@@ -62,7 +59,6 @@ export default function Dashboard() {
       }
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   };
 
@@ -70,18 +66,12 @@ export default function Dashboard() {
     fetchNFTs();
   }, [currentUser]);
 
-  const handleRefresh = async () => {
-    await refreshUsers();
-    await fetchNFTs();
-  };
-
   const handleMint = async (nftId: number) => {
     if (!currentUser?.privateKey) {
-      alert('User not authenticated or private key missing');
+      console.log('User not authenticated or private key missing');
       return;
     }
 
-    setPurchasing(nftId);
     setMintingStatus(prev => ({ ...prev, [nftId]: 'minting' }));
 
     try {
@@ -99,18 +89,17 @@ export default function Dashboard() {
           if (mintedNft) {
             setUserNfts(prev => [...prev, mintedNft]);
           }
-          alert(`NFT #${nftId} minted successfully! Transaction: ${result.transactionHash}`);
+          console.log(`NFT #${nftId} minted successfully! Transaction: ${result.transactionHash}`);
         }
       } else {
         setMintingStatus(prev => ({ ...prev, [nftId]: 'error' }));
-        alert('Minting failed');
+        console.log('Minting failed');
       }
     } catch (error) {
       console.error('Minting error:', error);
       setMintingStatus(prev => ({ ...prev, [nftId]: 'error' }));
-      alert('Minting failed: ' + (error as Error).message);
+      console.log('Minting failed: ' + (error as Error).message);
     } finally {
-      setPurchasing(null);
       // Clear status after 3 seconds
       setTimeout(() => {
         setMintingStatus(prev => ({ ...prev, [nftId]: '' }));
@@ -141,13 +130,6 @@ export default function Dashboard() {
             <p className="text-sm opacity-80 truncate max-w-xs">{currentUser.smartAccountAddress}</p>
             <div className="flex gap-2 mt-2">
               <button 
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {refreshing ? 'Refreshing...' : '🔄 Refresh'}
-              </button>
-              <button 
                 onClick={logout}
                 className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
               >
@@ -157,46 +139,20 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8">
           <Link 
             href="/"
-            className="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-gray-100"
+            className="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-gray-100 inline-block"
           >
             ← Back to Home
           </Link>
-          <button 
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {refreshing ? (
-              <>
-                <span className="animate-spin">⏳</span>
-                Refreshing...
-              </>
-            ) : (
-              <>
-                🔄 Refresh Data
-              </>
-            )}
-          </button>
         </div>
 
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-white">Available NFT Collection</h2>
-            <button 
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="text-white text-sm bg-purple-500 px-3 py-1 rounded hover:bg-purple-600 disabled:opacity-50"
-            >
-              {refreshing ? 'Refreshing...' : 'Refresh'}
-            </button>
-          </div>
+          <h2 className="text-2xl font-bold text-white mb-4">Available NFT Collection</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {nfts.map((nft) => {
               const isOwned = userNfts.some(owned => owned.id === nft.id);
-              const isPurchasing = purchasing === nft.id;
               const status = mintingStatus[nft.id];
               
               return (
@@ -235,7 +191,7 @@ export default function Dashboard() {
                     {!isOwned && (
                       <button
                         onClick={() => handleMint(nft.id)}
-                        disabled={isPurchasing || purchasing !== null || status === 'success'}
+                        disabled={status === 'minting' || status === 'success'}
                         className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {status === 'minting' ? 'Minting...' : 
@@ -252,16 +208,7 @@ export default function Dashboard() {
         </div>
 
         <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-white">Your NFT Collection</h2>
-            <button 
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="text-white text-sm bg-purple-500 px-3 py-1 rounded hover:bg-purple-600 disabled:opacity-50"
-            >
-              {refreshing ? 'Refreshing...' : 'Refresh'}
-            </button>
-          </div>
+          <h2 className="text-2xl font-bold text-white mb-4">Your NFT Collection</h2>
           {userNfts.length > 0 ? (
             <div className="bg-white rounded-lg p-6">
               <p className="text-center text-gray-600 mb-4">
