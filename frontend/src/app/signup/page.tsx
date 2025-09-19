@@ -15,6 +15,7 @@ export default function Signup() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     router.push('/dashboard');
+
   };
 
   return (

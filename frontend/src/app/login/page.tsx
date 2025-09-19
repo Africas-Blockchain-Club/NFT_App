@@ -2,25 +2,40 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-
+import { useUser } from '@/context/UserContext';
 
 export default function Login() {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const { login } = useUser();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would call your backend API
-    console.log('Logging in:', formData);
-    alert('Login functionality would go here!');
+    setError('');
+
+    const success = await login(formData.username, formData.password);
+    
+    if (success) {
+      alert('Login successful!');
+      window.location.href = '/dashboard';
+    } else {
+      setError('Invalid username or password');
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
         <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+        
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
         
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
@@ -54,7 +69,7 @@ export default function Login() {
         </form>
         
         <p className="mt-4 text-center">
-            <Link href="/" className="text-blue-500 hover:text-blue-700"> {/* ← CHANGE THIS */}
+          <Link href="/" className="text-blue-500 hover:text-blue-700">
             ← Back to Home
           </Link> 
         </p>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // NFT data structure based on your CID metadata
 interface NFT {
@@ -18,8 +19,28 @@ interface User {
   privateKey: string;
   smartAccountAddress: string;
   createdAt: string;
-  ownedNFTs?: number[]; // Array of NFT IDs that the user owns
+  ownedNFTs?: number[];
 }
+
+// Your existing user data
+const userData = [
+  {
+    "username": "SANDILE",
+    "password": "NARUTO",
+    "privateKey": "0x89136ff124691c9ba24501575f854fd3fbcfac792f5ca57d7a14c569c4caac94",
+    "smartAccountAddress": "0x2c85F380B26E4c82ff510FE5C33cF158DA50a438",
+    "createdAt": "2025-09-19T03:34:57.056Z",
+    "ownedNFTs": [0, 2, 5]
+  },
+  {
+    "username": "n",
+    "password": "nat",
+    "privateKey": "0xd26f7a94ed51c024ad5623a48cf359a8d05e6f5fe12a6e17ed184b677d9b1934",
+    "smartAccountAddress": "0xE16C153C3F64870c014b9C26c33532f43F04cA6D",
+    "createdAt": "2025-09-19T03:51:41.697Z",
+    "ownedNFTs": [1, 3]
+  }
+];
 
 export default function Dashboard() {
   const [nfts, setNfts] = useState<NFT[]>([]);
@@ -28,93 +49,109 @@ export default function Dashboard() {
   const [minting, setMinting] = useState(false);
   const [mintStatus, setMintStatus] = useState('');
   const [user, setUser] = useState<User | null>(null);
-  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [transactionHash, setTransactionHash] = useState('');
+  const router = useRouter();
 
   // Your IPFS CID and metadata
   const CID = 'QmdnHnBXSe9okMiGYJCPMfLevi6rrsFfd6bNJ3HEchPHZU';
   const BASE_URL = `https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/${CID}`;
   const IMAGE_BASE_URL = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx';
 
-  // Function to fetch users data
-  const fetchUsers = async (): Promise<User[]> => {
-    try {
-      const response = await fetch('/api/users');
-      if (response.ok) {
-        return await response.json();
-      }
-      return [];
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      return [];
-    }
+  // Simulate verifyUser function (replace with your actual import)
+  const verifyUser = (username: string, password: string): User | undefined => {
+    return userData.find(u => u.username === username && u.password === password);
   };
 
-  // Function to update user data (add NFT ownership)
-  const updateUserNFTs = async (username: string, nftId: number): Promise<boolean> => {
+  // Function to get the current authenticated user from URL params or localStorage
+  const getCurrentUser = (): User | null => {
+    if (typeof window === 'undefined') return null;
+    
     try {
-      const response = await fetch('/api/users/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          nftId,
-        }),
-      });
+      // Try to get from URL params first (for demo purposes)
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get('username');
+      const password = urlParams.get('password');
       
-      return response.ok;
+      if (username && password) {
+        const user = verifyUser(username, password);
+        if (user) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          // Clean up URL
+          window.history.replaceState({}, '', '/dashboard');
+          return user;
+        }
+      }
+      
+      // Fall back to localStorage
+      const userData = localStorage.getItem('currentUser');
+      return userData ? JSON.parse(userData) : null;
     } catch (error) {
-      console.error('Error updating user NFTs:', error);
-      return false;
+      console.error('Error getting current user:', error);
+      return null;
     }
   };
 
-  // Function to mint an NFT
+  // Function to mint an NFT using the direct blockchain function
   const mintNFT = async (tokenId: number) => {
     if (!user) return;
     
     setMinting(true);
-    setMintStatus('Processing your purchase...');
+    setMintStatus('Preparing transaction...');
     
     try {
-      // Simulate purchase process
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Import the blockchain functions directly
+      const { mintNFTForUser } = await import('@/lib/blockchain');
       
-      // Update user's owned NFTs in the JSON file
-      const success = await updateUserNFTs(user.username, tokenId);
+      setMintStatus('Connecting to blockchain...');
       
-      if (success) {
-        setMintStatus(`Successfully purchased NFT #${tokenId}!`);
-        
-        // Update local state
-        const mintedNft = nfts.find(nft => nft.id === tokenId);
-        if (mintedNft) {
-          setUserNfts(prev => [...prev, mintedNft]);
-          
-          // Update the user object
-          setUser(prev => prev ? {
-            ...prev,
-            ownedNFTs: [...(prev.ownedNFTs || []), tokenId]
-          } : null);
-        }
-        
-        // Refresh users data
-        const updatedUsers = await fetchUsers();
-        setAllUsers(updatedUsers);
-      } else {
-        setMintStatus('Purchase failed. Please try again.');
+      // Call the blockchain minting function directly
+      const txHash = await mintNFTForUser(user);
+      
+      setMintStatus('Transaction confirmed!');
+      setTransactionHash(txHash);
+      
+      // Update user's owned NFTs
+      const updatedUser = {
+        ...user,
+        ownedNFTs: [...(user.ownedNFTs || []), tokenId]
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      
+      // Update local state
+      const mintedNft = nfts.find(nft => nft.id === tokenId);
+      if (mintedNft) {
+        setUserNfts(prev => [...prev, mintedNft]);
       }
+      
+      setMintStatus(`Successfully minted NFT #${tokenId}!`);
       
     } catch (error) {
       console.error('Minting failed:', error);
-      setMintStatus('Purchase failed. Please try again.');
+      setMintStatus(error instanceof Error ? error.message : 'Minting failed. Please try again.');
     } finally {
       setMinting(false);
     }
   };
 
+  // Function to logout
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    router.push('/');
+  };
+
   useEffect(() => {
+    // Check if user is authenticated
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      // Redirect to login if not authenticated
+      router.push('/login');
+      return;
+    }
+    
+    setUser(currentUser);
+    
     // Fetch all NFT metadata from your CID
     const fetchNFTs = async () => {
       try {
@@ -155,17 +192,8 @@ export default function Dashboard() {
         
         setNfts(nftData);
         
-        // Fetch users data and set the current user
-        const users = await fetchUsers();
-        setAllUsers(users);
-        
-        // For demo purposes, let's assume the first user is logged in
-        // In a real app, you'd get this from authentication
-        const currentUser = users[0] || null;
-        setUser(currentUser);
-        
-        if (currentUser && currentUser.ownedNFTs) {
-          // Get the NFTs that the user owns
+        // Get the NFTs that the user owns
+        if (currentUser.ownedNFTs) {
           const ownedNfts = nftData.filter(nft => 
             currentUser.ownedNFTs?.includes(nft.id)
           );
@@ -180,12 +208,20 @@ export default function Dashboard() {
     };
 
     fetchNFTs();
-  }, [BASE_URL, IMAGE_BASE_URL]);
+  }, [BASE_URL, IMAGE_BASE_URL, router]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
         <div className="text-white text-xl">Loading your NFTs...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
+        <div className="text-white text-xl">Not authenticated. Redirecting...</div>
       </div>
     );
   }
@@ -196,10 +232,16 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">🎨 Your NFT Dashboard</h1>
-          <div className="text-white">
-            <p>Welcome, <span className="font-bold">{user?.username}</span></p>
+          <div className="text-white text-right">
+            <p>Welcome, <span className="font-bold">{user.username}</span></p>
             <p>{userNfts.length} NFTs owned</p>
-            <p className="text-sm opacity-80 truncate max-w-xs">{user?.smartAccountAddress}</p>
+            <p className="text-sm opacity-80 truncate max-w-xs">{user.smartAccountAddress}</p>
+            <button 
+              onClick={handleLogout}
+              className="mt-2 text-sm text-red-300 hover:text-red-100"
+            >
+              Logout
+            </button>
           </div>
         </div>
 
@@ -217,6 +259,18 @@ export default function Dashboard() {
         {mintStatus && (
           <div className="mb-4 p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg">
             {mintStatus}
+            {transactionHash && (
+              <div className="mt-2">
+                <a 
+                  href={`https://sepolia.scrollscan.com/tx/${transactionHash}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline text-sm"
+                >
+                  View transaction on Scrollscan
+                </a>
+              </div>
+            )}
           </div>
         )}
 
@@ -260,7 +314,7 @@ export default function Dashboard() {
                               : 'bg-purple-500 text-white hover:bg-purple-600'
                         }`}
                       >
-                        {isOwned ? 'Owned' : 'Purchase NFT'}
+                        {isOwned ? 'Owned' : 'Mint NFT'}
                       </button>
                     </div>
                   </div>
@@ -309,7 +363,7 @@ export default function Dashboard() {
                     : 'bg-purple-500 text-white hover:bg-purple-600'
                 }`}
               >
-                {minting ? 'Purchasing...' : 'Purchase Your First NFT'}
+                {minting ? 'Minting...' : 'Mint Your First NFT'}
               </button>
             </div>
           )}
