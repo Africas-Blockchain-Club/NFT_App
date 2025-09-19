@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useUser } from '@/context/UserContext';
 import { useAuth } from '@/hooks/useAuth';
+import { mintNFT } from '@/utils/mintNFT';
 
 interface NFT {
   id: number;
@@ -18,9 +19,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [purchasing, setPurchasing] = useState<number | null>(null);
+  const [mintingStatus, setMintingStatus] = useState<{ [key: number]: string }>({});
   const { currentUser, logout, updateUserNFTs, refreshUsers } = useUser();
   
-  // Use the auth hook to protect this page
   useAuth();
 
   const fetchNFTs = async () => {
@@ -28,13 +29,11 @@ export default function Dashboard() {
 
     setRefreshing(true);
     try {
-      // Load NFT metadata from the JSON file
       const response = await fetch('/nft_metadata.json');
       const nftData: NFT[] = await response.json();
       
       setNfts(nftData);
       
-      // Get the NFTs that the user owns
       if (currentUser.ownedNFTs) {
         const ownedNfts = nftData.filter(nft => 
           currentUser.ownedNFTs?.includes(nft.id)
@@ -44,7 +43,6 @@ export default function Dashboard() {
       
     } catch (error) {
       console.error('Error fetching NFTs:', error);
-      // Fallback: Create placeholder NFTs if JSON file fails
       const fallbackNfts: NFT[] = [];
       for (let i = 0; i < 10; i++) {
         fallbackNfts.push({
@@ -73,29 +71,50 @@ export default function Dashboard() {
   }, [currentUser]);
 
   const handleRefresh = async () => {
-    // Refresh both users data and NFTs
     await refreshUsers();
     await fetchNFTs();
   };
 
-  const handlePurchase = async (nftId: number) => {
-    if (!currentUser) return;
+  const handleMint = async (nftId: number) => {
+    if (!currentUser?.privateKey) {
+      alert('User not authenticated or private key missing');
+      return;
+    }
 
     setPurchasing(nftId);
+    setMintingStatus(prev => ({ ...prev, [nftId]: 'minting' }));
+
     try {
-      const success = await updateUserNFTs(nftId);
+      const result = await mintNFT(currentUser.privateKey as `0x${string}`);
       
-      if (success) {
-        // Update local UI state immediately
-        const purchasedNft = nfts.find(nft => nft.id === nftId);
-        if (purchasedNft) {
-          setUserNfts(prev => [...prev, purchasedNft]);
+      if (result.success) {
+        setMintingStatus(prev => ({ ...prev, [nftId]: 'success' }));
+        
+        // Update user's owned NFTs in context
+        const success = await updateUserNFTs(nftId);
+        
+        if (success) {
+          // Update local UI state
+          const mintedNft = nfts.find(nft => nft.id === nftId);
+          if (mintedNft) {
+            setUserNfts(prev => [...prev, mintedNft]);
+          }
+          alert(`NFT #${nftId} minted successfully! Transaction: ${result.transactionHash}`);
         }
+      } else {
+        setMintingStatus(prev => ({ ...prev, [nftId]: 'error' }));
+        alert('Minting failed');
       }
     } catch (error) {
-      console.error('Purchase error:', error);
+      console.error('Minting error:', error);
+      setMintingStatus(prev => ({ ...prev, [nftId]: 'error' }));
+      alert('Minting failed: ' + (error as Error).message);
     } finally {
       setPurchasing(null);
+      // Clear status after 3 seconds
+      setTimeout(() => {
+        setMintingStatus(prev => ({ ...prev, [nftId]: '' }));
+      }, 3000);
     }
   };
 
@@ -108,12 +127,11 @@ export default function Dashboard() {
   }
 
   if (!currentUser) {
-    return null; // useAuth hook will handle redirect
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500">
-      {/* Header */}
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">🎨 Your NFT Dashboard</h1>
@@ -139,7 +157,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Navigation */}
         <div className="mb-8 flex justify-between items-center">
           <Link 
             href="/"
@@ -165,7 +182,6 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* NFT Grid */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-white">Available NFT Collection</h2>
@@ -181,6 +197,7 @@ export default function Dashboard() {
             {nfts.map((nft) => {
               const isOwned = userNfts.some(owned => owned.id === nft.id);
               const isPurchasing = purchasing === nft.id;
+              const status = mintingStatus[nft.id];
               
               return (
                 <div key={nft.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -190,13 +207,17 @@ export default function Dashboard() {
                       alt={nft.name}
                       className="object-cover w-full h-48"
                       onError={(e) => {
-                        // Fallback image if the main image fails
                         e.target.src = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/2.jpg';
                       }}
                     />
                     {isOwned && (
                       <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold">
                         OWNED
+                      </div>
+                    )}
+                    {status === 'success' && (
+                      <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold">
+                        MINTED!
                       </div>
                     )}
                   </div>
@@ -213,11 +234,14 @@ export default function Dashboard() {
                     </div>
                     {!isOwned && (
                       <button
-                        onClick={() => handlePurchase(nft.id)}
-                        disabled={isPurchasing || purchasing !== null}
+                        onClick={() => handleMint(nft.id)}
+                        disabled={isPurchasing || purchasing !== null || status === 'success'}
                         className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {isPurchasing ? 'Purchasing...' : 'Buy NFT'}
+                        {status === 'minting' ? 'Minting...' : 
+                         status === 'success' ? 'Minted!' :
+                         status === 'error' ? 'Try Again' :
+                         'Mint NFT'}
                       </button>
                     )}
                   </div>
@@ -227,7 +251,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* User's Owned NFTs Section */}
         <div>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-white">Your NFT Collection</h2>
