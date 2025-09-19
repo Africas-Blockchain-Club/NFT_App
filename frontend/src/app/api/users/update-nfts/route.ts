@@ -11,7 +11,7 @@ interface User {
   ownedNFTs?: number[];
 }
 
-const DB_PATH = path.join(process.cwd(), 'data', 'users.json');
+const DB_PATH = path.join(process.cwd(),'data', 'users.json');
 
 // Initialize database
 const initializeDB = () => {

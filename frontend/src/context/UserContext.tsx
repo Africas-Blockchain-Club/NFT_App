@@ -36,7 +36,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   // NEW: Function to load users data
   const loadUsersData = async () => {
     try {
-      const response = await fetch('/users.json');
+      const response = await fetch('data/users.json');
       const usersData = await response.json();
       setUsers(usersData);
       

@@ -1,0 +1,58 @@
+[
+  {
+    "username": "klk",
+    "password": "dslfjnlkdsjlkjk",
+    "privateKey": "0x77fbad745e10a43d766d22a9b42c85fc8a704dff45cac4218f78800edcf2845c",
+    "smartAccountAddress": "0xa63AA5c6C974179F25F7d849Fb2588740889c7C5",
+    "createdAt": "2025-09-19T18:16:38.696Z",
+    "ownedNFTs": []
+  },
+  {
+    "username": "ncnvc",
+    "password": "bcxgfcklnj;lkm';l,",
+    "privateKey": "0xeb2b7e7e3a87a24d4a48ad659172f013f1a442d12af0622a833739447500003c",
+    "smartAccountAddress": "0x63Ce90f181306c6de7f1A98bf147Cad895c955E0",
+    "createdAt": "2025-09-19T18:21:16.475Z",
+    "ownedNFTs": []
+  },
+  {
+    "username": "sfdsjk",
+    "password": "fdslkjglfdj;lkj",
+    "privateKey": "0x8d6c913a6da4b2e87db0c880c5189ad88bb08b8a1b98dbafbc7a72052a8c3e82",
+    "smartAccountAddress": "0x84c3b2B542f356dA7d03E4C5FD576c9aD567d052",
+    "createdAt": "2025-09-19T18:38:41.176Z",
+    "ownedNFTs": []
+  },
+  {
+    "username": "tyr",
+    "password": "kjsdlkgj;fj",
+    "privateKey": "0x4000eb5457a99890d7a8c5f75535323769b77c9366f29bebc53b894e06a06a73",
+    "smartAccountAddress": "0x2133fF602C8b789b61Df3af2C2B120828cA4bf8C",
+    "createdAt": "2025-09-19T18:39:45.154Z",
+    "ownedNFTs": []
+  },
+  {
+    "username": "jlhlkj;lk",
+    "password": "jsf;oijd[poj[pgojfd",
+    "privateKey": "0x8074f76f092cc55ea7d1a2e47e08d747f51cc64b3460233269ea9b50dd50ed85",
+    "smartAccountAddress": "0x9A54aD877bE21e8f7Ef7baEDcAb96dDb32762CD6",
+    "createdAt": "2025-09-19T18:44:11.586Z",
+    "ownedNFTs": []
+  },
+  {
+    "username": "dflksj",
+    "password": ";lkdsjfljfd;slkj",
+    "privateKey": "0x5487706c6742df60bf6907b38d2069164d2cc5ce31e6bf309cdae4426bf608f5",
+    "smartAccountAddress": "0xb279e958D075d78042Fd56bF223f9F819aF71FF7",
+    "createdAt": "2025-09-19T18:45:16.382Z",
+    "ownedNFTs": []
+  },
+  {
+    "username": "heyhey",
+    "password": "lkdsjflkdj;lkgjfdk",
+    "privateKey": "0xb537f05d6755be4f4fae3a28d891382e03a2243779116923e11ff1e391ada461",
+    "smartAccountAddress": "0x1f0cA3C1293c085e8615B12e60Ec9c462Fe5B2Ff",
+    "createdAt": "2025-09-19T18:47:14.892Z",
+    "ownedNFTs": []
+  }
+]

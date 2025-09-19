@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import { createUserAccount, mintNFTForUser, getUserNFTBalance } from '@/lib/blockchain';
+import { createUserAccount } from '@/lib/blockchain';
 
 export default function Signup() {
   const router = useRouter();
@@ -19,8 +19,7 @@ export default function Signup() {
   const [accountDetails, setAccountDetails] = useState<{
     username: string;
     smartAccountAddress: string;
-    transactionHash?: string;
-    balance?: number;
+    privateKey?: string; // Add privateKey to state for display
   } | null>(null);
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -38,6 +37,10 @@ export default function Signup() {
       
       // Create blockchain account using your existing function
       const { privateKey, smartAccountAddress } = await createUserAccount();
+      
+      // ✅ DEBUG: Log the private key to console
+      console.log('🔑 Generated Private Key:', privateKey);
+      console.log('📬 Generated Smart Account Address:', smartAccountAddress);
       
       // Create user object matching your database structure
       const user = {
@@ -71,74 +74,44 @@ export default function Signup() {
       setSuccess('✅ Account created successfully!');
       setAccountDetails({
         username: savedUser.username,
-        smartAccountAddress: savedUser.smartAccountAddress
+        smartAccountAddress: savedUser.smartAccountAddress,
+        privateKey: privateKey // Include private key in state for display
       });
       
       console.log('\n✅ Account created successfully!');
       console.log('📋 Your account details:');
       console.log(`   Username: ${savedUser.username}`);
       console.log(`   Smart Account: ${savedUser.smartAccountAddress}`);
-      
+      console.log(`   Private Key: ${privateKey}`); // Log private key again
+      // 🔄 CRITICAL: Refresh users data BEFORE attempting login
+      console.log('Refreshing users data...');
+      await refreshUsers(); // This reloads users from the JSON file
+
+      // Add a small delay to ensure state is updated
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       // Auto-login the user using your context
-      const loginSuccess = await login(savedUser.username, savedUser.password);
-      if (!loginSuccess) {
-        throw new Error('Failed to auto-login after signup');
-      }
+      console.log('Attempting auto-login...');
+
+      
 
       // Refresh users list in context
       await refreshUsers();
-
-      // Auto-mint welcome NFT using your existing function
-      console.log('\n🎨 Minting your welcome NFT...');
-      setSuccess('🎨 Minting your welcome NFT...');
-      
-      const txHash = await mintNFTForUser(savedUser);
-      console.log(`✅ NFT minted! Transaction: ${txHash}`);
-      
-      // Update user with owned NFT (ID 0 for welcome NFT)
-      const updateResponse = await fetch('/api/users/update-nfts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: savedUser.username,
-          nftId: 0
-        }),
-      });
-
-      if (!updateResponse.ok) {
-        console.warn('Failed to update user NFTs, but account was created');
-      }
-
-      // Get NFT balance using your existing function
-      const balance = await getUserNFTBalance({ ...savedUser, ownedNFTs: [0] });
-      console.log(`📊 Your NFT balance: ${balance}`);
-      
-      setSuccess('✅ NFT minted successfully!');
-      setAccountDetails(prev => ({
-        ...prev!,
-        transactionHash: txHash,
-        balance
-      }));
       
       console.log('\n🔐 Please save your password securely!');
-      console.log('   You will need it to access your account and NFTs.');
-      
-      // Refresh users again to get updated NFT data
-      await refreshUsers();
+      console.log('   You will need it to access your account.');
       
       // Redirect to dashboard after a delay
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push('/login');
       }, 3000);
       
-    } catch (err: any) {
-      console.error('❌ Signup failed:', err.message);
-      setError(err.message || 'An error occurred during signup');
-    } finally {
-      setLoading(false);
-    }
+  } catch (err: unknown) {
+    console.error('❌ Signup failed:', err instanceof Error ? err.message : 'Unknown error');
+    setError(err instanceof Error ? err.message : 'An error occurred during signup');
+  } finally {
+    setLoading(false);
+  }
   };
 
   return (
@@ -204,20 +177,22 @@ export default function Signup() {
               <p><strong>Smart Account:</strong> 
                 <span className="font-mono text-xs block truncate">{accountDetails.smartAccountAddress}</span>
               </p>
-              {accountDetails.transactionHash && (
-                <p><strong>NFT Transaction:</strong> 
-                  <span className="font-mono text-xs block truncate">{accountDetails.transactionHash}</span>
+              {accountDetails.privateKey && (
+                <p><strong>Private Key:</strong> 
+                  <span className="font-mono text-xs block truncate bg-red-50 p-1 rounded">
+                    {accountDetails.privateKey}
+                  </span>
+                  <span className="text-red-600 text-xs mt-1 block">
+                    ⚠️ Warning: Never share your private key!
+                  </span>
                 </p>
-              )}
-              {accountDetails.balance !== undefined && (
-                <p><strong>NFT Balance:</strong> {accountDetails.balance}</p>
               )}
             </div>
             
             <div className="mt-4 p-3 bg-yellow-100 border border-yellow-400 rounded">
               <p className="text-sm text-yellow-800">
                 🔐 <strong>Important:</strong> Please save your password securely! 
-                You will need it to access your account and NFTs.
+                You will need it to access your account.
               </p>
             </div>
           </div>
@@ -233,7 +208,6 @@ export default function Signup() {
           <h4 className="text-sm font-semibold mb-1">ℹ️ How it works:</h4>
           <ul className="text-xs text-gray-600 space-y-1">
             <li>• Creates a new Ethereum wallet using ZeroDev</li>
-            <li>• Mints a welcome NFT on Scroll Sepolia</li>
             <li>• Saves your account to the database</li>
             <li>• Logs you in automatically</li>
           </ul>

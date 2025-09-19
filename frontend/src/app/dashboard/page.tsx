@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useUser } from '@/context/UserContext';
 import { useAuth } from '@/hooks/useAuth';
 import { mintNFT } from '@/utils/mintNFT';
@@ -158,12 +159,14 @@ export default function Dashboard() {
               return (
                 <div key={nft.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
                   <div className="relative h-48 w-full">
-                    <img
+                    <Image
                       src={nft.image}
                       alt={nft.name}
-                      className="object-cover w-full h-48"
+                      fill
+                      className="object-cover"
                       onError={(e) => {
-                        e.target.src = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/2.jpg';
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/2.jpg';
                       }}
                     />
                     {isOwned && (
@@ -218,12 +221,14 @@ export default function Dashboard() {
                 {userNfts.map((nft) => (
                   <div key={nft.id} className="border rounded-lg p-3 text-center">
                     <div className="relative h-32 w-full mb-2">
-                      <img
+                      <Image
                         src={nft.image}
                         alt={nft.name}
-                        className="object-cover rounded w-full h-32"
+                        fill
+                        className="object-cover rounded"
                         onError={(e) => {
-                          e.target.src = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/2.jpg';
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/2.jpg';
                         }}
                       />
                     </div>

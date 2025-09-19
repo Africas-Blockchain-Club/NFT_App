@@ -10,13 +10,6 @@ interface User {
   createdAt: Date;
 }
 
-interface NFT {
-  tokenId: number;
-  imageUrl: string;
-  name: string;
-  description: string;
-}
-
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
