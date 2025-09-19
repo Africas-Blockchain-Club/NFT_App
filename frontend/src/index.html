@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyNFT Minting DApp</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2/umd/ethers.min.js"></script>
+    <style>
+        :root {
+            --primary: #4a6cf7;
+            --primary-dark: #3a5cd8;
+            --success: #137333;
+            --success-bg: #e6f4ea;
+            --error: #c5221f;
+            --error-bg: #fce8e6;
+            --pending: #1a73e8;
+            --pending-bg: #e8f0fe;
+            --card-bg: #ffffff;
+            --background: #f5f8ff;
+            --text: #333333;
+            --border-radius: 12px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f8ff 0%, #e0e8ff 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .status {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        
+        .connected {
+            background-color: var(--success-bg);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+        
+        .error {
+            background-color: var(--error-bg);
+            color: var(--error);
+            border-left: 4px solid var(--error);
+        }
+        
+        .pending {
+            background-color: var(--pending-bg);
+            color: var(--pending);
+            border-left: 4px solid var(--pending);
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 0;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:disabled {
+            background-color: #b0b0b0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .network-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f4ff;
+            border-radius: 8px;
+        }
+        
+        .network-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .network-connected {
+            background-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(19, 115, 51, 0.2);
+        }
+        
+        .network-disconnected {
+            background-color: var(--error);
+            box-shadow: 0 0 0 3px rgba(197, 34, 31, 0.2);
+        }
+        
+        .account-info {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .account-info h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .contract-info {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .contract-info h3 {
+            margin-top: 0;
+            color: #0ea5e9;
+        }
+        
+        code {
+            background-color: #f1f5f9;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #334155;
+            display: block;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+        
+        .nft-preview {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(45deg, #4a6cf7, #3a5cd8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .success-card {
+            background-color: var(--success-bg);
+            border-left: 4px solid var(--success);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .transaction-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .transaction-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MyNFT Minting DApp</h1>
+            <p class="subtitle">Mint your unique NFTs on Scroll Sepolia</p>
+        </header>
+        
+        <div class="card">
+            <h2 class="card-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 16H12V19H13V16Z" fill="currentColor"/>
+                    <path d="M9 16H8V19H9V16Z" fill="currentColor"/>
+                    <path d="M17 16H16V19H17V16Z" fill="currentColor"/>
+                    <path d="M3 4C3 2.89543 3.89543 2 5 2H19C20.1046 2 21 2.89543 21 4V9C21 9.55228 20.5523 10 20 10H4C3.44772 10 3 9.55228 3 9V4Z" fill="currentColor"/>
+                    <path d="M4 12H20C20.5523 12 21 12.4477 21 13V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V13C3 12.4477 3.44772 12 4 12Z" fill="currentColor"/>
+                </svg>
+                Connect Your Wallet
+            </h2>
+            
+            <div class="network-info">
+                <span id="networkIndicator" class="network-indicator network-disconnected"></span>
+                <span id="networkStatus">Not connected to Scroll Sepolia</span>
+            </div>
+            
+            <button id="connectBtn">
+                Connect Wallet
+            </button>
+            
+            <div id="connectionStatus" class="status">
+                Wallet not connected yet. Click the button above to get started.
+            </div>
+            
+            <div id="accountInfo" style="display: none;">
+                <div class="account-info">
+                    <h3>Connected Account</h3>
+                    <p id="accountAddress"></p>
+                    <p id="accountBalance"></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 class="card-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 16V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M12 8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Contract Information
+            </h2>
+            
+            <div class="contract-info">
+                <h3>MyNFT Contract</h3>
+                <p>Your NFT contract has been successfully deployed to Scroll Sepolia:</p>
+                <code id="contractAddress">0xC9FEefAe44ddbA865e57209b6139a114662F4C81</code>
+                <p>You can view it on <a href="https://sepolia.scrollscan.com/address/0xC9FEefAe44ddbA865e57209b6139a114662F4C81" target="_blank" class="transaction-link">ScrollScan</a>.</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 class="card-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Mint Your NFT
+            </h2>
+            
+            <div class="nft-preview" id="nftPreview">
+                MyNFT #<span id="nextTokenId">0</span>
+            </div>
+            
+            <button id="mintBtn" disabled>
+                Mint NFT
+            </button>
+            
+            <div id="mintStatus" class="status">
+                Connect your wallet first to enable minting.
+            </div>
+            
+            <div id="mintSuccess" style="display: none;">
+                <div class="success-card">
+                    <h3>NFT Minted Successfully!</h3>
+                    <p>Transaction Hash: <span id="transactionHash"></span></p>
+                    <p>Token ID: <span id="tokenId"></span></p>
+                    <p>View on <a id="explorerLink" href="#" target="_blank" class="transaction-link">ScrollScan</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Powered by Scroll Sepolia | Contract: 0xC9FEefAe44ddbA865e57209b6139a114662F4C81</p>
+        </footer>
+    </div>
+
+    <script>
+        // Network configuration
+        const SCROLL_CHAIN_ID = "0x8274f"; // Scroll Sepolia Testnet
+        const SCROLL_CHAIN_NAME = "Scroll Sepolia";
+        const SCROLL_RPC_URL = "https://sepolia-rpc.scroll.io/";
+        const SCROLL_EXPLORER = "https://sepolia.scrollscan.com/tx/";
+        
+        // Your deployed NFT contract
+        const NFT_CONTRACT_ADDRESS = "0xC9FEefAe44ddbA865e57209b6139a114662F4C81";
+        const NFT_ABI = [
+            "function safeMint(address to) external returns (uint256)",
+            "function balanceOf(address owner) external view returns (uint256 balance)",
+            "function ownerOf(uint256 tokenId) external view returns (address owner)",
+            "function tokenURI(uint256 tokenId) public view returns (string memory)",
+            "function totalSupply() public view returns (uint256)"
+        ];
+
+        // DOM elements
+        const connectBtn = document.getElementById('connectBtn');
+        const mintBtn = document.getElementById('mintBtn');
+        const networkStatus = document.getElementById('networkStatus');
+        const networkIndicator = document.getElementById('networkIndicator');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const accountInfo = document.getElementById('accountInfo');
+        const accountAddress = document.getElementById('accountAddress');
+        const accountBalance = document.getElementById('accountBalance');
+        const mintStatus = document.getElementById('mintStatus');
+        const mintSuccess = document.getElementById('mintSuccess');
+        const transactionHash = document.getElementById('transactionHash');
+        const tokenId = document.getElementById('tokenId');
+        const explorerLink = document.getElementById('explorerLink');
+        const nftPreview = document.getElementById('nftPreview');
+        const nextTokenId = document.getElementById('nextTokenId');
+        const contractAddress = document.getElementById('contractAddress');
+
+        // State variables
+        let provider, signer, userAddress, nftContract;
+
+        // Event listeners
+        connectBtn.addEventListener('click', connectWallet);
+        mintBtn.addEventListener('click', mintNFT);
+
+        // Connect Wallet function
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                updateStatus(connectionStatus, "Please install MetaMask to continue!", "error");
+                return;
+            }
+
+            try {
+                updateStatus(connectionStatus, "Connecting to your wallet...", "pending");
+                connectBtn.disabled = true;
+                
+                // Request account access
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                // Check and switch to Scroll Sepolia
+                await switchToScrollSepolia();
+                
+                // Initialize provider
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
+                const balance = await provider.getBalance(userAddress);
+                
+                // Format the address for display
+                const formattedAddress = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
+                
+                // Display account info
+                accountAddress.textContent = `Address: ${formattedAddress}`;
+                accountBalance.textContent = `Balance: ${ethers.utils.formatEther(balance)} ETH`;
+                accountInfo.style.display = 'block';
+                
+                // Initialize NFT contract
+                nftContract = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_ABI, signer);
+                
+                // Get next token ID
+                try {
+                    const totalSupply = await nftContract.totalSupply();
+                    nextTokenId.textContent = parseInt(totalSupply) + 1;
+                } catch (e) {
+                    console.log("Could not get total supply, using default");
+                    nextTokenId.textContent = "1";
+                }
+                
+                // Update UI
+                updateStatus(connectionStatus, "Successfully connected to Scroll Sepolia!", "connected");
+                networkStatus.textContent = "Connected to Scroll Sepolia";
+                networkIndicator.className = "network-indicator network-connected";
+                
+                // Enable mint button
+                mintBtn.disabled = false;
+                updateStatus(mintStatus, "Ready to mint your NFT. Click the button above.", "pending");
+                
+            } catch (error) {
+                console.error("Connection error:", error);
+                
+                if (error.message && error.message.includes('Request timeout')) {
+                    updateStatus(connectionStatus, "Connection timeout. Please check MetaMask and try again.", "error");
+                } else if (error.message && error.message.includes('User rejected')) {
+                    updateStatus(connectionStatus, "Connection cancelled. Please try again and approve the connection.", "error");
+                } else {
+                    updateStatus(connectionStatus, "Error: " + (error.message || error), "error");
+                }
+                
+                networkStatus.textContent = "Not connected to Scroll Sepolia";
+                networkIndicator.className = "network-indicator network-disconnected";
+                connectBtn.disabled = false;
+            }
+        }
+
+        // Switch to Scroll Sepolia
+        async function switchToScrollSepolia() {
+            try {
+                // Check current chain
+                const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+                
+                if (currentChainId !== SCROLL_CHAIN_ID) {
+                    // Try to switch to Scroll Sepolia
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: SCROLL_CHAIN_ID }],
+                        });
+                    } catch (switchError) {
+                        // This error code indicates that the chain has not been added to MetaMask
+                        if (switchError.code === 4902) {
+                            try {
+                                await window.ethereum.request({
+                                    method: 'wallet_addEthereumChain',
+                                    params: [{
+                                        chainId: SCROLL_CHAIN_ID,
+                                        chainName: SCROLL_CHAIN_NAME,
+                                        rpcUrls: [SCROLL_RPC_URL],
+                                        nativeCurrency: {
+                                            name: 'Ether',
+                                            symbol: 'ETH',
+                                            decimals: 18
+                                        },
+                                        blockExplorerUrls: ['https://sepolia.scrollscan.com/']
+                                    }]
+                                });
+                            } catch (addError) {
+                                throw new Error("Failed to add Scroll Sepolia network to MetaMask. Please add it manually.");
+                            }
+                        } else if (switchError.code === 4001) {
+                            throw new Error("You rejected the network switch. Please switch to Scroll Sepolia manually.");
+                        } else {
+                            throw switchError;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Network switch error:", error);
+                throw error;
+            }
+        }
+
+        // Mint NFT function
+        async function mintNFT() {
+            try {
+                updateStatus(mintStatus, "Preparing minting transaction...", "pending");
+                mintBtn.disabled = true;
+                
+                if (!nftContract) {
+                    throw new Error("NFT contract not initialized");
+                }
+                
+                // Execute the mint transaction
+                updateStatus(mintStatus, "Sending transaction...", "pending");
+                
+                const mintTx = await nftContract.safeMint(userAddress);
+                updateStatus(mintStatus, "Transaction sent! Waiting for confirmation...", "pending");
+                
+                // Wait for the transaction to be mined
+                const receipt = await mintTx.wait();
+                
+                // Get the transaction hash
+                const txHash = receipt.transactionHash;
+                
+                // Try to extract token ID from transaction events
+                let mintedTokenId = "1"; // Default fallback
+                
+                if (receipt.events && receipt.events.length > 0) {
+                    for (const event of receipt.events) {
+                        if (event.event === "Transfer") {
+                            mintedTokenId = event.args.tokenId.toString();
+                            break;
+                        }
+                    }
+                }
+                
+                // Update UI with success
+                transactionHash.textContent = `${txHash.substring(0, 10)}...`;
+                tokenId.textContent = mintedTokenId;
+                explorerLink.href = `${SCROLL_EXPLORER}${txHash}`;
+                
+                // Show success section
+                mintSuccess.style.display = 'block';
+                updateStatus(mintStatus, "NFT minted successfully!", "connected");
+                
+                // Update NFT preview
+                nftPreview.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h3>MyNFT #${mintedTokenId}</h3>
+                        <p>Successfully Minted!</p>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error("Minting error:", error);
+                updateStatus(mintStatus, "Error: " + (error.message || error), "error");
+                mintBtn.disabled = false;
+            }
+        }
+
+        // Helper function to update status
+        function updateStatus(element, message, type) {
+            element.textContent = message;
+            element.className = "status";
+            if (type) element.classList.add(type);
+        }
+
+        // Initialize network check
+        if (typeof window.ethereum !== 'undefined') {
+            // Listen for account changes
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    updateStatus(connectionStatus, "Wallet disconnected", "error");
+                    networkStatus.textContent = "Not connected to Scroll Sepolia";
+                    networkIndicator.className = "network-indicator network-disconnected";
+                    accountInfo.style.display = 'none';
+                    mintBtn.disabled = true;
+                    updateStatus(mintStatus, "Connect your wallet first to enable minting.", "error");
+                } else {
+                    connectWallet(); // Reconnect if accounts change
+                }
+            });
+            
+            // Listen for chain changes
+            window.ethereum.on('chainChanged', (chainId) => {
+                if (chainId === SCROLL_CHAIN_ID) {
+                    networkStatus.textContent = "Connected to Scroll Sepolia";
+                    networkIndicator.className = "network-indicator network-connected";
+                    updateStatus(connectionStatus, "Connected to Scroll Sepolia", "connected");
+                    // Refresh account info
+                    if (accountInfo.style.display === 'block') {
+                        connectWallet();
+                    }
+                } else {
+                    networkStatus.textContent = "Please switch to Scroll Sepolia";
+                    networkIndicator.className = "network-indicator network-disconnected";
+                    updateStatus(connectionStatus, "Wrong network detected", "error");
+                }
+            });
+            
+            // Try to auto-connect if already connected
+            window.addEventListener('load', async () => {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                        if (chainId === SCROLL_CHAIN_ID) {
+                            connectWallet();
+                        }
+                    }
+                } catch (error) {
+                    console.log("No auto-connection possible:", error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
