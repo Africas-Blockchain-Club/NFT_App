@@ -1,0 +1,18 @@
+[
+  {
+    "username": "SANDILE",
+    "password": "NARUTO",
+    "privateKey": "0x89136ff124691c9ba24501575f854fd3fbcfac792f5ca57d7a14c569c4caac94",
+    "smartAccountAddress": "0x2c85F380B26E4c82ff510FE5C33cF158DA50a438",
+    "createdAt": "2025-09-19T03:34:57.056Z",
+    "ownedNFTs": [0, 2, 5]
+  },
+  {
+    "username": "n",
+    "password": "nat",
+    "privateKey": "0xd26f7a94ed51c024ad5623a48cf359a8d05e6f5fe12a6e17ed184b677d9b1934",
+    "smartAccountAddress": "0xE16C153C3F64870c014b9C26c33532f43F04cA6D",
+    "createdAt": "2025-09-19T03:51:41.697Z",
+    "ownedNFTs": [1, 3]
+  }
+]
