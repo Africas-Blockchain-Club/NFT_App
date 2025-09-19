@@ -10,7 +10,7 @@ import {
 import { getEntryPoint, KERNEL_V3_1 } from "@zerodev/sdk/constants";
 
 const ZERODEV_RPC = process.env.ZERODEV_RPC!;
-const contractAddress = "0xC9FEefAe44ddbA865e57209b6139a114662F4C81";
+const contractAddress = "0x5b9DF92f3F9cAFa7d804f81FA9A5db68cc0AE52a";
 const contractABI = parseAbi([
   "function safeMint(address _to) public",
   "function balanceOf(address owner) external view returns (uint256 balance)",

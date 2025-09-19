@@ -11,7 +11,7 @@ if (!process.env.ZERODEV_RPC) {
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
-});
+}); 
 
 const askQuestion = (question: string): Promise<string> => {
   return new Promise((resolve) => {

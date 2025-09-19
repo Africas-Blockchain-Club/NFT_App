@@ -11,7 +11,7 @@
 # pc.scroll.io/
 
 # Check if your contract was actually deployed
-# cast code 0xC9FEefAe44ddbA865e57209b6139a114662F4C81 --rpc-url https://sepolia-rpc.scroll.io/
+# cast code 0x5b9DF92f3F9cAFa7d804f81FA9A5db68cc0AE52a --rpc-url https://sepolia-rpc.scroll.io/
 
 # Check real time gas prices
 # cast gas-price --rpc-url https://sepolia-rpc.scroll.io/

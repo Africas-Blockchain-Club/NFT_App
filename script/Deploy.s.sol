@@ -9,10 +9,14 @@ contract DeployScript is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
         
-        MyNFT nft = new MyNFT("NewNFT", "NNFT");
+        // Deploy with your actual collection name and symbol
+        MyNFT nft = new MyNFT("Urban Snap Collection", "USNAP");
         
         vm.stopBroadcast();
         
         console.log("MyNFT deployed at:", address(nft));
+        console.log("Collection Name: Urban Snap Collection");
+        console.log("Collection Symbol: USNAP");
+        console.log("Base URI:", nft.baseURI()); // This will show your IPFS URL
     }
 }
