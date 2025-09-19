@@ -1,7 +1,8 @@
 import * as readline from 'readline';
-import { createUserAccount } from './blockchain';
 import { saveUser } from './database';
 import { User } from './types';
+import { createUserAccount, mintNFTForUser, getUserNFTBalance } from './blockchain'; 
+
 
 const rl = readline.createInterface({
   input: process.stdin,
