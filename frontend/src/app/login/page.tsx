@@ -103,6 +103,9 @@ export default function Login() {
                 </div>
               </div>
               
+              <div className="flex items-center justify-between">
+
+                
                 <div className="text-sm">
                   <a href="#" className="font-medium text-purple-300 hover:text-purple-200">
                     Forgot password?
