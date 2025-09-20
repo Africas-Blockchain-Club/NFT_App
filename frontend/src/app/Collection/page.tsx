@@ -30,7 +30,7 @@ const CharityNFTCollection = () => {
           description: "Protecting marine life and ecosystems",
           longDescription: "This NFT represents a commitment to protecting marine life and ecosystems from pollution and overfishing. Each purchase helps fund ocean conservation efforts worldwide.",
           emoji: "🌊",
-          color: "bg-blue-500",
+          color: "from-blue-400 to-blue-700",
           price: "0.2 ETH",
           featured: true,
           artist: "Marina Waters"
@@ -41,7 +41,7 @@ const CharityNFTCollection = () => {
           description: "Conserving rainforests worldwide",
           longDescription: "By acquiring this NFT, you're supporting efforts to conserve rainforests and prevent deforestation across the globe. Each token funds the protection of 100 square meters of forest.",
           emoji: "🌳",
-          color: "bg-green-600",
+          color: "from-green-500 to-green-800",
           price: "0.15 ETH",
           featured: true,
           artist: "Forest Guardian"
@@ -52,7 +52,7 @@ const CharityNFTCollection = () => {
           description: "Providing access to clean water",
           longDescription: "This NFT supports initiatives that provide access to clean drinking water in developing nations. Your contribution helps build wells and water purification systems.",
           emoji: "💧",
-          color: "bg-blue-400",
+          color: "from-blue-300 to-blue-600",
           price: "0.18 ETH",
           featured: true,
           artist: "Aqua Project"
@@ -63,7 +63,7 @@ const CharityNFTCollection = () => {
           description: "Rescuing endangered species",
           longDescription: "Your purchase of this NFT directly contributes to rescuing and rehabilitating endangered species around the world. Each token supports animal sanctuaries and protection programs.",
           emoji: "🐾",
-          color: "bg-amber-600",
+          color: "from-amber-500 to-amber-800",
           price: "0.25 ETH",
           artist: "Wild Protectors"
         },
@@ -73,7 +73,7 @@ const CharityNFTCollection = () => {
           description: "Combating climate change",
           longDescription: "This NFT funds research and initiatives to combat climate change. Holders become part of a community dedicated to creating a sustainable future for our planet.",
           emoji: "🌎",
-          color: "bg-teal-500",
+          color: "from-teal-400 to-teal-700",
           price: "0.22 ETH",
           artist: "Climate Warriors"
         },
@@ -83,7 +83,7 @@ const CharityNFTCollection = () => {
           description: "Aid for natural disasters",
           longDescription: "Support communities affected by natural disasters with this NFT. Funds provide immediate aid, shelter, and resources to those in crisis situations.",
           emoji: "🚑",
-          color: "bg-red-500",
+          color: "from-red-400 to-red-700",
           price: "0.3 ETH",
           artist: "Hope Providers"
         },
@@ -93,7 +93,7 @@ const CharityNFTCollection = () => {
           description: "Access to quality education",
           longDescription: "This NFT helps ensure all children have access to quality education regardless of location. Your support builds schools and provides learning materials.",
           emoji: "📚",
-          color: "bg-indigo-500",
+          color: "from-indigo-400 to-indigo-700",
           price: "0.16 ETH",
           artist: "EduFuture"
         },
@@ -103,7 +103,7 @@ const CharityNFTCollection = () => {
           description: "Funding disease research",
           longDescription: "Contribute to cutting-edge research for diseases affecting millions worldwide. This NFT supports medical breakthroughs and healthcare innovation.",
           emoji: "❤️",
-          color: "bg-red-400",
+          color: "from-red-300 to-red-600",
           price: "0.28 ETH",
           artist: "MedInnovate"
         },
@@ -113,7 +113,7 @@ const CharityNFTCollection = () => {
           description: "Food security for communities",
           longDescription: "This NFT provides meals and food security to communities in need. Each token represents 100 meals distributed to those facing food insecurity.",
           emoji: "🍲",
-          color: "bg-orange-500",
+          color: "from-orange-400 to-orange-700",
           price: "0.12 ETH",
           artist: "Food Angels"
         },
@@ -123,7 +123,7 @@ const CharityNFTCollection = () => {
           description: "Assisting refugees worldwide",
           longDescription: "Support refugees with shelter, food, and integration services through this NFT. Your contribution makes a direct impact on displaced lives.",
           emoji: "🕊️",
-          color: "bg-gray-400",
+          color: "from-gray-300 to-gray-600",
           price: "0.2 ETH",
           artist: "Safe Haven"
         }
@@ -192,7 +192,7 @@ const CharityNFTCollection = () => {
                 className="group bg-white/10 backdrop-blur-md rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
                 onClick={() => handleNftClick(nft)}
               >
-                <div className={`${nft.color} h-48 flex items-center justify-center relative`}>
+                <div className={`h-48 bg-gradient-to-br ${nft.color} flex items-center justify-center relative`}>
                   <span className="text-white text-6xl">{nft.emoji}</span>
                   {/* Hover overlay for description */}
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 flex items-center justify-center p-4 transition-all duration-300">
@@ -229,7 +229,7 @@ const CharityNFTCollection = () => {
                 className="group bg-white rounded-2xl overflow-hidden shadow-lg cursor-pointer transform transition-all duration-300 hover:-translate-y-2"
                 onClick={() => handleNftClick(nft)}
               >
-                <div className={`${nft.color} h-32 flex items-center justify-center relative`}>
+                <div className={`h-32 bg-gradient-to-br ${nft.color} flex items-center justify-center relative`}>
                   <span className="text-white text-4xl">
                     {nft.emoji}
                   </span>
@@ -265,8 +265,8 @@ const CharityNFTCollection = () => {
             
             {selectedNft && (
               <div className="mb-6 p-4 bg-gray-50 rounded-lg flex items-center">
-                <div className={`${selectedNft.color} w-12 h-12 rounded-lg flex items-center justify-center mr-4`}>
-                  <span className="text-2xl">{selectedNft.emoji}</span>
+                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-gradient-to-br ${selectedNft.color}`}>
+                  <span className="text-2xl text-white">{selectedNft.emoji}</span>
                 </div>
                 <div>
                   <h4 className="font-semibold">{selectedNft.name}</h4>

@@ -7,17 +7,30 @@ import { useUser } from '@/context/UserContext';
 import { useAuth } from '@/hooks/useAuth';
 import { mintNFT } from '@/utils/mintNFT';
 
+interface Charity {
+  id: number;
+  name: string;
+  description: string;
+  emoji: string;
+  color: string;
+  price: string;
+}
+
 interface NFT {
   id: number;
   name: string;
   description: string;
   image: string;
   charity?: string;
+  charityId?: number;
   price?: string;
+  emoji?: string;
+  color?: string;
 }
 
 export default function Dashboard() {
   const [nfts, setNfts] = useState<NFT[]>([]);
+  const [charities, setCharities] = useState<Charity[]>([]);
   const [userNfts, setUserNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'available' | 'owned'>('available');
@@ -26,19 +39,44 @@ export default function Dashboard() {
   
   useAuth();
 
+  const fetchCharities = async () => {
+    try {
+      const response = await fetch('/nft_metadata.json');
+      const charityData = await response.json();
+      setCharities(charityData.charities);
+      return charityData.charities;
+    } catch (error) {
+      console.error('Error fetching charities:', error);
+      return [];
+    }
+  };
+
   const fetchNFTs = async () => {
     if (!currentUser) return;
 
     try {
+      // Fetch charities first
+      const charityData = await fetchCharities();
+      
+      // Fetch NFTs
       const response = await fetch('/nft_metadata.json');
       const nftData: NFT[] = await response.json();
       
-      // Add charity information to NFTs
-      const nftsWithCharity = nftData.map((nft, index) => ({
-        ...nft,
-        charity: ['Ocean Guardians', 'Forest Preservation', 'Clean Water Initiative', 'Wildlife Rescue', 'Climate Action'][index % 5],
-        price: ['0.2 ETH', '0.15 ETH', '0.18 ETH', '0.25 ETH', '0.22 ETH'][index % 5]
-      }));
+      // Assign charity information to each NFT
+      const nftsWithCharity = nftData.map((nft, index) => {
+        const charityIndex = index % charityData.length;
+        const charity = charityData[charityIndex];
+        
+        return {
+          ...nft,
+          charity: charity.name,
+          charityId: charity.id,
+          price: charity.price,
+          emoji: charity.emoji,
+          color: charity.color,
+          name: `${charity.name} NFT #${nft.id}`
+        };
+      });
       
       setNfts(nftsWithCharity);
       
@@ -51,18 +89,24 @@ export default function Dashboard() {
       
     } catch (error) {
       console.error('Error fetching NFTs:', error);
+      // Fallback to charity-based NFTs if metadata fails
+      const charityData = await fetchCharities();
       const fallbackNfts: NFT[] = [];
-      const charities = ['Ocean Guardians', 'Forest Preservation', 'Clean Water Initiative', 'Wildlife Rescue', 'Climate Action'];
-      const prices = ['0.2 ETH', '0.15 ETH', '0.18 ETH', '0.25 ETH', '0.22 ETH'];
       
       for (let i = 0; i < 10; i++) {
+        const charityIndex = i % charityData.length;
+        const charity = charityData[charityIndex];
+        
         fallbackNfts.push({
           id: i,
-          name: `Charity NFT ${i}`,
-          description: `This NFT supports ${charities[i % 5]}. 100% of proceeds go to this important cause.`,
-          image: `https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/${i}.jpg`,
-          charity: charities[i % 5],
-          price: prices[i % 5]
+          name: `${charity.name} NFT #${i}`,
+          description: `This NFT supports ${charity.name}. ${charity.description}`,
+          image: '', // Will use emoji as fallback
+          charity: charity.name,
+          charityId: charity.id,
+          price: charity.price,
+          emoji: charity.emoji,
+          color: charity.color
         });
       }
       setNfts(fallbackNfts);
@@ -220,36 +264,8 @@ export default function Dashboard() {
                 
                 return (
                   <div key={nft.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden transition hover:scale-105 hover:shadow-2xl">
-                    <div className="relative h-48 w-full">
-                      <Image
-                        src={nft.image}
-                        alt={nft.name}
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/2.jpg';
-                        }}
-                      />
-                      {isOwned && (
-                        <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center">
-                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          OWNED
-                        </div>
-                      )}
-                      {status === 'success' && (
-                        <div className="absolute top-3 left-3 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center">
-                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          MINTED!
-                        </div>
-                      )}
-                      <div className="absolute bottom-3 left-3 bg-black/50 text-white px-2 py-1 rounded text-xs">
-                        {nft.price}
-                      </div>
+                    <div className={`h-48 ${nft.color || 'bg-purple-500'} flex items-center justify-center`}>
+                      <span className="text-white text-6xl">{nft.emoji || '🎨'}</span>
                     </div>
                     <div className="p-5">
                       <h3 className="font-bold text-white text-lg mb-2">{nft.name}</h3>
@@ -268,6 +284,10 @@ export default function Dashboard() {
                         }`}>
                           {isOwned ? 'Owned' : 'Available'}
                         </span>
+                      </div>
+                      
+                      <div className="flex justify-between items-center mb-4">
+                        <span className="text-white font-bold">{nft.price}</span>
                       </div>
                       
                       {!isOwned && (
@@ -318,17 +338,8 @@ export default function Dashboard() {
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {userNfts.map((nft) => (
                     <div key={nft.id} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center transition hover:scale-105">
-                      <div className="relative h-32 w-full mb-3">
-                        <Image
-                          src={nft.image}
-                          alt={nft.name}
-                          fill
-                          className="object-cover rounded-lg"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = 'https://coffee-famous-reindeer-467.mypinata.cloud/ipfs/QmZ8antBrQPFjCW3nY7aSpLWZCSeam7cmXBjXkXNqnQCnx/2.jpg';
-                          }}
-                        />
+                      <div className={`h-32 w-full mb-3 rounded-lg flex items-center justify-center ${nft.color || 'bg-purple-500'}`}>
+                        <span className="text-4xl">{nft.emoji || '🎨'}</span>
                       </div>
                       <h4 className="font-semibold text-white text-sm truncate">{nft.name}</h4>
                       <p className="text-xs text-purple-200 mt-1">ID: #{nft.id}</p>
