@@ -3,8 +3,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+// Remove the id field from the User interface
 interface User {
-  id: number; // Added ID for better identification
   username: string;
   password: string;
   privateKey: string;
@@ -12,6 +12,7 @@ interface User {
   createdAt: string;
   ownedNFTs: number[];
 }
+
 
 interface UserContextType {
   currentUser: User | null;
@@ -55,38 +56,37 @@ export function UserProvider({ children }: { children: ReactNode }) {
     await loadUsersData();
   };
 
-  // NEW: Function to update user's NFTs (simulated write)
-  const updateUserNFTs = async (nftId: number): Promise<boolean> => {
-    if (!currentUser) return false;
+const updateUserNFTs = async (nftId: number): Promise<boolean> => {
+  if (!currentUser) return false;
 
-    try {
-      // 1. Update local state immediately for better UX
-      const updatedUser = {
-        ...currentUser,
-        ownedNFTs: [...(currentUser.ownedNFTs || []), nftId]
-      };
-      
-      setCurrentUser(updatedUser);
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+  try {
+    // 1. Update local state immediately
+    const updatedUser = {
+      ...currentUser,
+      ownedNFTs: [...currentUser.ownedNFTs, nftId] // Add the new NFT ID
+    };
+    
+    setCurrentUser(updatedUser);
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
-      // 2. Update the users array
-      const updatedUsers = users.map(user => 
-        user.id === currentUser.id 
-          ? { ...user, ownedNFTs: [...(user.ownedNFTs || []), nftId] }
-          : user
-      );
-      setUsers(updatedUsers);
+    // 2. Update the users array - match by username
+    const updatedUsers = users.map(user => 
+      user.username === currentUser.username
+        ? { ...user, ownedNFTs: [...user.ownedNFTs, nftId] } // Add the new NFT ID
+        : user
+    );
+    
+    setUsers(updatedUsers);
 
-      // 3. In a real app, you would send this to your backend API
-      // For now, we'll simulate persistence by storing in localStorage
-      localStorage.setItem('userData', JSON.stringify(updatedUsers));
+    // 3. Store updated users in localStorage
+    localStorage.setItem('userData', JSON.stringify(updatedUsers));
 
-      return true;
-    } catch (error) {
-      console.error('Error updating NFTs:', error);
-      return false;
-    }
-  };
+    return true;
+  } catch (error) {
+    console.error('Error updating NFTs:', error);
+    return false;
+  }
+};
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {

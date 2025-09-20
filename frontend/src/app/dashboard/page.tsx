@@ -34,7 +34,6 @@ export default function Dashboard() {
     try {
       const response = await fetch('/nft_metadata.json');
       const charityData = await response.json();
-      setCharities(charityData.charities);
       return charityData.charities;
     } catch (error) {
       console.error('Error fetching charities:', error);
