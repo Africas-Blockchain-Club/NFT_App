@@ -79,9 +79,12 @@ export default function CharityNFTLanding() {
               Buy beautiful digital art NFTs while supporting your favorite causes. We cover gas fees so you can donate seamlessly.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="bg-white text-purple-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition flex items-center">
-                <span className="mr-2">💎</span> Explore NFTs
-              </button>
+              <button 
+                  onClick={() => window.location.href = '/Collection'}
+                  className="bg-white text-purple-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition flex items-center"
+                >
+                  <span className="mr-2">💎</span> Explore NFTs
+                </button>
               <button className="bg-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-pink-600 transition flex items-center">
                 <span className="mr-2">❤️</span> Support Causes
               </button>
