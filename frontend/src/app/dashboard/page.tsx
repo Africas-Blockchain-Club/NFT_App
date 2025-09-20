@@ -248,79 +248,90 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Available NFTs */}
-        {activeTab === 'available' && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-              <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-              </svg>
-              Available NFT Collection
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {nfts.map((nft) => {
-                const isOwned = userNfts.some(owned => owned.id === nft.id);
-                const status = mintingStatus[nft.id];
+{/* Available NFTs */}
+{activeTab === 'available' && (
+  <div className="mb-8">
+    <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+      <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 "></path>
+      </svg>
+      Available NFT Collection
+    </h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {nfts.map((nft) => {
+        const isOwned = userNfts.some(owned => owned.id === nft.id);
+        const status = mintingStatus[nft.id];
+        
+        return (
+          <div key={nft.id} className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:bg-white/10 h-[420px] relative">
+            {/* Image Container - Takes majority of space */}
+            <div className={`h-4/4 ${nft.color || 'bg-gradient-to-br from-purple-600 to-indigo-700'} relative overflow-hidden flex items-center justify-center`}>
+              <span className="text-white text-7xl transition-all duration-500 group-hover:scale-110">{nft.emoji || '🎨'}</span>
+              
+              {/* Overlay with essential info */}
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+                <h3 className="font-bold text-white text-xl mb-1">{nft.name}</h3>
+                <span className={`px-2 py-0.5 rounded-full text-xs ${
+                  isOwned ? 'bg-green-500/30 text-green-300 border border-green-500/50' : 'bg-white/20 text-white/90 border border-white/30'
+                }`}>
+                  {isOwned ? 'Owned' : 'Available'}
+                </span>
+              </div>
+              
+              {/* Hover effect overlay */}
+              <div className="absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-500 group-hover:opacity-100 flex flex-col justify-end p-4">
+                <p className="text-purple-100 text-sm mb-2 line-clamp-3">{nft.description}</p>
                 
-                return (
-                  <div key={nft.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden transition hover:scale-105 hover:shadow-2xl">
-                    <div className={`h-48 ${nft.color || 'bg-purple-500'} flex items-center justify-center`}>
-                      <span className="text-white text-6xl">{nft.emoji || '🎨'}</span>
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-bold text-white text-lg mb-2">{nft.name}</h3>
-                      <p className="text-purple-200 text-sm mb-3 line-clamp-2">{nft.description}</p>
-                      
-                      <div className="mb-4">
-                        <span className="text-xs text-white/70 bg-white/10 px-2 py-1 rounded">
-                          Supports: {nft.charity}
-                        </span>
-                      </div>
-                      
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-sm text-purple-200">ID: #{nft.id}</span>
-                        <span className={`px-3 py-1 rounded-full text-xs ${
-                          isOwned ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-white/10 text-white/70 border border-white/20'
-                        }`}>
-                          {isOwned ? 'Owned' : 'Available'}
-                        </span>
-                      </div>
-                      
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-white font-bold">{nft.price}</span>
-                      </div>
-                      
-                      {!isOwned && (
-                        <button
-                          onClick={() => handleMint(nft.id)}
-                          disabled={status === 'minting' || status === 'success'}
-                          className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
-                        >
-                          {status === 'minting' ? (
-                            <>
-                              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                              Minting...
-                            </>
-                          ) : status === 'success' ? (
-                            'Minted!'
-                          ) : status === 'error' ? (
-                            'Try Again'
-                          ) : (
-                            'Mint NFT'
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                <div className="mb-2">
+                  <span className="text-xs text-white/80 bg-white/10 px-2 py-1 rounded">
+                    Supports: {nft.charity}
+                  </span>
+                </div>
+                
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-sm text-purple-200">ID: #{nft.id}</span>
+                  <span className="text-white font-bold">{nft.price}</span>
+                </div>
+                
+                {!isOwned && (
+                  <button
+                    onClick={() => handleMint(nft.id)}
+                    disabled={status === 'minting' || status === 'success'}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white py-2 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
+                  >
+                    {status === 'minting' ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Minting...
+                      </>
+                    ) : status === 'success' ? (
+                      'Minted!'
+                    ) : status === 'error' ? (
+                      'Try Again'
+                    ) : (
+                      'Mint NFT'
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+            
+            {/* Bottom section with additional info (visible when not hovered) */}
+            <div className="p-3 transition-opacity duration-300 group-hover:opacity-0">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-purple-200">ID: #{nft.id}</span>
+                <span className="text-white font-bold">{nft.price}</span>
+              </div>
             </div>
           </div>
-        )}
-
+        );
+      })}
+    </div>
+  </div>
+)}
         {/* User's NFT Collection */}
         {activeTab === 'owned' && (
           <div>
