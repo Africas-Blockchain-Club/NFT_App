@@ -1,0 +1,8 @@
+{
+  "id": 10,
+  "name": "Animal Sanctuary",
+  "description": "Providing safe habitats for rescued farm and wild animals",
+  "emoji": "🐄",
+  "color": "bg-brown-500",
+  "price": "0.15 ETH"
+}

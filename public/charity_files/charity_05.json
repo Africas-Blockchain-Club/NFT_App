@@ -1,0 +1,8 @@
+{
+  "id": 5,
+  "name": "Disaster Relief",
+  "description": "Providing immediate aid to communities affected by natural disasters",
+  "emoji": "🚑",
+  "color": "bg-red-500",
+  "price": "0.3 ETH"
+}
