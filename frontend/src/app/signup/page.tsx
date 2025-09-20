@@ -258,18 +258,7 @@ export default function Signup() {
             )}
             
             <div className="mt-8 text-center">
-              <div className="bg-white/10 p-4 rounded-lg border border-white/10 mb-4">
-                <p className="text-white font-medium mb-2">
-                  Already have an account?
-                </p>
-                <Link 
-                  href="/login" 
-                  className="inline-block bg-white text-purple-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-100 transition-all duration-200 border border-white text-sm"
-                >
-                  Sign in instead
-                </Link>
-              </div>
-              
+             
               <p className="mt-4">
                 <Link href="/" className="text-purple-200 hover:text-white transition flex items-center justify-center text-sm">
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
