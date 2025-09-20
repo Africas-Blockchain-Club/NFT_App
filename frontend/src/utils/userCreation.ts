@@ -18,7 +18,7 @@ export async function createUserAccount(username: string, password: string): Pro
     
     const user: User = {
       username,
-      password, // In production, you should hash this!
+      password,
       privateKey: account.privateKey,
       smartAccountAddress: account.address,
       createdAt: new Date().toISOString(),

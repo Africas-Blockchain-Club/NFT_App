@@ -54,5 +54,13 @@
     "smartAccountAddress": "0x1f0cA3C1293c085e8615B12e60Ec9c462Fe5B2Ff",
     "createdAt": "2025-09-19T18:47:14.892Z",
     "ownedNFTs": []
+  },
+  {
+    "username": "kjddd",
+    "password": "sdjflkjdslkl",
+    "privateKey": "0x0d15119815cdbebfcdd9b7e8e2d2114859595af3455bc0a101ab09ed13ebddb1",
+    "smartAccountAddress": "0x67Ab688913DBCB2aA6A1AeABda4D3bf73b58bae7",
+    "createdAt": "2025-09-20T00:42:08.275Z",
+    "ownedNFTs": []
   }
 ]

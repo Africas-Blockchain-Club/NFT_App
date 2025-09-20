@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 export default function CharityNFTLanding() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Mock user data - replace with actual authentication logic
   useEffect(() => {
     // Check if user is logged in (this would come from your auth system)
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -323,9 +322,13 @@ export default function CharityNFTLanding() {
           <p className="text-xl text-gray-100 max-w-2xl mx-auto mb-10">
             Join us in supporting meaningful causes through the power of blockchain technology and digital art.
           </p>
-          <button className="bg-white text-purple-700 px-8 py-4 rounded-lg font-medium text-lg hover:bg-gray-100 transition mx-2">
-            Create Account
-          </button>
+
+          <button 
+                  onClick={() => window.location.href = '/signup'}
+                  className="bg-white text-purple-700 px-8 py-4 rounded-lg font-medium text-lg hover:bg-gray-100 transition mx-2"
+                >
+                  Create Account
+                </button>
           <button className="bg-gray-900 text-white px-8 py-4 rounded-lg font-medium text-lg hover:bg-gray-800 transition mx-2">
             View NFT Collection
           </button>
