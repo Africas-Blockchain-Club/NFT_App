@@ -1,4 +1,3 @@
-// utils/mintNFT.ts
 'use client';
 
 import { createPublicClient, encodeFunctionData, http, parseAbi } from "viem";
