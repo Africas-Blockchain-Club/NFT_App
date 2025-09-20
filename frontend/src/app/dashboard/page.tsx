@@ -7,14 +7,6 @@ import { useUser } from '@/context/UserContext';
 import { useAuth } from '@/hooks/useAuth';
 import { mintNFT } from '@/utils/mintNFT';
 
-interface Charity {
-  id: number;
-  name: string;
-  description: string;
-  emoji: string;
-  color: string;
-  price: string;
-}
 
 interface NFT {
   id: number;
@@ -61,6 +53,7 @@ export default function Dashboard() {
       // Fetch NFTs
       const response = await fetch('/nft_metadata.json');
       const nftData: NFT[] = await response.json();
+
       
       // Assign charity information to each NFT
       const nftsWithCharity = nftData.map((nft, index) => {
@@ -263,7 +256,7 @@ export default function Dashboard() {
         const status = mintingStatus[nft.id];
         
         return (
-          <div key={nft.id} className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:bg-white/10 h-[420px] relative">
+          <div key={nft.id} className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:bg-white/10 h-[400px] relative">
             {/* Image Container - Takes majority of space */}
             <div className={`h-4/4 ${nft.color || 'bg-gradient-to-br from-purple-600 to-indigo-700'} relative overflow-hidden flex items-center justify-center`}>
               <span className="text-white text-7xl transition-all duration-500 group-hover:scale-110">{nft.emoji || '🎨'}</span>

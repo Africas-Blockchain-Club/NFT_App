@@ -62,5 +62,24 @@
     "smartAccountAddress": "0x67Ab688913DBCB2aA6A1AeABda4D3bf73b58bae7",
     "createdAt": "2025-09-20T00:42:08.275Z",
     "ownedNFTs": []
+  },
+  {
+    "username": "sxd",
+    "password": "jgdhlkj;klj",
+    "privateKey": "0x6a5334f3b4cb51f450cef5969260584181c6ba44b7190ad84bf6af2dafdb4050",
+    "smartAccountAddress": "0x84e7A4be8E02220BB0b69457377ce87FE0fBF77C",
+    "createdAt": "2025-09-20T19:56:40.080Z",
+    "ownedNFTs": [
+      0,
+      2
+    ]
+  },
+  {
+    "username": "ddd",
+    "password": "kjfdlkvjfdkjn",
+    "privateKey": "0x8f6e9f3ecb0cb0c331f23fb2fe218a9f387af4650815a91e547409c43b6725f2",
+    "smartAccountAddress": "0xDB4e0B7Cdd795BcBaC373925181465cad0D40e4E",
+    "createdAt": "2025-09-20T20:24:12.818Z",
+    "ownedNFTs": []
   }
 ]
