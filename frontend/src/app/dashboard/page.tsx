@@ -22,7 +22,6 @@ interface NFT {
 
 export default function Dashboard() {
   const [nfts, setNfts] = useState<NFT[]>([]);
-  const [charities, setCharities] = useState<Charity[]>([]);
   const [userNfts, setUserNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'available' | 'owned'>('available');
