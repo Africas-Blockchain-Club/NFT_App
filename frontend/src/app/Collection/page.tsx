@@ -177,7 +177,7 @@ const CharityNFTCollection = () => {
         </div>
       </section>
 
-      {/* Featured NFTs Section */}
+      {/* NFT Showcase */}
       <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-500">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center text-white mb-4">Featured NFT Collections</h2>
@@ -189,17 +189,16 @@ const CharityNFTCollection = () => {
             {featuredNfts.map((nft) => (
               <div 
                 key={nft.id} 
-                className="group bg-white/10 backdrop-blur-md rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-2 cursor-pointer"
+                className="group bg-white/10 backdrop-blur-md rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
                 onClick={() => handleNftClick(nft)}
               >
-                <div className={`${nft.color} h-48 flex items-center justify-center relative overflow-hidden`}>
-                  <span className="text-white text-6xl transition-transform duration-500 group-hover:scale-110">
-                    {nft.emoji}
-                  </span>
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-500 flex items-center justify-center">
-                    <span className="text-white text-lg font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      Click to View
-                    </span>
+                <div className={`${nft.color} h-48 flex items-center justify-center relative`}>
+                  <span className="text-white text-6xl">{nft.emoji}</span>
+                  {/* Hover overlay for description */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 flex items-center justify-center p-4 transition-all duration-300">
+                    <p className="text-white text-sm text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {nft.longDescription}
+                    </p>
                   </div>
                 </div>
                 <div className="p-6">
@@ -207,19 +206,9 @@ const CharityNFTCollection = () => {
                   <p className="text-gray-200 mb-4">{nft.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-white font-bold">{nft.price}</span>
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <button className="bg-white text-purple-700 px-4 py-2 rounded-lg text-sm font-medium">
-                        View Details
-                      </button>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-white/20">
-                    <p className="text-gray-200 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150">
-                      Artist: {nft.artist}
-                    </p>
-                    <p className="text-gray-200 text-sm mt-2 max-h-0 group-hover:max-h-20 overflow-hidden transition-all duration-500">
-                      {nft.longDescription}
-                    </p>
+                    <button className="bg-white text-purple-700 px-4 py-2 rounded-lg text-sm font-medium">
+                      View Details
+                    </button>
                   </div>
                 </div>
               </div>
@@ -237,32 +226,26 @@ const CharityNFTCollection = () => {
             {nfts.map((nft) => (
               <div
                 key={nft.id}
-                className="group nft-card bg-white rounded-2xl overflow-hidden shadow-lg cursor-pointer transform transition-all duration-300 hover:-translate-y-2"
+                className="group bg-white rounded-2xl overflow-hidden shadow-lg cursor-pointer transform transition-all duration-300 hover:-translate-y-2"
                 onClick={() => handleNftClick(nft)}
               >
                 <div className={`${nft.color} h-32 flex items-center justify-center relative`}>
-                  <span className="emoji text-5xl transition-transform duration-300 group-hover:scale-110">
+                  <span className="text-white text-4xl">
                     {nft.emoji}
                   </span>
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      View Details
-                    </span>
+                  {/* Hover overlay for description */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 flex items-center justify-center p-3 transition-all duration-300">
+                    <p className="text-white text-xs text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {nft.longDescription}
+                    </p>
                   </div>
                 </div>
-                <div className="p-5">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{nft.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{nft.description}</p>
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-gray-800 mb-1">{nft.name}</h3>
+                  <p className="text-gray-600 text-xs mb-2">{nft.description}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-purple-600 font-bold">{nft.price}</span>
-                    <button className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      View Details
-                    </button>
-                  </div>
-                  <div className="mt-3 pt-3 border-t border-gray-100">
-                    <p className="text-gray-500 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      Artist: {nft.artist}
-                    </p>
+                    <span className="text-purple-600 font-bold text-sm">{nft.price}</span>
+                    <span className="text-xs text-gray-500">View Details</span>
                   </div>
                 </div>
               </div>
@@ -294,11 +277,9 @@ const CharityNFTCollection = () => {
             
             <div className="space-y-4">
               <button className="w-full bg-gray-800 text-white py-3 rounded-lg font-medium flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors">
-                <i className="fab fa-ethereum"></i>
                 <span>Connect with MetaMask</span>
               </button>
               <button className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium flex items-center justify-center space-x-2 hover:bg-blue-600 transition-colors">
-                <i className="fab fa-google"></i>
                 <span>Sign in with Google</span>
               </button>
               <button className="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
