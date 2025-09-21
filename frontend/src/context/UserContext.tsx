@@ -1,6 +1,9 @@
 // context/UserContext.tsx
 'use client';
 
+import Navbar from '@/components/Navbar';
+
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // Remove the id field from the User interface
@@ -117,8 +120,8 @@ const updateUserNFTs = async (nftId: number): Promise<boolean> => {
       login, 
       logout, 
       users,
-      updateUserNFTs, // Expose the new function
-      refreshUsers    // Expose refresh function
+      updateUserNFTs,
+      refreshUsers   
     }}>
       {children}
     </UserContext.Provider>
