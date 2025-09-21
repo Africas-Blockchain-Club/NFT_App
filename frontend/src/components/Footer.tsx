@@ -15,8 +15,10 @@ export default function Footer() {
           </div>
           
           <div className="flex space-x-6">
+            <a href="#" className="hover:text-white transition">Twitter</a>
             <a href="#" className="hover:text-white transition">Discord</a>
             <a href="#" className="hover:text-white transition">Instagram</a>
+            <a href="#" className="hover:text-white transition">GitHub</a>
           </div>
         </div>
         
