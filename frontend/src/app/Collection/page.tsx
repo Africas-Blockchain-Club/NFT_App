@@ -2,317 +2,144 @@
 
 import { useState, useEffect } from 'react';
 
-interface CharityNFT {
+interface NFT {
   id: number;
   name: string;
   description: string;
-  emoji: string;
-  color: string;
-  price: string;
-  featured?: boolean;
-  longDescription?: string;
-  artist?: string;
+  image: string;
+  charity?: string;
+  charityId?: number;
+  price?: string;
+  emoji?: string;
+  color?: string;
 }
 
-const CharityNFTCollection = () => {
-  const [nfts, setNfts] = useState<CharityNFT[]>([]);
-  const [featuredNfts, setFeaturedNfts] = useState<CharityNFT[]>([]);
-  const [showLogin, setShowLogin] = useState(false);
-  const [selectedNft, setSelectedNft] = useState<CharityNFT | null>(null);
+export default function NFTExplorePage() {
+  const [nfts, setNfts] = useState<NFT[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-
-    
-    // Simulate API call to fetch NFT data
-    const fetchNFTs = async () => {
-      const mockData: CharityNFT[] = [
+  const fetchNFTs = async () => {
+    try {
+      // In a real app, this would fetch from your API
+      const mockNFTs: NFT[] = [
         {
           id: 1,
           name: "Ocean Guardians",
-          description: "Protecting marine life and ecosystems",
-          longDescription: "This NFT represents a commitment to protecting marine life and ecosystems from pollution and overfishing. Each purchase helps fund ocean conservation efforts worldwide.",
-          emoji: "🌊",
-          color: "from-blue-400 to-blue-700",
+          description: "This NFT represents a commitment to protecting marine life and ecosystems from pollution and overfishing.",
+          image: "",
+          charity: "Ocean Conservation",
           price: "0.2 ETH",
-          featured: true,
-          artist: "Marina Waters"
+          emoji: "🌊",
+          color: "from-blue-400 to-blue-700"
         },
         {
           id: 2,
           name: "Forest Preservation",
-          description: "Conserving rainforests worldwide",
-          longDescription: "By acquiring this NFT, you're supporting efforts to conserve rainforests and prevent deforestation across the globe. Each token funds the protection of 100 square meters of forest.",
-          emoji: "🌳",
-          color: "from-green-500 to-green-800",
+          description: "By acquiring this NFT, you're supporting efforts to conserve rainforests and prevent deforestation.",
+          image: "",
+          charity: "Rainforest Alliance",
           price: "0.15 ETH",
-          featured: true,
-          artist: "Forest Guardian"
+          emoji: "🌳",
+          color: "from-green-500 to-green-800"
         },
         {
           id: 3,
           name: "Clean Water Initiative",
-          description: "Providing access to clean water",
-          longDescription: "This NFT supports initiatives that provide access to clean drinking water in developing nations. Your contribution helps build wells and water purification systems.",
-          emoji: "💧",
-          color: "from-blue-300 to-blue-600",
+          description: "This NFT supports initiatives that provide access to clean drinking water in developing nations.",
+          image: "",
+          charity: "Water.org",
           price: "0.18 ETH",
-          featured: true,
-          artist: "Aqua Project"
+          emoji: "💧",
+          color: "from-blue-300 to-blue-600"
         },
         {
           id: 4,
           name: "Wildlife Rescue",
-          description: "Rescuing endangered species",
-          longDescription: "Your purchase of this NFT directly contributes to rescuing and rehabilitating endangered species around the world. Each token supports animal sanctuaries and protection programs.",
-          emoji: "🐾",
-          color: "from-amber-500 to-amber-800",
+          description: "Your purchase directly contributes to rescuing and rehabilitating endangered species worldwide.",
+          image: "",
+          charity: "WWF",
           price: "0.25 ETH",
-          artist: "Wild Protectors"
+          emoji: "🐾",
+          color: "from-amber-500 to-amber-800"
         },
         {
           id: 5,
           name: "Climate Action",
-          description: "Combating climate change",
-          longDescription: "This NFT funds research and initiatives to combat climate change. Holders become part of a community dedicated to creating a sustainable future for our planet.",
-          emoji: "🌎",
-          color: "from-teal-400 to-teal-700",
+          description: "This NFT funds research and initiatives to combat climate change and create a sustainable future.",
+          image: "",
+          charity: "Climate Reality Project",
           price: "0.22 ETH",
-          artist: "Climate Warriors"
+          emoji: "🌎",
+          color: "from-teal-400 to-teal-700"
         },
         {
           id: 6,
-          name: "Disaster Relief",
-          description: "Aid for natural disasters",
-          longDescription: "Support communities affected by natural disasters with this NFT. Funds provide immediate aid, shelter, and resources to those in crisis situations.",
-          emoji: "🚑",
-          color: "from-red-400 to-red-700",
-          price: "0.3 ETH",
-          artist: "Hope Providers"
-        },
-        {
-          id: 7,
           name: "Education Equality",
-          description: "Access to quality education",
-          longDescription: "This NFT helps ensure all children have access to quality education regardless of location. Your support builds schools and provides learning materials.",
-          emoji: "📚",
-          color: "from-indigo-400 to-indigo-700",
+          description: "This NFT helps ensure all children have access to quality education regardless of location.",
+          image: "",
+          charity: "Room to Read",
           price: "0.16 ETH",
-          artist: "EduFuture"
-        },
-        {
-          id: 8,
-          name: "Medical Research",
-          description: "Funding disease research",
-          longDescription: "Contribute to cutting-edge research for diseases affecting millions worldwide. This NFT supports medical breakthroughs and healthcare innovation.",
-          emoji: "❤️",
-          color: "from-red-300 to-red-600",
-          price: "0.28 ETH",
-          artist: "MedInnovate"
-        },
-        {
-          id: 9,
-          name: "Hunger Relief",
-          description: "Food security for communities",
-          longDescription: "This NFT provides meals and food security to communities in need. Each token represents 100 meals distributed to those facing food insecurity.",
-          emoji: "🍲",
-          color: "from-orange-400 to-orange-700",
-          price: "0.12 ETH",
-          artist: "Food Angels"
-        },
-        {
-          id: 10,
-          name: "Refugee Support",
-          description: "Assisting refugees worldwide",
-          longDescription: "Support refugees with shelter, food, and integration services through this NFT. Your contribution makes a direct impact on displaced lives.",
-          emoji: "🕊️",
-          color: "from-gray-300 to-gray-600",
-          price: "0.2 ETH",
-          artist: "Safe Haven"
+          emoji: "📚",
+          color: "from-indigo-400 to-indigo-700"
         }
       ];
-      
-      setNfts(mockData);
-      setFeaturedNfts(mockData.filter(nft => nft.featured));
-    };
 
+      setNfts(mockNFTs);
+    } catch (error) {
+      console.error('Error fetching NFTs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchNFTs();
   }, []);
 
-  const handleNftClick = (nft: CharityNFT) => {
-    setSelectedNft(nft);
-    setShowLogin(true);
-  };
-
-  const handleCloseLogin = () => {
-    setShowLogin(false);
-    setSelectedNft(null);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900 flex items-center justify-center">
+        <div className="text-white text-xl flex items-center">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+          Loading NFT collection...
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold mr-3">
-              C
-            </div>
-            <h1 className="text-2xl font-bold text-gray-800">Charity NFTs</h1>
-          </div>
-          <button className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-2 rounded-full font-medium hover:from-purple-600 hover:to-indigo-700 transition-all">
-            Connect Wallet
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900">
+      <div className="container mx-auto px-4 py-8">
+        <header className="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-8 text-center border border-white/20">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">🌊 NFT Charity Collection</h1>
+          <p className="text-purple-200 text-lg">Explore and support charitable causes through digital collectibles</p>
+        </header>
 
-      {/* Hero Section */}
-      <section className="py-12 px-4">
-        <div className="container mx-auto text-center max-w-3xl">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Support Causes You Care About</h2>
-          <p className="text-xl text-gray-600 mb-8">Each NFT represents a donation to a charitable cause. Collect them all to make a difference.</p>
-          <div className="bg-white rounded-2xl p-6 shadow-lg inline-block">
-            <div className="flex items-center justify-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-              <span className="text-green-600 font-medium">{nfts.length} charities supported</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* NFT Showcase */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-500">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center text-white mb-4">Featured NFT Collections</h2>
-          <p className="text-xl text-gray-100 text-center max-w-3xl mx-auto mb-16">
-            Exclusive digital art created by talented artists who support our charitable mission.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredNfts.map((nft) => (
-              <div 
-                key={nft.id} 
-                className="group bg-white/10 backdrop-blur-md rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
-                onClick={() => handleNftClick(nft)}
-              >
-                <div className={`h-48 bg-gradient-to-br ${nft.color} flex items-center justify-center relative`}>
-                  <span className="text-white text-6xl">{nft.emoji}</span>
-                  {/* Hover overlay for description */}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 flex items-center justify-center p-4 transition-all duration-300">
-                    <p className="text-white text-sm text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {nft.longDescription}
-                    </p>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-2">{nft.name}</h3>
-                  <p className="text-gray-200 mb-4">{nft.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-white font-bold">{nft.price}</span>
-                    <button className="bg-white text-purple-700 px-4 py-2 rounded-lg text-sm font-medium">
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* All NFTs Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">All Charity NFTs</h2>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {nfts.map((nft) => (
-              <div
-                key={nft.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-lg cursor-pointer transform transition-all duration-300 hover:-translate-y-2"
-                onClick={() => handleNftClick(nft)}
-              >
-                <div className={`h-32 bg-gradient-to-br ${nft.color} flex items-center justify-center relative`}>
-                  <span className="text-white text-4xl">
-                    {nft.emoji}
-                  </span>
-                  {/* Hover overlay for description */}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 flex items-center justify-center p-3 transition-all duration-300">
-                    <p className="text-white text-xs text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {nft.longDescription}
-                    </p>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-gray-800 mb-1">{nft.name}</h3>
-                  <p className="text-gray-600 text-xs mb-2">{nft.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-purple-600 font-bold text-sm">{nft.price}</span>
-                    <span className="text-xs text-gray-500">View Details</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Login Modal */}
-      {showLogin && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
-          <div className="bg-white rounded-2xl max-w-md w-full p-8 transform transition-transform duration-300 scale-100">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">Login Required</h3>
-              <p className="text-gray-600">Please connect your wallet to view this NFT</p>
-            </div>
-            
-            {selectedNft && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg flex items-center">
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-gradient-to-br ${selectedNft.color}`}>
-                  <span className="text-2xl text-white">{selectedNft.emoji}</span>
-                </div>
-                <div>
-                  <h4 className="font-semibold">{selectedNft.name}</h4>
-                  <p className="text-sm text-gray-500">{selectedNft.price}</p>
-                </div>
-              </div>
-            )}
-            
-            <div className="space-y-4">
-              <button className="w-full bg-gray-800 text-white py-3 rounded-lg font-medium flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors">
-                <span>Connect with MetaMask</span>
-              </button>
-              <button className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium flex items-center justify-center space-x-2 hover:bg-blue-600 transition-colors">
-                <span>Sign in with Google</span>
-              </button>
-              <button className="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
-                Use Email Instead
-              </button>
-            </div>
-            
-            <button 
-              onClick={handleCloseLogin}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {nfts.map((nft) => (
+            <div
+              key={nft.id}
+              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-[400px] flex flex-col"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+              <div className={`h-3/5 bg-gradient-to-br ${nft.color} flex items-center justify-center`}>
+                <span className="text-6xl">{nft.emoji}</span>
+              </div>
+              
+              <div className="p-4 flex flex-col flex-grow">
+                <h3 className="text-xl font-bold text-white mb-2">{nft.name}</h3>
+                <p className="text-purple-200 text-sm mb-4 flex-grow">{nft.description}</p>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-white font-bold">{nft.price}</span>
+                  <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full">
+                    {nft.charity}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-8 mt-12">
-        <div className="container mx-auto px-4 text-center text-gray-600">
-          <div className="flex justify-center space-x-4 mt-4">
-            <a href="#" className="text-purple-600 hover:text-purple-800">Terms</a>
-            <a href="#" className="text-purple-600 hover:text-purple-800">Privacy</a>
-            <a href="#" className="text-purple-600 hover:text-purple-800">FAQ</a>
-          </div>
-        </div>
-      </footer>
+      </div>
     </div>
   );
-};
-
-export default CharityNFTCollection;
+}
