@@ -1,18 +1,19 @@
+// components/ScopeButton.tsx
 'use client';
 
 import { useState } from 'react';
 
-interface GoofyButtonProps {
+interface ScopeButtonProps {
   message?: string;
   className?: string;
-  children?: React.ReactNode; // Add children prop
+  children?: React.ReactNode;
 }
 
-export default function GoofyButton({ 
-  message = "This button is only for presentation! 🎭", 
+export default function ScopeButton({ 
+  message = "This feature is outside the current project scope", 
   className = "",
-  children = "✨ Click for Magic! ✨" // Default children
-}: GoofyButtonProps) {
+  children = "Feature Demo"
+}: ScopeButtonProps) {
   const [isShowingMessage, setIsShowingMessage] = useState(false);
 
   const handleClick = () => {
@@ -28,18 +29,18 @@ export default function GoofyButton({
     <div className="relative">
       <button
         onClick={handleClick}
-        className={`bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105 active:scale-95 ${className}`}
+        className={`bg-gray-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-gray-700 transition-colors ${className}`}
       >
         {children}
       </button>
       
       {isShowingMessage && (
-        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4 shadow-lg z-10 animate-bounce">
-          <div className="flex items-center">
-            <span className="text-2xl mr-2">🤪</span>
-            <p className="text-yellow-800 font-medium">{message}</p>
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-blue-100 border border-blue-300 rounded-lg p-3 shadow-lg z-10 w-64">
+          <div className="flex items-start">
+            <span className="text-blue-600 mr-2 mt-0.5">ℹ️</span>
+            <p className="text-blue-800 text-sm">{message}</p>
           </div>
-          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-yellow-100 border-t-2 border-l-2 border-yellow-400 rotate-45"></div>
+          <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-blue-100 border-t border-l border-blue-300 rotate-45"></div>
         </div>
       )}
     </div>
