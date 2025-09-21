@@ -1,4 +1,5 @@
-// components/Footer.tsx
+import GoofyButton from '@/components/UnrealButton';
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 py-12 text-gray-400">
@@ -15,10 +16,30 @@ export default function Footer() {
           </div>
           
           <div className="flex space-x-6">
-            <a href="#" className="hover:text-white transition">Twitter</a>
-            <a href="#" className="hover:text-white transition">Discord</a>
-            <a href="#" className="hover:text-white transition">Instagram</a>
-            <a href="#" className="hover:text-white transition">GitHub</a>
+            <GoofyButton 
+              message="Our Twitter is in another castle! 🏰" 
+              className="!px-3 !py-1 !text-sm bg-transparent !bg-none border border-gray-600 hover:border-white hover:text-white transition"
+            >
+              Twitter
+            </GoofyButton>
+            <GoofyButton 
+              message="Discord? More like Dis-cord-less! 🎸" 
+              className="!px-3 !py-1 !text-sm bg-transparent !bg-none border border-gray-600 hover:border-white hover:text-white transition"
+            >
+              Discord
+            </GoofyButton>
+            <GoofyButton 
+              message="Instagram? We barely know 'em! 📸" 
+              className="!px-3 !py-1 !text-sm bg-transparent !bg-none border border-gray-600 hover:border-white hover:text-white transition"
+            >
+              Instagram
+            </GoofyButton>
+            <GoofyButton 
+              message="Our GitHub is on a coffee break! ☕" 
+              className="!px-3 !py-1 !text-sm bg-transparent !bg-none border border-gray-600 hover:border-white hover:text-white transition"
+            >
+              GitHub
+            </GoofyButton>
           </div>
         </div>
         

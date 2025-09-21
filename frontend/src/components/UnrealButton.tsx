@@ -5,11 +5,13 @@ import { useState } from 'react';
 interface GoofyButtonProps {
   message?: string;
   className?: string;
+  children?: React.ReactNode; // Add children prop
 }
 
 export default function GoofyButton({ 
   message = "This button is only for presentation! 🎭", 
-  className = "" 
+  className = "",
+  children = "✨ Click for Magic! ✨" // Default children
 }: GoofyButtonProps) {
   const [isShowingMessage, setIsShowingMessage] = useState(false);
 
@@ -28,7 +30,7 @@ export default function GoofyButton({
         onClick={handleClick}
         className={`bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105 active:scale-95 ${className}`}
       >
-        ✨ Click for Magic! ✨
+        {children}
       </button>
       
       {isShowingMessage && (
