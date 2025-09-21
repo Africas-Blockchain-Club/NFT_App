@@ -2,6 +2,15 @@
 
 import { useState, useEffect } from 'react';
 
+interface Charity {
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  emoji: string;
+  color: string;
+}
+
 interface NFT {
   id: number;
   name: string;
@@ -18,81 +27,7 @@ export default function NFTExplorePage() {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchNFTs = async () => {
-    try {
-      // In a real app, this would fetch from your API
-      const mockNFTs: NFT[] = [
-        {
-          id: 1,
-          name: "Ocean Guardians",
-          description: "This NFT represents a commitment to protecting marine life and ecosystems from pollution and overfishing.",
-          image: "",
-          charity: "Ocean Conservation",
-          price: "0.2 ETH",
-          emoji: "🌊",
-          color: "from-blue-400 to-blue-700"
-        },
-        {
-          id: 2,
-          name: "Forest Preservation",
-          description: "By acquiring this NFT, you're supporting efforts to conserve rainforests and prevent deforestation.",
-          image: "",
-          charity: "Rainforest Alliance",
-          price: "0.15 ETH",
-          emoji: "🌳",
-          color: "from-green-500 to-green-800"
-        },
-        {
-          id: 3,
-          name: "Clean Water Initiative",
-          description: "This NFT supports initiatives that provide access to clean drinking water in developing nations.",
-          image: "",
-          charity: "Water.org",
-          price: "0.18 ETH",
-          emoji: "💧",
-          color: "from-blue-300 to-blue-600"
-        },
-        {
-          id: 4,
-          name: "Wildlife Rescue",
-          description: "Your purchase directly contributes to rescuing and rehabilitating endangered species worldwide.",
-          image: "",
-          charity: "WWF",
-          price: "0.25 ETH",
-          emoji: "🐾",
-          color: "from-amber-500 to-amber-800"
-        },
-        {
-          id: 5,
-          name: "Climate Action",
-          description: "This NFT funds research and initiatives to combat climate change and create a sustainable future.",
-          image: "",
-          charity: "Climate Reality Project",
-          price: "0.22 ETH",
-          emoji: "🌎",
-          color: "from-teal-400 to-teal-700"
-        },
-        {
-          id: 6,
-          name: "Education Equality",
-          description: "This NFT helps ensure all children have access to quality education regardless of location.",
-          image: "",
-          charity: "Room to Read",
-          price: "0.16 ETH",
-          emoji: "📚",
-          color: "from-indigo-400 to-indigo-700"
-        }
-      ];
-
-      setNfts(mockNFTs);
-    } catch (error) {
-      console.error('Error fetching NFTs:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCharities = async () => {
+  const fetchCharities = async (): Promise<Charity[]> => {
     try {
       const response = await fetch('/nft_metadata.json');
       const charityData = await response.json();
@@ -100,6 +35,68 @@ export default function NFTExplorePage() {
     } catch (error) {
       console.error('Error fetching charities:', error);
       return [];
+    }
+  };
+
+  const fetchNFTs = async () => {
+    try {
+      // Fetch charities first
+      const charities = await fetchCharities();
+      
+      // Create NFTs based on charities
+      const nftData: NFT[] = charities.map((charity, index) => ({
+        id: index + 1,
+        name: `${charity.name} NFT`,
+        description: charity.description,
+        image: "",
+        charity: charity.name,
+        charityId: charity.id,
+        price: charity.price,
+        emoji: charity.emoji,
+        color: charity.color
+      }));
+
+      setNfts(nftData);
+    } catch (error) {
+      console.error('Error fetching NFTs:', error);
+      
+      // Fallback data if fetch fails
+      const fallbackNFTs: NFT[] = [
+        {
+          id: 1,
+          name: "Ocean Guardians NFT",
+          description: "Protecting marine life and ecosystems",
+          image: "",
+          charity: "Ocean Guardians",
+          price: "0.2 ETH",
+          emoji: "🌊",
+          color: "from-blue-400 to-blue-700"
+        },
+        {
+          id: 2,
+          name: "Forest Preservation NFT",
+          description: "Conserving rainforests worldwide",
+          image: "",
+          charity: "Forest Preservation",
+          price: "0.15 ETH",
+          emoji: "🌳",
+          color: "from-green-500 to-green-800"
+        },
+        {
+          id: 3,
+          name: "Clean Water Initiative NFT",
+          description: "Providing access to clean water",
+          image: "",
+          charity: "Clean Water Initiative",
+          price: "0.18 ETH",
+          emoji: "💧",
+          color: "from-blue-300 to-blue-600"
+        }
+      ];
+      
+      setNfts(fallbackNFTs);
+    } finally {
+      setLoading(false);
     }
   };
 
