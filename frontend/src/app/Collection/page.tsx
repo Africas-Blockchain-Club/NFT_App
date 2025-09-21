@@ -1,4 +1,3 @@
-// CharityNFTCollection.jsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -20,45 +19,120 @@ const CharityNFTCollection = () => {
   const [featuredNfts, setFeaturedNfts] = useState<CharityNFT[]>([]);
   const [showLogin, setShowLogin] = useState(false);
   const [selectedNft, setSelectedNft] = useState<CharityNFT | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+
+    
+    // Simulate API call to fetch NFT data
     const fetchNFTs = async () => {
-      try {
-        setLoading(true);
-        // Fetch NFT data from external file
-        const response = await fetch('/nft_metadata.json');
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch NFT data: ${response.status}`);
+      const mockData: CharityNFT[] = [
+        {
+          id: 1,
+          name: "Ocean Guardians",
+          description: "Protecting marine life and ecosystems",
+          longDescription: "This NFT represents a commitment to protecting marine life and ecosystems from pollution and overfishing. Each purchase helps fund ocean conservation efforts worldwide.",
+          emoji: "🌊",
+          color: "from-blue-400 to-blue-700",
+          price: "0.2 ETH",
+          featured: true,
+          artist: "Marina Waters"
+        },
+        {
+          id: 2,
+          name: "Forest Preservation",
+          description: "Conserving rainforests worldwide",
+          longDescription: "By acquiring this NFT, you're supporting efforts to conserve rainforests and prevent deforestation across the globe. Each token funds the protection of 100 square meters of forest.",
+          emoji: "🌳",
+          color: "from-green-500 to-green-800",
+          price: "0.15 ETH",
+          featured: true,
+          artist: "Forest Guardian"
+        },
+        {
+          id: 3,
+          name: "Clean Water Initiative",
+          description: "Providing access to clean water",
+          longDescription: "This NFT supports initiatives that provide access to clean drinking water in developing nations. Your contribution helps build wells and water purification systems.",
+          emoji: "💧",
+          color: "from-blue-300 to-blue-600",
+          price: "0.18 ETH",
+          featured: true,
+          artist: "Aqua Project"
+        },
+        {
+          id: 4,
+          name: "Wildlife Rescue",
+          description: "Rescuing endangered species",
+          longDescription: "Your purchase of this NFT directly contributes to rescuing and rehabilitating endangered species around the world. Each token supports animal sanctuaries and protection programs.",
+          emoji: "🐾",
+          color: "from-amber-500 to-amber-800",
+          price: "0.25 ETH",
+          artist: "Wild Protectors"
+        },
+        {
+          id: 5,
+          name: "Climate Action",
+          description: "Combating climate change",
+          longDescription: "This NFT funds research and initiatives to combat climate change. Holders become part of a community dedicated to creating a sustainable future for our planet.",
+          emoji: "🌎",
+          color: "from-teal-400 to-teal-700",
+          price: "0.22 ETH",
+          artist: "Climate Warriors"
+        },
+        {
+          id: 6,
+          name: "Disaster Relief",
+          description: "Aid for natural disasters",
+          longDescription: "Support communities affected by natural disasters with this NFT. Funds provide immediate aid, shelter, and resources to those in crisis situations.",
+          emoji: "🚑",
+          color: "from-red-400 to-red-700",
+          price: "0.3 ETH",
+          artist: "Hope Providers"
+        },
+        {
+          id: 7,
+          name: "Education Equality",
+          description: "Access to quality education",
+          longDescription: "This NFT helps ensure all children have access to quality education regardless of location. Your support builds schools and provides learning materials.",
+          emoji: "📚",
+          color: "from-indigo-400 to-indigo-700",
+          price: "0.16 ETH",
+          artist: "EduFuture"
+        },
+        {
+          id: 8,
+          name: "Medical Research",
+          description: "Funding disease research",
+          longDescription: "Contribute to cutting-edge research for diseases affecting millions worldwide. This NFT supports medical breakthroughs and healthcare innovation.",
+          emoji: "❤️",
+          color: "from-red-300 to-red-600",
+          price: "0.28 ETH",
+          artist: "MedInnovate"
+        },
+        {
+          id: 9,
+          name: "Hunger Relief",
+          description: "Food security for communities",
+          longDescription: "This NFT provides meals and food security to communities in need. Each token represents 100 meals distributed to those facing food insecurity.",
+          emoji: "🍲",
+          color: "from-orange-400 to-orange-700",
+          price: "0.12 ETH",
+          artist: "Food Angels"
+        },
+        {
+          id: 10,
+          name: "Refugee Support",
+          description: "Assisting refugees worldwide",
+          longDescription: "Support refugees with shelter, food, and integration services through this NFT. Your contribution makes a direct impact on displaced lives.",
+          emoji: "🕊️",
+          color: "from-gray-300 to-gray-600",
+          price: "0.2 ETH",
+          artist: "Safe Haven"
         }
-        
-        const text = await response.text();
-        
-        // Extract the array from the file (this is a simple approach)
-        // For a more robust solution, consider using a JSON file instead
-        const arrayMatch = text.match(/\[[\s\S]*\]/);
-        
-        if (arrayMatch) {
-          try {
-            // This is a simplified approach - in production, use proper JSON
-            const nftData = eval(`(${arrayMatch[0]})`);
-            setNfts(nftData);
-            setFeaturedNfts(nftData.filter((nft: CharityNFT) => nft.featured));
-          } catch (e) {
-            console.error("Error parsing NFT data:", e);
-            setError("Failed to parse NFT data");
-          }
-        } else {
-          setError("No valid NFT data found");
-        }
-      } catch (err) {
-        console.error("Error loading NFT data:", err);
-        setError(err instanceof Error ? err.message : "Unknown error occurred");
-      } finally {
-        setLoading(false);
-      }
+      ];
+      
+      setNfts(mockData);
+      setFeaturedNfts(mockData.filter(nft => nft.featured));
     };
 
     fetchNFTs();
@@ -73,35 +147,6 @@ const CharityNFTCollection = () => {
     setShowLogin(false);
     setSelectedNft(null);
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading NFT data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-2xl shadow-lg max-w-md">
-          <div className="text-red-500 text-4xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Data</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-2 rounded-full font-medium hover:from-purple-600 hover:to-indigo-700 transition-all"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100">
@@ -259,7 +304,6 @@ const CharityNFTCollection = () => {
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-8 mt-12">
         <div className="container mx-auto px-4 text-center text-gray-600">
-          <p>© 2023 CharityNFTs. All rights reserved.</p>
           <div className="flex justify-center space-x-4 mt-4">
             <a href="#" className="text-purple-600 hover:text-purple-800">Terms</a>
             <a href="#" className="text-purple-600 hover:text-purple-800">Privacy</a>
