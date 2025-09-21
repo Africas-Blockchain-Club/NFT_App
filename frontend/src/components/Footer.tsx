@@ -1,4 +1,4 @@
-import GoofyButton from '@/components/UnrealButton';
+import ScopeButton from '@/components/UnrealButton';
 
 export default function Footer() {
   return (
@@ -15,31 +15,31 @@ export default function Footer() {
             <p className="mt-2">Making charitable giving accessible through technology</p>
           </div>
           
-          <div className="flex space-x-6">
-            <GoofyButton 
-              message="Our Twitter is in another castle! 🏰" 
-              className="!px-3 !py-1 !text-sm bg-transparent !bg-none border border-gray-600 hover:border-white hover:text-white transition"
+          <div className="flex space-x-4">
+            <ScopeButton 
+              message="Social media integration is outside the current project scope"
+              className="text-gray-400 hover:text-white transition-colors"
             >
               Twitter
-            </GoofyButton>
-            <GoofyButton 
-              message="Discord? More like Dis-cord-less! 🎸" 
-              className="!px-3 !py-1 !text-sm bg-transparent !bg-none border border-gray-600 hover:border-white hover:text-white transition"
+            </ScopeButton>
+            <ScopeButton 
+              message="Community platform integration is outside the current project scope"
+              className="text-gray-400 hover:text-white transition-colors"
             >
               Discord
-            </GoofyButton>
-            <GoofyButton 
-              message="Instagram? We barely know 'em! 📸" 
-              className="!px-3 !py-1 !text-sm bg-transparent !bg-none border border-gray-600 hover:border-white hover:text-white transition"
+            </ScopeButton>
+            <ScopeButton 
+              message="Social media integration is outside the current project scope"
+              className="text-gray-400 hover:text-white transition-colors"
             >
               Instagram
-            </GoofyButton>
-            <GoofyButton 
-              message="Our GitHub is on a coffee break! ☕" 
-              className="!px-3 !py-1 !text-sm bg-transparent !bg-none border border-gray-600 hover:border-white hover:text-white transition"
+            </ScopeButton>
+            <ScopeButton 
+              message="Code repository integration is outside the current project scope"
+              className="text-gray-400 hover:text-white transition-colors"
             >
               GitHub
-            </GoofyButton>
+            </ScopeButton>
           </div>
         </div>
         
