@@ -92,6 +92,17 @@ export default function NFTExplorePage() {
     }
   };
 
+  const fetchCharities = async () => {
+    try {
+      const response = await fetch('/nft_metadata.json');
+      const charityData = await response.json();
+      return charityData.charities;
+    } catch (error) {
+      console.error('Error fetching charities:', error);
+      return [];
+    }
+  };
+
   useEffect(() => {
     fetchNFTs();
   }, []);
