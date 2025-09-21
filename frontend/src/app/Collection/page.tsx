@@ -60,41 +60,7 @@ export default function NFTExplorePage() {
     } catch (error) {
       console.error('Error fetching NFTs:', error);
       
-      // Fallback data if fetch fails
-      const fallbackNFTs: NFT[] = [
-        {
-          id: 1,
-          name: "Ocean Guardians NFT",
-          description: "Protecting marine life and ecosystems",
-          image: "",
-          charity: "Ocean Guardians",
-          price: "0.2 ETH",
-          emoji: "🌊",
-          color: "from-blue-400 to-blue-700"
-        },
-        {
-          id: 2,
-          name: "Forest Preservation NFT",
-          description: "Conserving rainforests worldwide",
-          image: "",
-          charity: "Forest Preservation",
-          price: "0.15 ETH",
-          emoji: "🌳",
-          color: "from-green-500 to-green-800"
-        },
-        {
-          id: 3,
-          name: "Clean Water Initiative NFT",
-          description: "Providing access to clean water",
-          image: "",
-          charity: "Clean Water Initiative",
-          price: "0.18 ETH",
-          emoji: "💧",
-          color: "from-blue-300 to-blue-600"
-        }
-      ];
-      
-      setNfts(fallbackNFTs);
+
     } finally {
       setLoading(false);
     }
