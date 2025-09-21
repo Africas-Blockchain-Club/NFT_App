@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-\import { useUser } from '@/context/UserContext';
+import Image from 'next/image';
+import { useUser } from '@/context/UserContext';
 import { useAuth } from '@/hooks/useAuth';
 import { mintNFT } from '@/utils/mintNFT';
 
