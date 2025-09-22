@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
-
+import Navbar from '@/components/Navbar'; // Make sure this path is correct
 
 interface Charity {
   id: number;
@@ -28,6 +27,18 @@ interface NFT {
 export default function NFTExplorePage() {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add login state
+
+  // Login/Logout handlers
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    // Add your actual login logic here
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    // Add your actual logout logic here
+  };
 
   const fetchCharities = async (): Promise<Charity[]> => {
     try {
@@ -61,8 +72,6 @@ export default function NFTExplorePage() {
       setNfts(nftData);
     } catch (error) {
       console.error('Error fetching NFTs:', error);
-      
-
     } finally {
       setLoading(false);
     }
@@ -70,6 +79,10 @@ export default function NFTExplorePage() {
 
   useEffect(() => {
     fetchNFTs();
+    
+    // Check if user is already logged in (from localStorage, context, etc.)
+    // Example: const loggedIn = localStorage.getItem('userToken');
+    // setIsLoggedIn(!!loggedIn);
   }, []);
 
   if (loading) {
@@ -85,35 +98,45 @@ export default function NFTExplorePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900">
-      <div className="container mx-auto px-4 py-8">
-        <header className="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-8 text-center border border-white/20">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">🌊 NFT Charity Collection</h1>
-          <p className="text-purple-200 text-lg">Explore and support charitable causes through digital collectibles</p>
-        </header>
+      {/* Navbar */}
+      <Navbar 
+        isLoggedIn={isLoggedIn} 
+        onLogin={handleLogin} 
+        onLogout={handleLogout} 
+      />
+      
+      {/* Add padding-top to account for fixed navbar */}
+      <div className="pt-16"> {/* Adjust this value based on your navbar height */}
+        <div className="container mx-auto px-4 py-8">
+          <header className="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-8 text-center border border-white/20">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">🌊 NFT Charity Collection</h1>
+            <p className="text-purple-200 text-lg">Explore and support charitable causes through digital collectibles</p>
+          </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {nfts.map((nft) => (
-            <div
-              key={nft.id}
-              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-[400px] flex flex-col"
-            >
-              <div className={`h-3/5 bg-gradient-to-br ${nft.color} flex items-center justify-center`}>
-                <span className="text-6xl">{nft.emoji}</span>
-              </div>
-              
-              <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold text-white mb-2">{nft.name}</h3>
-                <p className="text-purple-200 text-sm mb-4 flex-grow">{nft.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {nfts.map((nft) => (
+              <div
+                key={nft.id}
+                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-[400px] flex flex-col"
+              >
+                <div className={`h-3/5 bg-gradient-to-br ${nft.color} flex items-center justify-center`}>
+                  <span className="text-6xl">{nft.emoji}</span>
+                </div>
                 
-                <div className="flex justify-between items-center">
-                  <span className="text-white font-bold">{nft.price}</span>
-                  <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full">
-                    {nft.charity}
-                  </span>
+                <div className="p-4 flex flex-col flex-grow">
+                  <h3 className="text-xl font-bold text-white mb-2">{nft.name}</h3>
+                  <p className="text-purple-200 text-sm mb-4 flex-grow">{nft.description}</p>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-white font-bold">{nft.price}</span>
+                    <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full">
+                      {nft.charity}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
