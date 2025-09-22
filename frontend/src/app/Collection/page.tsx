@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Navbar from '@/components/Navbar';
+
 
 interface Charity {
   id: number;

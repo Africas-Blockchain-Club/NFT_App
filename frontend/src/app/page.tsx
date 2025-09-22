@@ -1,40 +1,144 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import HowItWorks from '@/components/HowItWorks';
-import TechnologyStack from '@/components/TechnologyStack';
-import Footer from '@/components/Footer';
+import Navbar from '@/components/Navbar'; // Make sure this path is correct
 
-export default function CharityNFTLanding() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+interface Charity {
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  emoji: string;
+  color: string;
+}
 
-  useEffect(() => {
-    // Check if user is logged in (this would come from your auth system)
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(loggedIn);
-  }, []);
+interface NFT {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  charity?: string;
+  charityId?: number;
+  price?: string;
+  emoji?: string;
+  color?: string;
+}
 
+export default function NFTExplorePage() {
+  const [nfts, setNfts] = useState<NFT[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add login state
+
+  // Login/Logout handlers
   const handleLogin = () => {
-    // Simulate login
-    localStorage.setItem('isLoggedIn', 'true');
     setIsLoggedIn(true);
+    // Add your actual login logic here
   };
 
   const handleLogout = () => {
-    // Simulate logout
-    localStorage.removeItem('isLoggedIn');
     setIsLoggedIn(false);
+    // Add your actual logout logic here
   };
+
+  const fetchCharities = async (): Promise<Charity[]> => {
+    try {
+      const response = await fetch('/nft_metadata.json');
+      const charityData = await response.json();
+      return charityData.charities;
+    } catch (error) {
+      console.error('Error fetching charities:', error);
+      return [];
+    }
+  };
+
+  const fetchNFTs = async () => {
+    try {
+      // Fetch charities first
+      const charities = await fetchCharities();
+      
+      // Create NFTs based on charities
+      const nftData: NFT[] = charities.map((charity, index) => ({
+        id: index + 1,
+        name: `${charity.name} NFT`,
+        description: charity.description,
+        image: "",
+        charity: charity.name,
+        charityId: charity.id,
+        price: charity.price,
+        emoji: charity.emoji,
+        color: charity.color
+      }));
+
+      setNfts(nftData);
+    } catch (error) {
+      console.error('Error fetching NFTs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNFTs();
+    
+    // Check if user is already logged in (from localStorage, context, etc.)
+    // Example: const loggedIn = localStorage.getItem('userToken');
+    // setIsLoggedIn(!!loggedIn);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900 flex items-center justify-center">
+        <div className="text-white text-xl flex items-center">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+          Loading NFT collection...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900">
-      <Navbar isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
-      <Hero />
-      <HowItWorks />
-      <TechnologyStack />
-      <Footer />
+      {/* Navbar */}
+      <Navbar 
+        isLoggedIn={isLoggedIn} 
+        onLogin={handleLogin} 
+        onLogout={handleLogout} 
+      />
+      
+      {/* Add padding-top to account for fixed navbar */}
+      <div className="pt-16"> {/* Adjust this value based on your navbar height */}
+        <div className="container mx-auto px-4 py-8">
+          <header className="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-8 text-center border border-white/20">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">🌊 NFT Charity Collection</h1>
+            <p className="text-purple-200 text-lg">Explore and support charitable causes through digital collectibles</p>
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {nfts.map((nft) => (
+              <div
+                key={nft.id}
+                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-[400px] flex flex-col"
+              >
+                <div className={`h-3/5 bg-gradient-to-br ${nft.color} flex items-center justify-center`}>
+                  <span className="text-6xl">{nft.emoji}</span>
+                </div>
+                
+                <div className="p-4 flex flex-col flex-grow">
+                  <h3 className="text-xl font-bold text-white mb-2">{nft.name}</h3>
+                  <p className="text-purple-200 text-sm mb-4 flex-grow">{nft.description}</p>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-white font-bold">{nft.price}</span>
+                    <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full">
+                      {nft.charity}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
