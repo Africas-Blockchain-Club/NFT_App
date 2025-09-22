@@ -24,3 +24,14 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+/* Or be more specific for your NFT buttons */
+button:not(:disabled):hover {
+  cursor: pointer;
+}
+
+/* For disabled buttons */
+button:disabled:hover {
+  cursor: not-allowed;
+}
