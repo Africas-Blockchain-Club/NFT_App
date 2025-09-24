@@ -41,33 +41,57 @@ export default function Dashboard() {
     }
   };
 
-  const fetchNFTs = async () => {
+const fetchNFTs = async () => {
     if (!currentUser) return;
 
     try {
-      // Fetch charities first
-      const charityData = await fetchCharities();
-      
-      // Fetch NFTs
+      // Fetch the metadata file once
       const response = await fetch('/nft_metadata.json');
-      const nftData: NFT[] = await response.json();
-
+      const data = await response.json();
       
-      // Assign charity information to each NFT
-      const nftsWithCharity = nftData.map((nft, index) => {
-        const charityIndex = index % charityData.length;
-        const charity = charityData[charityIndex];
+      // Extract charities - this exists in your file
+      const charityData = data.charities || [];
+      
+      // Since there's no NFTs array in your file, we'll generate them dynamically
+      const generatedNfts: NFT[] = [];
+      
+      // Generate 21 NFTs (one for each charity) or more if you want
+      for (let i = 0; i < charityData.length; i++) {
+        const charity = charityData[i];
         
-        return {
-          ...nft,
+        generatedNfts.push({
+          id: i + 1,
+          name: `${charity.name} NFT #${i + 1}`,
+          description: `This exclusive NFT supports ${charity.name}. ${charity.description}`,
+          image: '', // You can add image URLs later
           charity: charity.name,
           charityId: charity.id,
           price: charity.price,
           emoji: charity.emoji,
-          color: charity.color,
-          name: `${charity.name} NFT #${nft.id}`
-        };
-      });
+          color: charity.color.replace('bg-', '') // Remove Tailwind classes for color
+        });
+      }
+      
+      // If you want more NFTs than charities, you can duplicate/cycle through charities
+      const totalNfts = 50; // Or whatever number you want
+      const nftsWithCharity = [];
+      
+      for (let i = 0; i < totalNfts; i++) {
+        const charityIndex = i % charityData.length;
+        const charity = charityData[charityIndex];
+        
+        nftsWithCharity.push({
+          id: i + 1,
+          name: `${charity.name} NFT #${i + 1}`,
+          description: `This exclusive NFT supports ${charity.name}. ${charity.description}`,
+          image: '',
+          charity: charity.name,
+          charityId: charity.id,
+          price: charity.price,
+          emoji: charity.emoji,
+          color: charity.color.replace('bg-', '') // Remove Tailwind prefix for CSS use
+        });
+      }
       
       setNfts(nftsWithCharity);
       
@@ -80,19 +104,22 @@ export default function Dashboard() {
       
     } catch (error) {
       console.error('Error fetching NFTs:', error);
-      // Fallback to charity-based NFTs if metadata fails
-      const charityData = await fetchCharities();
+      
+      // Fallback with basic NFT generation
       const fallbackNfts: NFT[] = [];
+      const fallbackCharities = [
+        { id: 1, name: "Default Charity", description: "Supporting good causes", price: "0.1 ETH", emoji: "❤️", color: "#ff0000" }
+      ];
       
       for (let i = 0; i < 10; i++) {
-        const charityIndex = i % charityData.length;
-        const charity = charityData[charityIndex];
+        const charityIndex = i % fallbackCharities.length;
+        const charity = fallbackCharities[charityIndex];
         
         fallbackNfts.push({
           id: i,
           name: `${charity.name} NFT #${i}`,
-          description: `This NFT supports ${charity.name}. ${charity.description}`,
-          image: '', // Will use emoji as fallback
+          description: `This NFT supports ${charity.name}.`,
+          image: '',
           charity: charity.name,
           charityId: charity.id,
           price: charity.price,
