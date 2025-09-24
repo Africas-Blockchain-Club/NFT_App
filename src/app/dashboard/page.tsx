@@ -30,16 +30,6 @@ export default function Dashboard() {
   
   useAuth();
 
-  const fetchCharities = async () => {
-    try {
-      const response = await fetch('/nft_metadata.json');
-      const charityData = await response.json();
-      return charityData.charities;
-    } catch (error) {
-      console.error('Error fetching charities:', error);
-      return [];
-    }
-  };
 
 const fetchNFTs = async () => {
     if (!currentUser) return;
@@ -270,9 +260,19 @@ const fetchNFTs = async () => {
 {activeTab === 'available' && (
   <div className="mb-8">
     <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-      <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 "></path>
-      </svg>
+      <svg 
+  xmlns="http://www.w3.org/2000/svg" 
+  fill="none" 
+  viewBox="0 0 24 24" 
+  stroke="currentColor"
+>
+  <path 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    strokeWidth="2" 
+    d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2v-6a2 2 0 00-2-2M5 12V9a2 2 0 012-2h10a2 2 0 012 2v3M5 12V6a2 2 0 012-2h10a2 2 0 012 2v6"
+  ></path>
+</svg>
       Available NFT Collection
     </h2>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
