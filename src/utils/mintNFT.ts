@@ -9,7 +9,6 @@ import {
 } from "@zerodev/sdk";
 import { getEntryPoint, KERNEL_V3_1 } from "@zerodev/sdk/constants";
 
-// ✅ Use the corrected environment variables
 const ZERODEV_RPC = process.env.NEXT_PUBLIC_ZERODEV_RPC!;
 const SCROLL_RPC = process.env.NEXT_PUBLIC_SCROLL_RPC!;
 
@@ -21,7 +20,6 @@ const contractABI = parseAbi([
 
 const chain = scrollSepolia;
 
-// ✅ Public client for reading blockchain data
 const publicClient = createPublicClient({
   transport: http(SCROLL_RPC),
   chain,
@@ -38,7 +36,6 @@ export const mintNFT = async (privateKey: `0x${string}`) => {
     const userSigner = privateKeyToAccount(privateKey);
     console.log("✅ EOA address:", userSigner.address);
 
-    // Construct validator and account
     const ecdsaValidator = await signerToEcdsaValidator(publicClient, {
       signer: userSigner,
       entryPoint,
@@ -60,19 +57,18 @@ export const mintNFT = async (privateKey: `0x${string}`) => {
       transport: http(ZERODEV_RPC),
     });
 
-    // Kernel client uses ZeroDev RPC for bundler operations
     const kernelClient = createKernelAccountClient({
       account,
       chain,
       bundlerTransport: http(ZERODEV_RPC),
       paymaster: {
         getPaymasterData(userOperation) {
+          console.log("🔄 Getting paymaster data...");
           return zerodevPaymaster.sponsorUserOperation({ userOperation });
         },
       },
     });
 
-    // Check current balance
     const currentBalance = await publicClient.readContract({
       address: contractAddress,
       abi: contractABI,
@@ -81,7 +77,6 @@ export const mintNFT = async (privateKey: `0x${string}`) => {
     });
     console.log("📊 Current NFT balance:", currentBalance);
 
-    // Send UserOp
     const userOpHash = await kernelClient.sendUserOperation({
       callData: await kernelClient.account.encodeCalls([
         {
@@ -97,7 +92,6 @@ export const mintNFT = async (privateKey: `0x${string}`) => {
     });
     console.log("✅ UserOp submitted:", userOpHash);
 
-    // Wait for receipt
     const receipt = await kernelClient.waitForUserOperationReceipt({
       hash: userOpHash,
     });
@@ -117,11 +111,12 @@ export const mintNFT = async (privateKey: `0x${string}`) => {
       newBalance: Number(newBalance)
     };
     
-  } catch (error: any) {
+  } catch (error) {
     console.error("❌ Detailed minting error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return { 
       success: false, 
-      error: error?.message || "Unknown error",
+      error: errorMessage,
       transactionHash: null,
       newBalance: null
     };
