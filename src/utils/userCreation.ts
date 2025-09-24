@@ -1,5 +1,6 @@
 import { createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
+import { generatePrivateKey } from 'viem/accounts'; // Import the proper function
 import { sepolia } from 'viem/chains';
 
 export interface User {
@@ -13,13 +14,14 @@ export interface User {
 
 export async function createUserAccount(username: string, password: string): Promise<User> {
   try {
-    // Generate a new private key
-    const account = privateKeyToAccount(`0x${generatePrivateKey()}`);
+    // Generate a new private key using viem's built-in function
+    const privateKey = generatePrivateKey();
+    const account = privateKeyToAccount(privateKey);
     
     const user: User = {
       username,
       password,
-      privateKey: account.privateKey,
+      privateKey: privateKey, // Use the generated private key directly
       smartAccountAddress: account.address,
       createdAt: new Date().toISOString(),
       ownedNFTs: []
@@ -32,14 +34,7 @@ export async function createUserAccount(username: string, password: string): Pro
   }
 }
 
-function generatePrivateKey(): string {
-  const chars = '0123456789abcdef';
-  let result = '';
-  for (let i = 0; i < 64; i++) {
-    result += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return result;
-}
+// Remove the custom generatePrivateKey function since we're using viem's built-in one
 
 export async function saveUserToFile(user: User): Promise<void> {
   try {
