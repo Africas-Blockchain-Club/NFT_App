@@ -79,7 +79,7 @@ const fetchNFTs = async () => {
           charityId: charity.id,
           price: charity.price,
           emoji: charity.emoji,
-          color: charity.color.replace('bg-', '') // Remove Tailwind prefix for CSS use
+          color: charity.color.replace('bg-', '') 
         });
       }
       
@@ -259,22 +259,21 @@ const fetchNFTs = async () => {
 {/* Available NFTs */}
 {activeTab === 'available' && (
   <div className="mb-8">
-    <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-      <svg 
-  xmlns="http://www.w3.org/2000/svg" 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  stroke="currentColor"
->
-  <path 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    strokeWidth="2" 
-    d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2v-6a2 2 0 00-2-2M5 12V9a2 2 0 012-2h10a2 2 0 012 2v3M5 12V6a2 2 0 012-2h10a2 2 0 012 2v6"
-  ></path>
-</svg>
-      Available NFT Collection
-    </h2>
+<h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+  <svg 
+    width="20" 
+    height="20" 
+    viewBox="0 0 14 14" 
+    fill="none" 
+    stroke="currentColor"
+    className="mr-3" 
+  >
+    <rect x="1" y="4" width="12" height="8" rx="1" />
+    <path d="M4 4V2C4 1 5 0 6 0H8C9 0 10 1 10 2V4" />
+    <path d="M1 6H13" />
+  </svg>
+  Available NFT Collection
+</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {nfts.map((nft) => {
         const isOwned = userNfts.some(owned => owned.id === nft.id);

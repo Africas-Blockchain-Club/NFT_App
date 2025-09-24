@@ -1,5 +1,3 @@
-'use client';
-
 import { createPublicClient, encodeFunctionData, http, parseAbi } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { scrollSepolia } from "viem/chains";
@@ -11,7 +9,10 @@ import {
 } from "@zerodev/sdk";
 import { getEntryPoint, KERNEL_V3_1 } from "@zerodev/sdk/constants";
 
+// ✅ Use the corrected environment variables
 const ZERODEV_RPC = process.env.NEXT_PUBLIC_ZERODEV_RPC!;
+const SCROLL_RPC = process.env.NEXT_PUBLIC_SCROLL_RPC!;
+
 const contractAddress = "0x5b9DF92f3F9cAFa7d804f81FA9A5db68cc0AE52a";
 const contractABI = parseAbi([
   "function safeMint(address _to) public",
@@ -19,101 +20,110 @@ const contractABI = parseAbi([
 ]);
 
 const chain = scrollSepolia;
+
+// ✅ Public client for reading blockchain data
 const publicClient = createPublicClient({
-  transport: http(ZERODEV_RPC),
+  transport: http(SCROLL_RPC),
   chain,
 });
+
 const entryPoint = getEntryPoint("0.7");
 
 export const mintNFT = async (privateKey: `0x${string}`) => {
-  const userSigner = privateKeyToAccount(privateKey);
-  
-  console.log("====================================");
-  console.log("🧑‍💼 USER SESSION");
-  console.log("User EOA address:", userSigner.address);
+  try {
+    console.log("🔧 Starting mintNFT function...");
+    console.log("📡 Using ZeroDev RPC:", ZERODEV_RPC);
+    console.log("📡 Using Scroll RPC:", SCROLL_RPC);
+    
+    const userSigner = privateKeyToAccount(privateKey);
+    console.log("✅ EOA address:", userSigner.address);
 
-  // Construct a validator for THIS user
-  const ecdsaValidator = await signerToEcdsaValidator(publicClient, {
-    signer: userSigner,
-    entryPoint,
-    kernelVersion: KERNEL_V3_1,
-  });
+    // Construct validator and account
+    const ecdsaValidator = await signerToEcdsaValidator(publicClient, {
+      signer: userSigner,
+      entryPoint,
+      kernelVersion: KERNEL_V3_1,
+    });
 
-  // Construct a Kernel account for THIS user
-  const account = await createKernelAccount(publicClient, {
-    entryPoint,
-    plugins: {
-      sudo: ecdsaValidator,
-    },
-    kernelVersion: KERNEL_V3_1,
-  });
-
-  const zerodevPaymaster = createZeroDevPaymasterClient({
-    chain,
-    transport: http(ZERODEV_RPC),
-  });
-
-  // Construct a Kernel account client for THIS user
-  const kernelClient = createKernelAccountClient({
-    account,
-    chain,
-    bundlerTransport: http(ZERODEV_RPC),
-    paymaster: {
-      getPaymasterData(userOperation) {
-        return zerodevPaymaster.sponsorUserOperation({ userOperation });
+    const account = await createKernelAccount(publicClient, {
+      entryPoint,
+      plugins: {
+        sudo: ecdsaValidator,
       },
-    },
-  });
+      kernelVersion: KERNEL_V3_1,
+    });
 
-  const accountAddress = kernelClient.account.address;
-  console.log("User's smart account:", accountAddress);
+    console.log("✅ Smart account address:", account.address);
 
-  // Check current NFT balance for THIS user
-  const currentBalance = await publicClient.readContract({
-    address: contractAddress,
-    abi: contractABI,
-    functionName: "balanceOf",
-    args: [accountAddress],
-  });
+    const zerodevPaymaster = createZeroDevPaymasterClient({
+      chain,
+      transport: http(ZERODEV_RPC),
+    });
 
-  console.log(`User's current NFT balance: ${currentBalance}`);
-
-  // Send a UserOp to mint NFT for THIS user
-  const userOpHash = await kernelClient.sendUserOperation({
-    callData: await kernelClient.account.encodeCalls([
-      {
-        to: contractAddress,
-        value: BigInt(0),
-        data: encodeFunctionData({
-          abi: contractABI,
-          functionName: "safeMint",
-          args: [accountAddress],
-        }),
+    // Kernel client uses ZeroDev RPC for bundler operations
+    const kernelClient = createKernelAccountClient({
+      account,
+      chain,
+      bundlerTransport: http(ZERODEV_RPC),
+      paymaster: {
+        getPaymasterData(userOperation) {
+          return zerodevPaymaster.sponsorUserOperation({ userOperation });
+        },
       },
-    ]),
-  });
-  console.log("Submitted UserOp:", userOpHash);
+    });
 
-  // Wait for the UserOp to be included on-chain
-  const receipt = await kernelClient.waitForUserOperationReceipt({
-    hash: userOpHash,
-  });
-  console.log("UserOp confirmed:", receipt.userOpHash);
-  console.log("TxHash:", receipt.receipt.transactionHash);
+    // Check current balance
+    const currentBalance = await publicClient.readContract({
+      address: contractAddress,
+      abi: contractABI,
+      functionName: "balanceOf",
+      args: [account.address],
+    });
+    console.log("📊 Current NFT balance:", currentBalance);
 
-  // Print new NFT balance for THIS user
-  const newBalance = await publicClient.readContract({
-    address: contractAddress,
-    abi: contractABI,
-    functionName: "balanceOf",
-    args: [accountAddress],
-  });
-  console.log(`User's new NFT balance: ${newBalance}`);
-  console.log("====================================");
+    // Send UserOp
+    const userOpHash = await kernelClient.sendUserOperation({
+      callData: await kernelClient.account.encodeCalls([
+        {
+          to: contractAddress,
+          value: BigInt(0),
+          data: encodeFunctionData({
+            abi: contractABI,
+            functionName: "safeMint",
+            args: [account.address],
+          }),
+        },
+      ]),
+    });
+    console.log("✅ UserOp submitted:", userOpHash);
 
-  return { 
-    success: true, 
-    transactionHash: receipt.receipt.transactionHash,
-    newBalance: Number(newBalance)
-  };
+    // Wait for receipt
+    const receipt = await kernelClient.waitForUserOperationReceipt({
+      hash: userOpHash,
+    });
+    console.log("✅ Transaction confirmed:", receipt.receipt.transactionHash);
+
+    const newBalance = await publicClient.readContract({
+      address: contractAddress,
+      abi: contractABI,
+      functionName: "balanceOf",
+      args: [account.address],
+    });
+    console.log("📊 New NFT balance:", newBalance);
+
+    return { 
+      success: true, 
+      transactionHash: receipt.receipt.transactionHash,
+      newBalance: Number(newBalance)
+    };
+    
+  } catch (error: any) {
+    console.error("❌ Detailed minting error:", error);
+    return { 
+      success: false, 
+      error: error?.message || "Unknown error",
+      transactionHash: null,
+      newBalance: null
+    };
+  }
 };

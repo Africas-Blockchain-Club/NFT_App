@@ -81,5 +81,13 @@
     "smartAccountAddress": "0xDB4e0B7Cdd795BcBaC373925181465cad0D40e4E",
     "createdAt": "2025-09-20T20:24:12.818Z",
     "ownedNFTs": []
+  },
+  {
+    "username": "nat",
+    "password": "fdshfsgjhkghl",
+    "privateKey": "0xd500aa156279115427bc00d1b93ebda47da73f347d205f2eec5c592209bcaa20",
+    "smartAccountAddress": "0xff525f798c089a11C98a62c8991dc5504744fa36",
+    "createdAt": "2025-09-24T16:26:09.565Z",
+    "ownedNFTs": []
   }
 ]

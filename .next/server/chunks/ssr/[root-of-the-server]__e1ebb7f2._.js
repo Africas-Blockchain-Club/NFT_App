@@ -71,112 +71,120 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$clients$2f$kernelAccountClient$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@zerodev/sdk/_esm/clients/kernelAccountClient.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$clients$2f$paymasterClient$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@zerodev/sdk/_esm/clients/paymasterClient.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$constants$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@zerodev/sdk/_esm/constants.js [app-ssr] (ecmascript)");
-'use client';
 ;
 ;
 ;
 ;
 ;
 ;
-const ZERODEV_RPC = process.env.NEXT_PUBLIC_ZERODEV_RPC;
+// ✅ Use the corrected environment variables
+const ZERODEV_RPC = ("TURBOPACK compile-time value", "https://rpc.zerodev.app/api/v3/3752311b-fb60-4900-ac94-66d92b19b675/chain/534351");
+const SCROLL_RPC = ("TURBOPACK compile-time value", "https://sepolia-rpc.scroll.io");
 const contractAddress = "0x5b9DF92f3F9cAFa7d804f81FA9A5db68cc0AE52a";
 const contractABI = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$abitype$2f$dist$2f$esm$2f$human$2d$readable$2f$parseAbi$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["parseAbi"])([
     "function safeMint(address _to) public",
     "function balanceOf(address owner) external view returns (uint256 balance)"
 ]);
 const chain = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$chains$2f$definitions$2f$scrollSepolia$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["scrollSepolia"];
+// ✅ Public client for reading blockchain data
 const publicClient = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$clients$2f$createPublicClient$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createPublicClient"])({
-    transport: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$clients$2f$transports$2f$http$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["http"])(ZERODEV_RPC),
+    transport: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$clients$2f$transports$2f$http$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["http"])(SCROLL_RPC),
     chain
 });
 const entryPoint = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$constants$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getEntryPoint"])("0.7");
 const mintNFT = async (privateKey)=>{
-    const userSigner = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$accounts$2f$privateKeyToAccount$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["privateKeyToAccount"])(privateKey);
-    console.log("====================================");
-    console.log("🧑‍💼 USER SESSION");
-    console.log("User EOA address:", userSigner.address);
-    // Construct a validator for THIS user
-    const ecdsaValidator = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$ecdsa$2d$validator$2f$_esm$2f$toECDSAValidatorPlugin$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["signerToEcdsaValidator"])(publicClient, {
-        signer: userSigner,
-        entryPoint,
-        kernelVersion: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$constants$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["KERNEL_V3_1"]
-    });
-    // Construct a Kernel account for THIS user
-    const account = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$accounts$2f$kernel$2f$createKernelAccount$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createKernelAccount"])(publicClient, {
-        entryPoint,
-        plugins: {
-            sudo: ecdsaValidator
-        },
-        kernelVersion: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$constants$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["KERNEL_V3_1"]
-    });
-    const zerodevPaymaster = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$clients$2f$paymasterClient$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createZeroDevPaymasterClient"])({
-        chain,
-        transport: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$clients$2f$transports$2f$http$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["http"])(ZERODEV_RPC)
-    });
-    // Construct a Kernel account client for THIS user
-    const kernelClient = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$clients$2f$kernelAccountClient$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createKernelAccountClient"])({
-        account,
-        chain,
-        bundlerTransport: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$clients$2f$transports$2f$http$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["http"])(ZERODEV_RPC),
-        paymaster: {
-            getPaymasterData (userOperation) {
-                return zerodevPaymaster.sponsorUserOperation({
-                    userOperation
-                });
+    try {
+        console.log("🔧 Starting mintNFT function...");
+        console.log("📡 Using ZeroDev RPC:", ZERODEV_RPC);
+        console.log("📡 Using Scroll RPC:", SCROLL_RPC);
+        const userSigner = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$accounts$2f$privateKeyToAccount$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["privateKeyToAccount"])(privateKey);
+        console.log("✅ EOA address:", userSigner.address);
+        // Construct validator and account
+        const ecdsaValidator = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$ecdsa$2d$validator$2f$_esm$2f$toECDSAValidatorPlugin$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["signerToEcdsaValidator"])(publicClient, {
+            signer: userSigner,
+            entryPoint,
+            kernelVersion: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$constants$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["KERNEL_V3_1"]
+        });
+        const account = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$accounts$2f$kernel$2f$createKernelAccount$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createKernelAccount"])(publicClient, {
+            entryPoint,
+            plugins: {
+                sudo: ecdsaValidator
+            },
+            kernelVersion: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$constants$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["KERNEL_V3_1"]
+        });
+        console.log("✅ Smart account address:", account.address);
+        const zerodevPaymaster = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$clients$2f$paymasterClient$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createZeroDevPaymasterClient"])({
+            chain,
+            transport: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$clients$2f$transports$2f$http$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["http"])(ZERODEV_RPC)
+        });
+        // Kernel client uses ZeroDev RPC for bundler operations
+        const kernelClient = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$zerodev$2f$sdk$2f$_esm$2f$clients$2f$kernelAccountClient$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createKernelAccountClient"])({
+            account,
+            chain,
+            bundlerTransport: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$clients$2f$transports$2f$http$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["http"])(ZERODEV_RPC),
+            paymaster: {
+                getPaymasterData (userOperation) {
+                    return zerodevPaymaster.sponsorUserOperation({
+                        userOperation
+                    });
+                }
             }
-        }
-    });
-    const accountAddress = kernelClient.account.address;
-    console.log("User's smart account:", accountAddress);
-    // Check current NFT balance for THIS user
-    const currentBalance = await publicClient.readContract({
-        address: contractAddress,
-        abi: contractABI,
-        functionName: "balanceOf",
-        args: [
-            accountAddress
-        ]
-    });
-    console.log(`User's current NFT balance: ${currentBalance}`);
-    // Send a UserOp to mint NFT for THIS user
-    const userOpHash = await kernelClient.sendUserOperation({
-        callData: await kernelClient.account.encodeCalls([
-            {
-                to: contractAddress,
-                value: BigInt(0),
-                data: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$utils$2f$abi$2f$encodeFunctionData$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["encodeFunctionData"])({
-                    abi: contractABI,
-                    functionName: "safeMint",
-                    args: [
-                        accountAddress
-                    ]
-                })
-            }
-        ])
-    });
-    console.log("Submitted UserOp:", userOpHash);
-    // Wait for the UserOp to be included on-chain
-    const receipt = await kernelClient.waitForUserOperationReceipt({
-        hash: userOpHash
-    });
-    console.log("UserOp confirmed:", receipt.userOpHash);
-    console.log("TxHash:", receipt.receipt.transactionHash);
-    // Print new NFT balance for THIS user
-    const newBalance = await publicClient.readContract({
-        address: contractAddress,
-        abi: contractABI,
-        functionName: "balanceOf",
-        args: [
-            accountAddress
-        ]
-    });
-    console.log(`User's new NFT balance: ${newBalance}`);
-    console.log("====================================");
-    return {
-        success: true,
-        transactionHash: receipt.receipt.transactionHash,
-        newBalance: Number(newBalance)
-    };
+        });
+        // Check current balance
+        const currentBalance = await publicClient.readContract({
+            address: contractAddress,
+            abi: contractABI,
+            functionName: "balanceOf",
+            args: [
+                account.address
+            ]
+        });
+        console.log("📊 Current NFT balance:", currentBalance);
+        // Send UserOp
+        const userOpHash = await kernelClient.sendUserOperation({
+            callData: await kernelClient.account.encodeCalls([
+                {
+                    to: contractAddress,
+                    value: BigInt(0),
+                    data: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$viem$2f$_esm$2f$utils$2f$abi$2f$encodeFunctionData$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["encodeFunctionData"])({
+                        abi: contractABI,
+                        functionName: "safeMint",
+                        args: [
+                            account.address
+                        ]
+                    })
+                }
+            ])
+        });
+        console.log("✅ UserOp submitted:", userOpHash);
+        // Wait for receipt
+        const receipt = await kernelClient.waitForUserOperationReceipt({
+            hash: userOpHash
+        });
+        console.log("✅ Transaction confirmed:", receipt.receipt.transactionHash);
+        const newBalance = await publicClient.readContract({
+            address: contractAddress,
+            abi: contractABI,
+            functionName: "balanceOf",
+            args: [
+                account.address
+            ]
+        });
+        console.log("📊 New NFT balance:", newBalance);
+        return {
+            success: true,
+            transactionHash: receipt.receipt.transactionHash,
+            newBalance: Number(newBalance)
+        };
+    } catch (error) {
+        console.error("❌ Detailed minting error:", error);
+        return {
+            success: false,
+            error: error?.message || "Unknown error",
+            transactionHash: null,
+            newBalance: null
+        };
+    }
 };
 }),
 "[project]/src/app/dashboard/page.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
@@ -247,7 +255,7 @@ function Dashboard() {
                     charityId: charity.id,
                     price: charity.price,
                     emoji: charity.emoji,
-                    color: charity.color.replace('bg-', '') // Remove Tailwind prefix for CSS use
+                    color: charity.color.replace('bg-', '')
                 });
             }
             setNfts(nftsWithCharity);
@@ -578,31 +586,50 @@ function Dashboard() {
                             className: "text-2xl font-bold text-white mb-6 flex items-center",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-                                    xmlns: "http://www.w3.org/2000/svg",
+                                    width: "20",
+                                    height: "20",
+                                    viewBox: "0 0 14 14",
                                     fill: "none",
-                                    viewBox: "0 0 24 24",
                                     stroke: "currentColor",
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                        strokeLinecap: "round",
-                                        strokeLinejoin: "round",
-                                        strokeWidth: "2",
-                                        d: "M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2v-6a2 2 0 00-2-2M5 12V9a2 2 0 012-2h10a2 2 0 012 2v3M5 12V6a2 2 0 012-2h10a2 2 0 012 2v6"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/app/dashboard/page.tsx",
-                                        lineNumber: 269,
-                                        columnNumber: 3
-                                    }, this)
-                                }, void 0, false, {
+                                    className: "mr-3",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
+                                            x: "1",
+                                            y: "4",
+                                            width: "12",
+                                            height: "8",
+                                            rx: "1"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/dashboard/page.tsx",
+                                            lineNumber: 271,
+                                            columnNumber: 5
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                            d: "M4 4V2C4 1 5 0 6 0H8C9 0 10 1 10 2V4"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/dashboard/page.tsx",
+                                            lineNumber: 272,
+                                            columnNumber: 5
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                            d: "M1 6H13"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/dashboard/page.tsx",
+                                            lineNumber: 273,
+                                            columnNumber: 5
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/src/app/dashboard/page.tsx",
                                     lineNumber: 263,
-                                    columnNumber: 7
+                                    columnNumber: 3
                                 }, this),
                                 "Available NFT Collection"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/dashboard/page.tsx",
                             lineNumber: 262,
-                            columnNumber: 5
+                            columnNumber: 1
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
@@ -620,7 +647,7 @@ function Dashboard() {
                                                     children: nft.emoji || '🎨'
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                                    lineNumber: 287,
+                                                    lineNumber: 286,
                                                     columnNumber: 15
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -631,7 +658,7 @@ function Dashboard() {
                                                             children: nft.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/dashboard/page.tsx",
-                                                            lineNumber: 291,
+                                                            lineNumber: 290,
                                                             columnNumber: 17
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -639,13 +666,13 @@ function Dashboard() {
                                                             children: isOwned ? 'Owned' : 'Available'
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/dashboard/page.tsx",
-                                                            lineNumber: 292,
+                                                            lineNumber: 291,
                                                             columnNumber: 17
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                                    lineNumber: 290,
+                                                    lineNumber: 289,
                                                     columnNumber: 15
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -656,7 +683,7 @@ function Dashboard() {
                                                             children: nft.description
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/dashboard/page.tsx",
-                                                            lineNumber: 301,
+                                                            lineNumber: 300,
                                                             columnNumber: 17
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -669,12 +696,12 @@ function Dashboard() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/dashboard/page.tsx",
-                                                                lineNumber: 304,
+                                                                lineNumber: 303,
                                                                 columnNumber: 19
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/dashboard/page.tsx",
-                                                            lineNumber: 303,
+                                                            lineNumber: 302,
                                                             columnNumber: 17
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -688,7 +715,7 @@ function Dashboard() {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                                                    lineNumber: 310,
+                                                                    lineNumber: 309,
                                                                     columnNumber: 19
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -696,13 +723,13 @@ function Dashboard() {
                                                                     children: nft.price
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                                                    lineNumber: 311,
+                                                                    lineNumber: 310,
                                                                     columnNumber: 19
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/dashboard/page.tsx",
-                                                            lineNumber: 309,
+                                                            lineNumber: 308,
                                                             columnNumber: 17
                                                         }, this),
                                                         !isOwned && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -725,7 +752,7 @@ function Dashboard() {
                                                                                 strokeWidth: "4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/dashboard/page.tsx",
-                                                                                lineNumber: 323,
+                                                                                lineNumber: 322,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -734,13 +761,13 @@ function Dashboard() {
                                                                                 d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/dashboard/page.tsx",
-                                                                                lineNumber: 324,
+                                                                                lineNumber: 323,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/dashboard/page.tsx",
-                                                                        lineNumber: 322,
+                                                                        lineNumber: 321,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     "Minting..."
@@ -748,19 +775,19 @@ function Dashboard() {
                                                             }, void 0, true) : status === 'success' ? 'Minted!' : status === 'error' ? 'Try Again' : 'Mint NFT'
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/dashboard/page.tsx",
-                                                            lineNumber: 315,
+                                                            lineNumber: 314,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                                    lineNumber: 300,
+                                                    lineNumber: 299,
                                                     columnNumber: 15
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/dashboard/page.tsx",
-                                            lineNumber: 286,
+                                            lineNumber: 285,
                                             columnNumber: 13
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -776,7 +803,7 @@ function Dashboard() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/dashboard/page.tsx",
-                                                        lineNumber: 343,
+                                                        lineNumber: 342,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -784,30 +811,30 @@ function Dashboard() {
                                                         children: nft.price
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/page.tsx",
-                                                        lineNumber: 344,
+                                                        lineNumber: 343,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/dashboard/page.tsx",
-                                                lineNumber: 342,
+                                                lineNumber: 341,
                                                 columnNumber: 15
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/dashboard/page.tsx",
-                                            lineNumber: 341,
+                                            lineNumber: 340,
                                             columnNumber: 13
                                         }, this)
                                     ]
                                 }, nft.id, true, {
                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                    lineNumber: 284,
+                                    lineNumber: 283,
                                     columnNumber: 11
                                 }, this);
                             })
                         }, void 0, false, {
                             fileName: "[project]/src/app/dashboard/page.tsx",
-                            lineNumber: 278,
+                            lineNumber: 277,
                             columnNumber: 5
                         }, this)
                     ]
@@ -833,19 +860,19 @@ function Dashboard() {
                                         d: "M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/dashboard/page.tsx",
-                                        lineNumber: 358,
+                                        lineNumber: 357,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                    lineNumber: 357,
+                                    lineNumber: 356,
                                     columnNumber: 15
                                 }, this),
                                 "Your NFT Collection"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/dashboard/page.tsx",
-                            lineNumber: 356,
+                            lineNumber: 355,
                             columnNumber: 13
                         }, this),
                         userNfts.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -862,7 +889,7 @@ function Dashboard() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                    lineNumber: 364,
+                                    lineNumber: 363,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -877,12 +904,12 @@ function Dashboard() {
                                                         children: nft.emoji || '🎨'
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/page.tsx",
-                                                        lineNumber: 371,
+                                                        lineNumber: 370,
                                                         columnNumber: 25
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                                    lineNumber: 370,
+                                                    lineNumber: 369,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -890,7 +917,7 @@ function Dashboard() {
                                                     children: nft.name
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                                    lineNumber: 373,
+                                                    lineNumber: 372,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -901,7 +928,7 @@ function Dashboard() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                                    lineNumber: 374,
+                                                    lineNumber: 373,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -912,24 +939,24 @@ function Dashboard() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                                    lineNumber: 375,
+                                                    lineNumber: 374,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, nft.id, true, {
                                             fileName: "[project]/src/app/dashboard/page.tsx",
-                                            lineNumber: 369,
+                                            lineNumber: 368,
                                             columnNumber: 21
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                    lineNumber: 367,
+                                    lineNumber: 366,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/dashboard/page.tsx",
-                            lineNumber: 363,
+                            lineNumber: 362,
                             columnNumber: 15
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 text-center",
@@ -939,7 +966,7 @@ function Dashboard() {
                                     children: "🎨"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                    lineNumber: 382,
+                                    lineNumber: 381,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -947,7 +974,7 @@ function Dashboard() {
                                     children: "You don't own any NFTs yet."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                    lineNumber: 383,
+                                    lineNumber: 382,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -955,7 +982,7 @@ function Dashboard() {
                                     children: "Mint your first NFT to support a charitable cause!"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                    lineNumber: 384,
+                                    lineNumber: 383,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -964,19 +991,19 @@ function Dashboard() {
                                     children: "Browse NFTs"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/page.tsx",
-                                    lineNumber: 385,
+                                    lineNumber: 384,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/dashboard/page.tsx",
-                            lineNumber: 381,
+                            lineNumber: 380,
                             columnNumber: 15
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/dashboard/page.tsx",
-                    lineNumber: 355,
+                    lineNumber: 354,
                     columnNumber: 11
                 }, this)
             ]
