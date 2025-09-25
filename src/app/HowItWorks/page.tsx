@@ -93,23 +93,7 @@ const HowItWorks: React.FC = () => {
           </FeatureCard>
         </Grid>
 
-        {/* Step 3: NFT Purchase */}
-        <Grid item xs={12} md={6}>
-          <FeatureCard elevation={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Payment color="primary" sx={{ fontSize: 40, mr: 2 }} />
-              <Typography variant="h5" fontWeight="bold">3. NFT Purchase</Typography>
-            </Box>
-            <Typography variant="body1" color="text.secondary">
-              Purchase NFTs representing your chosen charity. 100% of proceeds go directly to the charity's 
-              on-chain treasury. Each NFT is a unique digital collectible representing your contribution.
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Chip label="100% to Charity" variant="outlined" sx={{ mr: 1, mb: 1 }} />
-              <Chip label="Unique Collectibles" variant="outlined" />
-            </Box>
-          </FeatureCard>
-        </Grid>
+
 
         {/* Step 4: Fund Management */}
         <Grid item xs={12} md={6}>
