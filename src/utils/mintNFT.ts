@@ -77,6 +77,7 @@ export const mintNFT = async (privateKey: `0x${string}`) => {
     });
     console.log("📊 Current NFT balance:", currentBalance);
 
+    // THe call data of the UserOp
     const userOpHash = await kernelClient.sendUserOperation({
       callData: await kernelClient.account.encodeCalls([
         {

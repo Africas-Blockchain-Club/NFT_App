@@ -83,19 +83,14 @@ export default function Signup() {
       console.log(`   Smart Account: ${savedUser.smartAccountAddress}`);
       console.log(`   Private Key: ${privateKey}`);
       
-      // Refresh users data
       console.log('Refreshing users data...');
       await refreshUsers();
 
       // Add a small delay to ensure state is updated
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Refresh users list in context
       await refreshUsers();
-      
-      console.log('\n🔐 Please save your password securely!');
-      console.log('   You will need it to access your account.');
-      
+            
       // Redirect to login after a delay
       setTimeout(() => {
         router.push('/login');

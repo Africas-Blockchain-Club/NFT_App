@@ -22,8 +22,8 @@ interface UserContextType {
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   users: User[];
-  updateUserNFTs: (nftId: number) => Promise<boolean>; // NEW: Function to update NFTs
-  refreshUsers: () => Promise<void>; // NEW: Refresh users data
+  updateUserNFTs: (nftId: number) => Promise<boolean>; 
+  refreshUsers: () => Promise<void>; 
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);

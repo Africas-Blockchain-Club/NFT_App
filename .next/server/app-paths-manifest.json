@@ -1,9 +1,5 @@
 {
   "/Collection/page": "app/Collection/page.js",
-  "/api/users/signup/route": "app/api/users/signup/route.js",
-  "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/login/page": "app/login/page.js",
-  "/page": "app/page.js",
-  "/signup/page": "app/signup/page.js"
+  "/page": "app/page.js"
 }

@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
   try {
     const userData = await request.json();
     
-    // Validate required fields
     if (!userData.username || !userData.password || !userData.privateKey || !userData.smartAccountAddress) {
       return NextResponse.json(
         { error: 'Missing required fields' },

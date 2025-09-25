@@ -53,7 +53,7 @@ const fetchNFTs = async () => {
           id: i + 1,
           name: `${charity.name} NFT #${i + 1}`,
           description: `This exclusive NFT supports ${charity.name}. ${charity.description}`,
-          image: '', // You can add image URLs later
+          image: '', 
           charity: charity.name,
           charityId: charity.id,
           price: charity.price,
@@ -62,8 +62,7 @@ const fetchNFTs = async () => {
         });
       }
       
-      // If you want more NFTs than charities, you can duplicate/cycle through charities
-      const totalNfts = 50; // Or whatever number you want
+      const totalNfts = 50; 
       const nftsWithCharity = [];
       
       for (let i = 0; i < totalNfts; i++) {

@@ -26,7 +26,7 @@ const publicClient = createPublicClient({
 });
 const entryPoint = getEntryPoint("0.7");
 
-// Create new blockchain account for user
+// Creates a new blockchain account for user
 export const createUserAccount = async (): Promise<{ privateKey: string; smartAccountAddress: string }> => {
   const privateKey = generatePrivateKey();
   const signer = privateKeyToAccount(privateKey);
