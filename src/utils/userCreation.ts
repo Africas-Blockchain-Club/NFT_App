@@ -21,7 +21,7 @@ export async function createUserAccount(username: string, password: string): Pro
     const user: User = {
       username,
       password,
-      privateKey: privateKey, // Use the generated private key directly
+      privateKey: privateKey,
       smartAccountAddress: account.address,
       createdAt: new Date().toISOString(),
       ownedNFTs: []
