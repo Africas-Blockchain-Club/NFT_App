@@ -55,7 +55,25 @@ const HowItWorks: React.FC = () => {
         </Stepper>
       </Box>
 
-
+      {/* Detailed Process */}
+      <Grid container spacing={4}>
+        {/* Step 1: Charity Nomination */}
+        <Grid item xs={12} md={6}>
+          <FeatureCard elevation={2}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Groups color="primary" sx={{ fontSize: 40, mr: 2 }} />
+              <Typography variant="h5" fontWeight="bold">1. Charity Nomination</Typography>
+            </Box>
+            <Typography variant="body1" color="text.secondary">
+              Charities are nominated by our community and verified through a rigorous due diligence process. 
+              Any reputable organization can be proposed for consideration.
+            </Typography>
+            <Box sx={{ mt: 2 }}>
+              <Chip label="Community-Driven" variant="outlined" sx={{ mr: 1, mb: 1 }} />
+              <Chip label="Verified Organizations" variant="outlined" />
+            </Box>
+          </FeatureCard>
+        </Grid>
 
         {/* Step 2: Token Holder Voting */}
         <Grid item xs={12} md={6}>
