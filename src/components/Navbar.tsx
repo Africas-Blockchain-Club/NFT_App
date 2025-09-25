@@ -19,7 +19,7 @@ export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
           <span className="text-white text-xl font-bold">CharityNFT</span>
         </div>
         <div className="hidden md:flex space-x-8">
-          <a href="#how" className="text-white hover:text-pink-300 transition">How It Works</a>
+          <a href="#HowItWorks" className="text-white hover:text-pink-300 transition">How It Works</a>
           <a href="#tech" className="text-white hover:text-pink-300 transition">Technology</a>
           <a href="#charities" className="text-white hover:text-pink-300 transition">Charities</a>
           <a href="#faq" className="text-white hover:text-pink-300 transition">FAQ</a>
