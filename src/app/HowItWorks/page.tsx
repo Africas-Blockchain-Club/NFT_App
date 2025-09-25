@@ -1,201 +1,339 @@
-import React from 'react';
-import { Card, Grid, Container, Typography, Box, Stepper, Step, StepLabel, Paper, Chip } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { Favorite, TrendingUp, HowToVote, Payment, Visibility, Security, Groups } from '@mui/icons-material';
+'use client';
 
-const StyledCard = styled(Card)(({ theme }) => ({
-  padding: theme.spacing(4),
-  marginBottom: theme.spacing(4),
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  color: 'white',
-}));
+import React, { useState, useEffect } from 'react';
+import { Charity, VotingPeriod, FundAllocation } from '../types/charity';
 
-const FeatureCard = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  height: '100%',
-  transition: 'transform 0.2s',
-  '&:hover': {
-    transform: 'translateY(-4px)',
-    boxShadow: theme.shadows[4],
-  },
-}));
+const HowItWorksPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'nomination' | 'voting' | 'purchase' | 'tracking'>('nomination');
+  const [charities, setCharities] = useState<Charity[]>([]);
+  const [currentVotingPeriod, setCurrentVotingPeriod] = useState<VotingPeriod | null>(null);
 
-const steps = [
-  'Charity Nomination',
-  'Community Voting',
-  'NFT Minting',
-  'Fund Distribution',
-  'Transparent Tracking',
-];
+  // Mock data - replace with actual API calls
+  useEffect(() => {
+    // Simulate fetching data
+    const mockCharities: Charity[] = [
+      {
+        id: '1',
+        name: 'Ocean Cleanup Initiative',
+        description: 'Dedicated to removing plastic from oceans',
+        website: 'https://oceancleanup.org',
+        votes: 1250,
+        status: 'approved',
+        nftCollection: 'ocean-cleanup-nft'
+      },
+      {
+        id: '2',
+        name: 'Education for All',
+        description: 'Providing education to underprivileged children',
+        website: 'https://educationforall.org',
+        votes: 980,
+        status: 'approved',
+        nftCollection: 'education-nft'
+      }
+    ];
 
-const HowItWorks: React.FC = () => {
-  return (
-    <Container maxWidth="lg" sx={{ py: 8 }}>
-      {/* Hero Section */}
-      <StyledCard elevation={6}>
-        <Typography variant="h2" component="h1" gutterBottom align="center" fontWeight="bold">
-          💫 NFT Charity Platform
-        </Typography>
-        <Typography variant="h5" align="center" sx={{ opacity: 0.9 }}>
-          Transforming NFT purchases into real-world impact through decentralized governance
-        </Typography>
-      </StyledCard>
+    const mockVotingPeriod: VotingPeriod = {
+      id: 'current',
+      startDate: new Date('2024-01-01'),
+      endDate: new Date('2024-01-31'),
+      status: 'active',
+      nominatedCharities: mockCharities
+    };
 
-      {/* Process Overview */}
-      <Box sx={{ mb: 8 }}>
-        <Typography variant="h4" component="h2" gutterBottom align="center" color="primary" fontWeight="bold">
-          How It Works
-        </Typography>
-        <Stepper alternativeLabel sx={{ mt: 4 }}>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
+    setCharities(mockCharities);
+    setCurrentVotingPeriod(mockVotingPeriod);
+  }, []);
+
+  const processSteps = [
+    {
+      id: 'nomination',
+      title: '1. Charity Nomination',
+      description: 'How charities are selected for consideration',
+      icon: '🏆'
+    },
+    {
+      id: 'voting',
+      title: '2. Community Voting',
+      description: 'Token holders decide which charities to support',
+      icon: '🗳️'
+    },
+    {
+      id: 'purchase',
+      title: '3. NFT Purchase',
+      description: 'Buy NFTs to fund the selected charities',
+      icon: '🖼️'
+    },
+    {
+      id: 'tracking',
+      title: '4. Fund Tracking',
+      description: 'Monitor how donations are being used',
+      icon: '📊'
+    }
+  ];
+
+  const renderNominationContent = () => (
+    <div className="space-y-6">
+      <div className="bg-green-50 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold text-green-800 mb-4">Nomination Process</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-semibold text-green-700 mb-2">Who Can Nominate?</h4>
+            <ul className="list-disc list-inside space-y-2 text-green-600">
+              <li>Token holders with minimum 100 tokens</li>
+              <li>Verified charity representatives</li>
+              <li>Community members with proven track record</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-green-700 mb-2">Requirements</h4>
+            <ul className="list-disc list-inside space-y-2 text-green-600">
+              <li>Valid charity registration documents</li>
+              <li>Clear mission statement and goals</li>
+              <li>Transparent financial reporting history</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-blue-50 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold text-blue-800 mb-4">Nomination Timeline</h3>
+        <div className="flex flex-col space-y-4">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded-full mr-4"></div>
+            <span className="font-medium">Monthly nomination window (1st-7th)</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded-full mr-4"></div>
+            <span className="font-medium">Verification period (8th-14th)</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded-full mr-4"></div>
+            <span className="font-medium">Voting preparation (15th-21st)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderVotingContent = () => (
+    <div className="space-y-6">
+      <div className="bg-purple-50 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold text-purple-800 mb-4">Voting Mechanism</h3>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="text-center p-4 bg-white rounded-lg">
+            <div className="text-2xl font-bold text-purple-600">1 Token = 1 Vote</div>
+            <p className="text-sm text-purple-500 mt-2">Each token gives you one voting power</p>
+          </div>
+          <div className="text-center p-4 bg-white rounded-lg">
+            <div className="text-2xl font-bold text-purple-600">Quadratic Voting</div>
+            <p className="text-sm text-purple-500 mt-2">Prevent whale dominance in voting</p>
+          </div>
+          <div className="text-center p-4 bg-white rounded-lg">
+            <div className="text-2xl font-bold text-purple-600">Snapshot Voting</div>
+            <p className="text-sm text-purple-500 mt-2">Vote without gas fees using signatures</p>
+          </div>
+        </div>
+      </div>
+
+      {currentVotingPeriod && (
+        <div className="bg-orange-50 p-6 rounded-lg">
+          <h3 className="text-xl font-semibold text-orange-800 mb-4">Current Voting Period</h3>
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-orange-600">
+                Ends: {currentVotingPeriod.endDate.toLocaleDateString()}
+              </p>
+              <p className="text-sm text-orange-500">
+                {charities.length} charities nominated
+              </p>
+            </div>
+            <button className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+              Vote Now
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderPurchaseContent = () => (
+    <div className="space-y-6">
+      <div className="bg-indigo-50 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold text-indigo-800 mb-4">NFT Collection & Funding</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-semibold text-indigo-700 mb-3">Funding Distribution</h4>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-indigo-600">Charity Donation</span>
+                <span className="font-semibold">85%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-indigo-600">Platform Maintenance</span>
+                <span className="font-semibold">10%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-indigo-600">Artist Royalties</span>
+                <span className="font-semibold">5%</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h4 className="font-semibold text-indigo-700 mb-3">Smart Contract Security</h4>
+            <ul className="list-disc list-inside space-y-2 text-indigo-600">
+              <li>Funds locked in multi-sig wallet</li>
+              <li>Automatic monthly disbursements</li>
+              <li>Transparent on-chain tracking</li>
+              <li>Regular security audits</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-teal-50 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold text-teal-800 mb-4">Available NFT Collections</h3>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {charities.map(charity => (
+            <div key={charity.id} className="bg-white p-4 rounded-lg border border-teal-200">
+              <h5 className="font-semibold text-teal-700">{charity.name}</h5>
+              <p className="text-sm text-teal-600 mt-2">{charity.description}</p>
+              <button className="w-full mt-3 bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
+                View Collection
+              </button>
+            </div>
           ))}
-        </Stepper>
-      </Box>
+        </div>
+      </div>
+    </div>
+  );
 
-      {/* Detailed Process */}
-      <Grid container spacing={4}>
-        {/* Step 1: Charity Nomination */}
-        <Grid item xs={12} md={6}>
-          <FeatureCard elevation={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Groups color="primary" sx={{ fontSize: 40, mr: 2 }} />
-              <Typography variant="h5" fontWeight="bold">1. Charity Nomination</Typography>
-            </Box>
-            <Typography variant="body1" color="text.secondary">
-              Charities are nominated by our community and verified through a rigorous due diligence process. 
-              Any reputable organization can be proposed for consideration.
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Chip label="Community-Driven" variant="outlined" sx={{ mr: 1, mb: 1 }} />
-              <Chip label="Verified Organizations" variant="outlined" />
-            </Box>
-          </FeatureCard>
-        </Grid>
+  const renderTrackingContent = () => (
+    <div className="space-y-6">
+      <div className="bg-red-50 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold text-red-800 mb-4">Real-time Fund Tracking</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-semibold text-red-700 mb-3">On-chain Transparency</h4>
+            <ul className="list-disc list-inside space-y-2 text-red-600">
+              <li>All transactions recorded on blockchain</li>
+              <li>Real-time balance tracking</li>
+              <li>Monthly disbursement reports</li>
+              <li>Charity spending verification</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-red-700 mb-3">Progress Monitoring</h4>
+            <ul className="list-disc list-inside space-y-2 text-red-600">
+              <li>Impact metrics and KPIs</li>
+              <li>Photo/video evidence of work</li>
+              <li>Quarterly impact reports</li>
+              <li>Community feedback system</li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-        {/* Step 2: Token Holder Voting */}
-        <Grid item xs={12} md={6}>
-          <FeatureCard elevation={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <HowToVote color="primary" sx={{ fontSize: 40, mr: 2 }} />
-              <Typography variant="h5" fontWeight="bold">2. Democratic Voting</Typography>
-            </Box>
-            <Typography variant="body1" color="text.secondary">
-              Our token holders participate in governance votes to select which charities receive funding. 
-              Voting power is proportional to token holdings, ensuring fair representation.
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Chip label="Token-Based Voting" variant="outlined" sx={{ mr: 1, mb: 1 }} />
-              <Chip label="Transparent Results" variant="outlined" />
-            </Box>
-          </FeatureCard>
-        </Grid>
+      <div className="bg-gray-50 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">Example Fund Allocation</h3>
+        <div className="space-y-4">
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="font-medium text-gray-700">Ocean Cleanup Initiative</span>
+              <span className="font-semibold">$47,500</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="bg-green-500 h-2 rounded-full" style={{ width: '95%' }}></div>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">95% of target reached - 15 tons of plastic removed</p>
+          </div>
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="font-medium text-gray-700">Education for All</span>
+              <span className="font-semibold">$32,000</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="bg-blue-500 h-2 rounded-full" style={{ width: '64%' }}></div>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">64% of target reached - 250 children supported</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
-        {/* Step 3: NFT Purchase */}
-        <Grid item xs={12} md={6}>
-          <FeatureCard elevation={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Payment color="primary" sx={{ fontSize: 40, mr: 2 }} />
-              <Typography variant="h5" fontWeight="bold">3. NFT Purchase</Typography>
-            </Box>
-            <Typography variant="body1" color="text.secondary">
-              Purchase NFTs representing your chosen charity. 100% of proceeds go directly to the charity's 
-              on-chain treasury. Each NFT is a unique digital collectible representing your contribution.
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Chip label="100% to Charity" variant="outlined" sx={{ mr: 1, mb: 1 }} />
-              <Chip label="Unique Collectibles" variant="outlined" />
-            </Box>
-          </FeatureCard>
-        </Grid>
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'nomination':
+        return renderNominationContent();
+      case 'voting':
+        return renderVotingContent();
+      case 'purchase':
+        return renderPurchaseContent();
+      case 'tracking':
+        return renderTrackingContent();
+      default:
+        return renderNominationContent();
+    }
+  };
 
-        {/* Step 4: Fund Management */}
-        <Grid item xs={12} md={6}>
-          <FeatureCard elevation={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Security color="primary" sx={{ fontSize: 40, mr: 2 }} />
-              <Typography variant="h5" fontWeight="bold">4. Secure Fund Management</Typography>
-            </Box>
-            <Typography variant="body1" color="text.secondary">
-              Funds are held in secure, transparent smart contracts on the blockchain. Charities receive 
-              funds through governed proposals, ensuring proper allocation and usage.
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Chip label="Smart Contract Managed" variant="outlined" sx={{ mr: 1, mb: 1 }} />
-              <Chip label="Multi-Sig Security" variant="outlined" />
-            </Box>
-          </FeatureCard>
-        </Grid>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            How Our Charity NFT Platform Works
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Transforming NFT purchases into real-world impact through transparent, 
+            community-driven charitable giving
+          </p>
+        </div>
 
-        {/* Step 5: Transparency */}
-        <Grid item xs={12}>
-          <FeatureCard elevation={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Visibility color="primary" sx={{ fontSize: 40, mr: 2 }} />
-              <Typography variant="h5" fontWeight="bold">5. Complete Transparency</Typography>
-            </Box>
-            <Typography variant="body1" color="text.secondary">
-              Track every dollar in real-time. Our platform provides transparent reporting on how funds are 
-              spent, with on-chain verification of all transactions and regular impact reports.
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Chip label="Real-Time Tracking" variant="outlined" sx={{ mr: 1, mb: 1 }} />
-              <Chip label="On-Chain Verification" variant="outlined" />
-              <Chip label="Impact Reporting" variant="outlined" />
-            </Box>
-          </FeatureCard>
-        </Grid>
-      </Grid>
+        {/* Process Steps */}
+        <div className="grid md:grid-cols-4 gap-4 mb-12">
+          {processSteps.map(step => (
+            <button
+              key={step.id}
+              onClick={() => setActiveTab(step.id as any)}
+              className={`p-6 rounded-lg text-center transition-all duration-300 ${
+                activeTab === step.id
+                  ? 'bg-white shadow-lg border-2 border-blue-500 transform scale-105'
+                  : 'bg-gray-100 border-2 border-transparent hover:bg-white hover:shadow-md'
+              }`}
+            >
+              <div className="text-3xl mb-3">{step.icon}</div>
+              <h3 className="font-semibold text-gray-900 mb-2">{step.title}</h3>
+              <p className="text-sm text-gray-600">{step.description}</p>
+            </button>
+          ))}
+        </div>
 
-      {/* Benefits Section */}
-      <Box sx={{ mt: 8, p: 4, bgcolor: 'background.default', borderRadius: 2 }}>
-        <Typography variant="h4" component="h2" gutterBottom align="center" color="primary">
-          Why Choose Our Platform?
-        </Typography>
-        <Grid container spacing={3} sx={{ mt: 2 }}>
-          <Grid item xs={12} md={4}>
-            <Box textAlign="center">
-              <Favorite sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
-              <Typography variant="h6" gutterBottom>Maximum Impact</Typography>
-              <Typography variant="body2" color="text.secondary">
-                100% of NFT proceeds go to charities with minimal operational costs through blockchain efficiency
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Box textAlign="center">
-              <HowToVote sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
-              <Typography variant="h6" gutterBottom>Community Governed</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Token holders decide which charities receive funding through transparent voting mechanisms
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Box textAlign="center">
-              <Visibility sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
-              <Typography variant="h6" gutterBottom>Complete Transparency</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Track donations from purchase to impact with full on-chain visibility and regular audits
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
-      </Box>
+        {/* Content Section */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          {renderContent()}
+        </div>
 
-      {/* Call to Action */}
-      <Box sx={{ mt: 6, textAlign: 'center' }}>
-        <Typography variant="h6" gutterBottom color="text.secondary">
-          Ready to make a difference?
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Join our community of donors and help shape the future of charitable giving through blockchain technology.
-        </Typography>
-      </Box>
-    </Container>
+        {/* CTA Section */}
+        <div className="text-center mt-16 bg-white rounded-2xl shadow-xl p-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Ready to Make an Impact?
+          </h2>
+          <p className="text-lg text-gray-600 mb-8">
+            Join our community of changemakers and start supporting causes you believe in
+          </p>
+          <div className="flex justify-center space-x-4">
+            <button className="bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
+              Explore NFT Collections
+            </button>
+            <button className="border-2 border-blue-500 text-blue-500 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+              Learn About Voting
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default HowItWorks;
+export default HowItWorksPage;
