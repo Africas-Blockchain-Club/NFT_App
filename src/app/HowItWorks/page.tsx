@@ -137,7 +137,7 @@ const HowItWorksPage: React.FC = () => {
       </div>
 
       {currentVotingPeriod && (
-        <div className="bg-orange-50 p-6 rounded-lg">
+        <div className="bg-orange-50 p-10 rounded-lg">
           <h3 className="text-xl font-semibold text-orange-800 mb-4">Current Voting Period</h3>
           <div className="flex justify-between items-center">
             <div>
