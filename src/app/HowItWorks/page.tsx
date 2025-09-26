@@ -208,60 +208,121 @@ const HowItWorksPage: React.FC = () => {
     </div>
   );
 
-  const renderTrackingContent = () => (
-    <div className="space-y-6">
-      <div className="bg-red-50 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold text-red-500 mb-4">Real-time Fund Tracking</h3>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="font-semibold text-red-700 mb-3">On-chain Transparency</h4>
-            <ul className="list-disc list-inside space-y-2 text-red-600">
-              <li>All transactions recorded on blockchain</li>
-              <li>Real-time balance tracking</li>
-              <li>Monthly disbursement reports</li>
-              <li>Charity spending verification</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-red-700 mb-3">Progress Monitoring</h4>
-            <ul className="list-disc list-inside space-y-2 text-red-600">
-              <li>Impact metrics and KPIs</li>
-              <li>Photo/video evidence of work</li>
-              <li>Quarterly impact reports</li>
-              <li>Community feedback system</li>
-            </ul>
-          </div>
+const renderTrackingContent = () => (
+  <div className="space-y-8">
+    {/* Real-time Fund Tracking Section */}
+    <div className="bg-gradient-to-br from-red-50 to-red-100 p-8 rounded-xl border border-red-200 shadow-sm">
+      <div className="flex items-center mb-6">
+        <div className="bg-red-100 p-3 rounded-lg mr-4">
+          <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-red-900">Real-time Fund Tracking</h3>
+      </div>
+      
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="bg-white p-5 rounded-lg border border-red-100">
+          <h4 className="font-bold text-red-800 mb-4 text-lg flex items-center">
+            <span className="bg-red-200 w-2 h-2 rounded-full mr-3"></span>
+            On-chain Transparency
+          </h4>
+          <ul className="space-y-3 text-red-700">
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2">•</span>
+              All transactions recorded on blockchain
+            </li>
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2">•</span>
+              Real-time balance tracking
+            </li>
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2">•</span>
+              Monthly disbursement reports
+            </li>
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2">•</span>
+              Charity spending verification
+            </li>
+          </ul>
+        </div>
+        
+        <div className="bg-white p-5 rounded-lg border border-red-100">
+          <h4 className="font-bold text-red-800 mb-4 text-lg flex items-center">
+            <span className="bg-red-200 w-2 h-2 rounded-full mr-3"></span>
+            Progress Monitoring
+          </h4>
+          <ul className="space-y-3 text-red-700">
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2">•</span>
+              Impact metrics and KPIs
+            </li>
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2">•</span>
+              Photo/video evidence of work
+            </li>
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2">•</span>
+              Quarterly impact reports
+            </li>
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2">•</span>
+              Community feedback system
+            </li>
+          </ul>
         </div>
       </div>
+    </div>
 
-      <div className="bg-gray-50 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">Example Fund Allocation</h3>
-        <div className="space-y-4">
-          <div>
-            <div className="flex justify-between mb-1">
-              <span className="font-medium text-gray-700">Ocean Cleanup Initiative</span>
-              <span className="font-semibold">$47,500</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-green-500 h-2 rounded-full" style={{ width: '95%' }}></div>
-            </div>
-            <p className="text-sm text-gray-500 mt-1">95% of target reached - 15 tons of plastic removed</p>
+    {/* Example Fund Allocation Section */}
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-xl border border-gray-200 shadow-sm">
+      <div className="flex items-center mb-6">
+        <div className="bg-gray-100 p-3 rounded-lg mr-4">
+          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-gray-900">Example Fund Allocation</h3>
+      </div>
+      
+      <div className="space-y-6">
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-center mb-3">
+            <span className="font-semibold text-gray-800 text-lg">Ocean Cleanup Initiative</span>
+            <span className="font-bold text-green-600 text-xl">$47,500</span>
           </div>
-          <div>
-            <div className="flex justify-between mb-1">
-              <span className="font-medium text-gray-700">Education for All</span>
-              <span className="font-semibold">$32,000</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-blue-500 h-2 rounded-full" style={{ width: '64%' }}></div>
-            </div>
-            <p className="text-sm text-gray-500 mt-1">64% of target reached - 250 children supported</p>
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+            <div 
+              className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full shadow-sm" 
+              style={{ width: '95%' }}
+            ></div>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-green-600 font-medium">95% of target reached</span>
+            <span className="text-gray-500">15 tons of plastic removed</span>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-center mb-3">
+            <span className="font-semibold text-gray-800 text-lg">Education for All</span>
+            <span className="font-bold text-blue-600 text-xl">$32,000</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+            <div 
+              className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full shadow-sm" 
+              style={{ width: '64%' }}
+            ></div>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-blue-600 font-medium">64% of target reached</span>
+            <span className="text-gray-500">250 children supported</span>
           </div>
         </div>
       </div>
     </div>
-  );
-
+  </div>
+);
   const renderContent = () => {
     switch (activeTab) {
       case 'nomination':
