@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
-import HowItWorks from '@/components/HowItWorks';
 import TechnologyStack from '@/components/TechnologyStack';
 import Footer from '@/components/Footer';
 import HowItWorksComponent from '@/components/HowItWorksComponent'
