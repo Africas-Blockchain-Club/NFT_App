@@ -2418,6 +2418,10 @@
     color: var(--color-red-300);
   }
 
+  .text-red-500 {
+    color: var(--color-red-500);
+  }
+
   .text-red-600 {
     color: var(--color-red-600);
   }

@@ -211,7 +211,7 @@ const HowItWorksPage: React.FC = () => {
   const renderTrackingContent = () => (
     <div className="space-y-6">
       <div className="bg-red-50 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold text-red-800 mb-4">Real-time Fund Tracking</h3>
+        <h3 className="text-xl font-semibold text-red-500 mb-4">Real-time Fund Tracking</h3>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <h4 className="font-semibold text-red-700 mb-3">On-chain Transparency</h4>
