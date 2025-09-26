@@ -209,6 +209,7 @@
     --color-pink-400: #fb64b6;
     --color-pink-500: #f6339a;
     --color-pink-600: #e30076;
+    --color-pink-900: #861043;
     --color-gray-50: #f9fafb;
     --color-gray-100: #f3f4f6;
     --color-gray-200: #e5e7eb;
@@ -342,6 +343,7 @@
       --color-pink-400: color(display-p3 .915485 .430491 .70271);
       --color-pink-500: color(display-p3 .88894 .276457 .595049);
       --color-pink-600: color(display-p3 .825649 .141205 .459338);
+      --color-pink-900: color(display-p3 .480862 .117563 .26009);
       --color-gray-50: color(display-p3 .977213 .98084 .985102);
       --color-gray-100: color(display-p3 .953567 .956796 .964321);
       --color-gray-200: color(display-p3 .899787 .906171 .92106);
@@ -431,6 +433,7 @@
       --color-pink-400: lab(64.5597% 64.3615 -12.7988);
       --color-pink-500: lab(56.9303% 76.8162 -8.07021);
       --color-pink-600: lab(49.5493% 79.8381 2.31768);
+      --color-pink-900: lab(29.4367% 49.3962 3.35757);
       --color-gray-50: lab(98.2596% -.247031 -.706708);
       --color-gray-100: lab(96.1596% -.0823438 -1.13575);
       --color-gray-200: lab(91.6229% -.159115 -2.26791);
@@ -1780,6 +1783,10 @@
     background-color: var(--color-blue-800);
   }
 
+  .bg-blue-900 {
+    background-color: var(--color-blue-900);
+  }
+
   .bg-cyan-400 {
     background-color: var(--color-cyan-400);
   }
@@ -1930,6 +1937,10 @@
     .bg-pink-500\/20 {
       background-color: color-mix(in oklab, var(--color-pink-500) 20%, transparent);
     }
+  }
+
+  .bg-pink-900 {
+    background-color: var(--color-pink-900);
   }
 
   .bg-purple-50 {
@@ -3018,6 +3029,12 @@
   @media (hover: hover) {
     .hover\:bg-gray-700:hover {
       background-color: var(--color-gray-700);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-gray-800:hover {
+      background-color: var(--color-gray-800);
     }
   }
 
