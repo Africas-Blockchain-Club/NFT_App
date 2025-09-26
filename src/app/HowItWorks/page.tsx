@@ -72,50 +72,114 @@ const HowItWorksPage: React.FC = () => {
     }
   ];
 
-  const renderNominationContent = () => (
-    <div className="space-y-6">
-      <div className="bg-green-50 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold text-green-800 mb-4">Nomination Process</h3>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="font-semibold text-green-700 mb-2">Who Can Nominate?</h4>
-            <ul className="list-disc list-inside space-y-2 text-green-600">
-              <li>Token holders with minimum 100 tokens</li>
-              <li>Verified charity representatives</li>
-              <li>Community members with proven track record</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-green-700 mb-2">Requirements</h4>
-            <ul className="list-disc list-inside space-y-2 text-green-600">
-              <li>Valid charity registration documents</li>
-              <li>Clear mission statement and goals</li>
-              <li>Transparent financial reporting history</li>
-            </ul>
-          </div>
+const renderNominationContent = () => (
+  <div className="space-y-8">
+    {/* Nomination Process Section */}
+    <div className="bg-gradient-to-br from-green-50 to-emerald-100 p-8 rounded-xl border border-green-200 shadow-sm">
+      <div className="flex items-center mb-6">
+        <div className="bg-green-100 p-3 rounded-lg mr-4">
+          <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-green-900">Nomination Process</h3>
+      </div>
+      
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-lg border border-green-100 shadow-xs">
+          <h4 className="font-bold text-green-800 mb-4 text-lg flex items-center">
+            <span className="bg-green-400 w-3 h-3 rounded-full mr-3 shadow-sm"></span>
+            Who Can Nominate?
+          </h4>
+          <ul className="space-y-3 text-green-700">
+            <li className="flex items-start bg-green-50 p-3 rounded-md">
+              <span className="text-green-500 font-bold mr-3">✓</span>
+              Token holders with minimum 100 tokens
+            </li>
+            <li className="flex items-start bg-green-50 p-3 rounded-md">
+              <span className="text-green-500 font-bold mr-3">✓</span>
+              Verified charity representatives
+            </li>
+            <li className="flex items-start bg-green-50 p-3 rounded-md">
+              <span className="text-green-500 font-bold mr-3">✓</span>
+              Community members with proven track record
+            </li>
+          </ul>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg border border-green-100 shadow-xs">
+          <h4 className="font-bold text-green-800 mb-4 text-lg flex items-center">
+            <span className="bg-green-400 w-3 h-3 rounded-full mr-3 shadow-sm"></span>
+            Requirements
+          </h4>
+          <ul className="space-y-3 text-green-700">
+            <li className="flex items-start bg-green-50 p-3 rounded-md">
+              <span className="text-green-500 font-bold mr-3">📋</span>
+              Valid charity registration documents
+            </li>
+            <li className="flex items-start bg-green-50 p-3 rounded-md">
+              <span className="text-green-500 font-bold mr-3">🎯</span>
+              Clear mission statement and goals
+            </li>
+            <li className="flex items-start bg-green-50 p-3 rounded-md">
+              <span className="text-green-500 font-bold mr-3">💫</span>
+              Transparent financial reporting history
+            </li>
+          </ul>
         </div>
       </div>
+    </div>
 
-      <div className="bg-blue-50 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold text-blue-800 mb-4">Nomination Timeline</h3>
-        <div className="flex flex-col space-y-4">
+    {/* Nomination Timeline Section */}
+    <div className="bg-gradient-to-br from-blue-50 to-sky-100 p-8 rounded-xl border border-blue-200 shadow-sm">
+      <div className="flex items-center mb-6">
+        <div className="bg-blue-100 p-3 rounded-lg mr-4">
+          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-blue-900">Nomination Timeline</h3>
+      </div>
+      
+      <div className="relative">
+        {/* Timeline connector line */}
+        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-blue-200 ml-0.5"></div>
+        
+        <div className="space-y-6 relative z-10">
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-blue-500 rounded-full mr-4"></div>
-            <span className="font-medium">Monthly nomination window (1st-7th)</span>
+            <div className="w-8 h-8 bg-blue-500 rounded-full mr-6 flex items-center justify-center shadow-lg border-2 border-white">
+              <span className="text-white font-bold text-sm">1</span>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-blue-100 shadow-xs flex-1">
+              <span className="font-semibold text-blue-800 text-lg">Monthly nomination window (1st-7th)</span>
+              <p className="text-blue-600 text-sm mt-1">Submit charity nominations during this period</p>
+            </div>
           </div>
+          
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-blue-500 rounded-full mr-4"></div>
-            <span className="font-medium">Verification period (8th-14th)</span>
+            <div className="w-8 h-8 bg-blue-600 rounded-full mr-6 flex items-center justify-center shadow-lg border-2 border-white">
+              <span className="text-white font-bold text-sm">2</span>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-blue-100 shadow-xs flex-1">
+              <span className="font-semibold text-blue-800 text-lg">Verification period (8th-14th)</span>
+              <p className="text-blue-600 text-sm mt-1">Documents review and eligibility check</p>
+            </div>
           </div>
+          
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-blue-500 rounded-full mr-4"></div>
-            <span className="font-medium">Voting preparation (15th-21st)</span>
+            <div className="w-8 h-8 bg-blue-700 rounded-full mr-6 flex items-center justify-center shadow-lg border-2 border-white">
+              <span className="text-white font-bold text-sm">3</span>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-blue-100 shadow-xs flex-1">
+              <span className="font-semibold text-blue-800 text-lg">Voting preparation (15th-21st)</span>
+              <p className="text-blue-600 text-sm mt-1">Finalize candidates for community voting</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  );
-
+  </div>
+);
   const renderVotingContent = () => (
     <div className="space-y-6">
       <div className="bg-purple-50 p-6 ">
