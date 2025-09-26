@@ -118,7 +118,7 @@ const HowItWorksPage: React.FC = () => {
 
   const renderVotingContent = () => (
     <div className="space-y-6">
-      <div className="bg-purple-50 p-6 rounded-lg">
+      <div className="bg-purple-50 p-6 ">
         <h3 className="text-xl font-semibold text-purple-800 mb-4">Voting Mechanism</h3>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="text-center p-4 bg-white rounded-lg">
