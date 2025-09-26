@@ -313,24 +313,6 @@ const HowItWorksPage: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {renderContent()}
         </div>
-
-        {/* CTA Section */}
-        <div className="text-center mt-16 bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Ready to Make an Impact?
-          </h2>
-          <p className="text-lg text-gray-600 mb-8">
-            Join our community of changemakers and start supporting causes you believe in
-          </p>
-          <div className="flex justify-center space-x-4">
-            <button className="bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
-              Explore NFT Collections
-            </button>
-            <button className="border-2 border-blue-500 text-blue-500 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
-              Learn About Voting
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
