@@ -13,7 +13,7 @@ interface Charity {
 }
 
 interface VotingPeriod {
-  id: string;
+  id: 'nomination' | 'voting' | 'purchase' | 'tracking';
   startDate: Date;
   endDate: Date;
   status: string;
@@ -21,7 +21,7 @@ interface VotingPeriod {
 }
 
 const HowItWorks: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'nomination' | 'voting' | 'purchase' | 'tracking'>('nomination');
+  const [activeTab, setActiveTab] = useState<ProcessStep['id']>('nomination');
 
   const charities: Charity[] = [
     {
@@ -460,7 +460,7 @@ const HowItWorks: React.FC = () => {
           {processSteps.map(step => (
             <button
               key={step.id}
-              onClick={() => setActiveTab(step.id as any)}
+              onClick={() => setActiveTab(step.id)}
               className={`p-6 rounded-2xl text-center transition-all duration-300 backdrop-blur-md border-2 ${
                 activeTab === step.id
                   ? 'bg-white/10 border-purple-500 transform scale-105 shadow-xl'
