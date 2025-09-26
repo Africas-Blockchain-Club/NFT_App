@@ -18,11 +18,6 @@ export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
           </div>
           <span className="text-white text-xl font-bold">CharityNFT</span>
         </div>
-        <div className="hidden md:flex space-x-8">
-          <a href="#tech" className="text-white hover:text-pink-300 transition">Technology</a>
-          <a href="#charities" className="text-white hover:text-pink-300 transition">Charities</a>
-          <a href="#faq" className="text-white hover:text-pink-300 transition">FAQ</a>
-        </div>
         <div className="flex space-x-4">
           {isLoggedIn ? (
             <button 
