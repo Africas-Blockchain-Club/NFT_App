@@ -1,4 +1,3 @@
-// components/TechnologyStack.tsx
 export default function TechnologyStack() {
   return (
     <section id="tech" className="py-20 bg-gradient-to-r from-purple-600 to-pink-500">

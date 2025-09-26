@@ -1,14 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 
-interface NavbarProps {
-  isLoggedIn: boolean;
-  onLogin: () => void;
-  onLogout: () => void;
-}
 
-export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
+export default function Navbar() {
   return (
     <nav className="bg-white/10 backdrop-blur-md border-b border-white/20 fixed w-full z-10">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -19,14 +13,8 @@ export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
           <span className="text-white text-xl font-bold">CharityNFT</span>
         </div>
         <div className="flex space-x-4">
-          {isLoggedIn ? (
-            <button 
-              onClick={onLogout}
-              className="bg-white text-purple-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition"
-            >
-              Logout
-            </button>
-          ) : (
+           
+          
             <>
               <button 
                 onClick={() => window.location.href = '/signup'}
@@ -41,7 +29,7 @@ export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
                 Login
               </button>
             </>
-          )}
+          
         </div>
       </div>
     </nav>

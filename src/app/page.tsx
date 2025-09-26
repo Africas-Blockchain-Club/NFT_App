@@ -8,29 +8,10 @@ import Footer from '@/components/Footer';
 import HowItWorksComponent from '@/components/HowItWorksComponent'
 
 export default function CharityNFTLanding() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // Check if user is logged in (this would come from your auth system)
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(loggedIn);
-  }, []);
-
-  const handleLogin = () => {
-    // Simulate login
-    localStorage.setItem('isLoggedIn', 'true');
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    // Simulate logout
-    localStorage.removeItem('isLoggedIn');
-    setIsLoggedIn(false);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900">
-      <Navbar isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
+      <Navbar />
       <Hero />
               {/* Stats Bar */}
 <div className="bg-white/5 backdrop-blur-md border-b border-white/10">
