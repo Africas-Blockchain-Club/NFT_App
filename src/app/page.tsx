@@ -6,6 +6,7 @@ import Hero from '@/components/Hero';
 import HowItWorks from '@/components/HowItWorks';
 import TechnologyStack from '@/components/TechnologyStack';
 import Footer from '@/components/Footer';
+import HowItWorksComponent from '@/components/HowItWorksComponent'
 
 export default function CharityNFTLanding() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -55,7 +56,7 @@ export default function CharityNFTLanding() {
     </div>
   </div>
 </div>
-      <HowItWorks />
+      <HowItWorksComponent />
       <TechnologyStack />
       <Footer />
     </div>

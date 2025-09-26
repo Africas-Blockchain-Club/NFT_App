@@ -423,15 +423,15 @@ const renderTrackingContent = () => (
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900">
       <Navbar isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-6">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-20 pt-20">
+          <h1 className="text-4xl font-bold text-white mb-6">
             How Our Charity NFT Platform Works
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-white max-w-3xl mx-auto">
             Transforming NFT purchases into real-world impact through transparent, 
             community-driven charitable giving
           </p>
