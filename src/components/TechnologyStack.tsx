@@ -1,6 +1,6 @@
 export default function TechnologyStack() {
   return (
-    <section id="tech" className="py-20 bg-gradient-to-r from-purple-600 to-pink-500">
+    <section id="tech" className="py-20 min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center text-white mb-4">Powered by Cutting-Edge Technology</h2>
         <p className="text-xl text-gray-100 text-center max-w-3xl mx-auto mb-16">
