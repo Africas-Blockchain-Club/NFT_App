@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Charity, VotingPeriod, FundAllocation } from '../types/charity';
+import { Charity, VotingPeriod } from '../types/charity';
+import Navbar from '@/components/Navbar';
+
+
 
 const HowItWorksPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'nomination' | 'voting' | 'purchase' | 'tracking'>('nomination');
   const [charities, setCharities] = useState<Charity[]>([]);
   const [currentVotingPeriod, setCurrentVotingPeriod] = useState<VotingPeriod | null>(null);
 
-  // Mock data - replace with actual API calls
   useEffect(() => {
-    // Simulate fetching data
     const mockCharities: Charity[] = [
       {
         id: '1',
@@ -275,12 +276,33 @@ const HowItWorksPage: React.FC = () => {
         return renderNominationContent();
     }
   };
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in (this would come from your auth system)
+    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(loggedIn);
+  }, []);
+
+
+    const handleLogin = () => {
+    // Simulate login
+    localStorage.setItem('isLoggedIn', 'true');
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    // Simulate logout
+    localStorage.removeItem('isLoggedIn');
+    setIsLoggedIn(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">
+      <Navbar isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-6">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             How Our Charity NFT Platform Works
           </h1>
@@ -309,7 +331,6 @@ const HowItWorksPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Content Section */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {renderContent()}
         </div>
