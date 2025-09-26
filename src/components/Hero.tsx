@@ -16,9 +16,6 @@ export default function Hero() {
             >
               <span className="mr-2">💎</span> Explore NFTs
             </button>
-            <button className="bg-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-pink-600 transition flex items-center">
-              <span className="mr-2">❤️</span> Support Causes
-            </button>
           </div>
         </div>
         <div className="md:w-1/2 flex justify-center">
