@@ -125,9 +125,9 @@ const HowItWorksPage: React.FC = () => {
             <div className="text-2xl font-bold text-purple-600">1 Token = 1 Vote</div>
             <p className="text-sm text-purple-500 mt-2">Each token gives you one voting power</p>
           </div>
-          <div className="text-center p-4 rounded-lg">
+          <div className="text-center p-4 bg-white rounded-lg">
             <div className="text-2xl font-bold text-purple-600">Quadratic Voting</div>
-            <p className="text-sm text-purple-500 mt-2">Prevent whale dominance in voting</p>
+            <p className="text-sm text-purple-800 mt-2">Prevent whale dominance in voting</p>
           </div>
           <div className="text-center p-4 bg-white rounded-lg">
             <div className="text-2xl font-bold text-purple-600">Snapshot Voting</div>
