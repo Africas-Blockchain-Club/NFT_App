@@ -7,7 +7,7 @@ export default function Navbar() {
     <nav className="bg-white/10 backdrop-blur-md border-b border-white/20 fixed w-full z-10">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-700 to-white flex items-center justify-center">
             <span className="text-white">❤️</span>
           </div>
           <span className="text-gray-700 text-xl font-bold">CharityNFT</span>

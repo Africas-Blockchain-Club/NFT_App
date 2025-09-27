@@ -103,7 +103,7 @@ const HowItWorks: React.FC = () => {
         
         <div className="grid md:grid-cols-2 gap-8">
           <div className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10">
-            <h4 className="font-bold text-white mb-4 text-lg flex items-center">
+            <h4 className="font-bold text-gray-700 mb-4 text-lg flex items-center">
               <span className="bg-purple-400 w-3 h-3 rounded-full mr-3 shadow-lg"></span>
               Who Can Nominate?
             </h4>
@@ -124,7 +124,7 @@ const HowItWorks: React.FC = () => {
           </div>
           
           <div className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10">
-            <h4 className="font-bold text-white mb-4 text-lg flex items-center">
+            <h4 className="font-bold text-gray-700 mb-4 text-lg flex items-center">
               <span className="bg-purple-400 w-3 h-3 rounded-full mr-3 shadow-lg"></span>
               Requirements
             </h4>
@@ -163,30 +163,30 @@ const HowItWorks: React.FC = () => {
           <div className="space-y-6 relative z-10">
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mr-6 flex items-center justify-center shadow-lg border-2 border-purple-900">
-                <span className="text-white font-bold text-sm">1</span>
+                <span className="text-gray-700 font-bold text-sm">1</span>
               </div>
               <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 flex-1">
-                <span className="font-semibold text-white text-lg">Monthly nomination window (1st-7th)</span>
+                <span className="font-semibold text-gray-700 text-lg">Monthly nomination window (1st-7th)</span>
                 <p className="text-purple-300 text-sm mt-1">Submit charity nominations during this period</p>
               </div>
             </div>
             
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mr-6 flex items-center justify-center shadow-lg border-2 border-blue-900">
-                <span className="text-white font-bold text-sm">2</span>
+                <span className="text-gray-700 font-bold text-sm">2</span>
               </div>
               <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 flex-1">
-                <span className="font-semibold text-white text-lg">Verification period (8th-14th)</span>
+                <span className="font-semibold text-gray-700 text-lg">Verification period (8th-14th)</span>
                 <p className="text-blue-300 text-sm mt-1">Documents review and eligibility check</p>
               </div>
             </div>
             
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-500 rounded-full mr-6 flex items-center justify-center shadow-lg border-2 border-green-900">
-                <span className="text-white font-bold text-sm">3</span>
+                <span className="text-gray-700 font-bold text-sm">3</span>
               </div>
               <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 flex-1">
-                <span className="font-semibold text-white text-lg">Voting preparation (15th-21st)</span>
+                <span className="font-semibold text-gray-700 text-lg">Voting preparation (15th-21st)</span>
                 <p className="text-green-300 text-sm mt-1">Finalize candidates for community voting</p>
               </div>
             </div>
@@ -227,7 +227,7 @@ const HowItWorks: React.FC = () => {
         <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 backdrop-blur-md p-8 rounded-2xl border border-orange-500/30">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold text-white mb-2">Current Voting Period</h3>
+              <h3 className="text-xl font-bold text-gray-700 mb-2">Current Voting Period</h3>
               <p className="text-orange-300">
                 Ends: {currentVotingPeriod.endDate.toLocaleDateString()}
               </p>
@@ -235,7 +235,7 @@ const HowItWorks: React.FC = () => {
                 {charities.length} charities nominated
               </p>
             </div>
-            <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-xl hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
+            <button className="bg-gradient-to-r from-orange-500 to-red-500 text-gray-700 px-8 py-3 rounded-xl hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
               Vote Now
             </button>
           </div>
@@ -257,7 +257,7 @@ const HowItWorks: React.FC = () => {
         </div>
         <div className="grid md:grid-cols-2 gap-8">
           <div className="bg-white/5 p-6 rounded-xl border border-white/10">
-            <h4 className="font-bold text-white mb-4 text-lg">Funding Distribution</h4>
+            <h4 className="font-bold text-gray-700 mb-4 text-lg">Funding Distribution</h4>
             <div className="space-y-4">
               <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
                 <span className="text-purple-300">Charity Donation</span>
@@ -274,7 +274,7 @@ const HowItWorks: React.FC = () => {
             </div>
           </div>
           <div className="bg-white/5 p-6 rounded-xl border border-white/10">
-            <h4 className="font-bold text-white mb-4 text-lg">Smart Contract Security</h4>
+            <h4 className="font-bold text-gray-700 mb-4 text-lg">Smart Contract Security</h4>
             <ul className="space-y-3 text-purple-200">
               <li className="flex items-center p-2">
                 <span className="text-green-400 mr-3">✓</span>
@@ -309,9 +309,9 @@ const HowItWorks: React.FC = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {charities.map(charity => (
             <div key={charity.id} className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-white/20 transition-all">
-              <h5 className="font-bold text-white mb-2">{charity.name}</h5>
+              <h5 className="font-bold text-gray-700 mb-2">{charity.name}</h5>
               <p className="text-purple-300 text-sm mb-4">{charity.description}</p>
-              <button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all">
+              <button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-gray-700 py-2 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all">
                 View Collection
               </button>
             </div>
@@ -335,7 +335,7 @@ const HowItWorks: React.FC = () => {
         
         <div className="grid md:grid-cols-2 gap-8">
           <div className="bg-white/5 p-6 rounded-xl border border-white/10">
-            <h4 className="font-bold text-white mb-4 text-lg flex items-center">
+            <h4 className="font-bold text-gray-700 mb-4 text-lg flex items-center">
               <span className="bg-red-400 w-2 h-2 rounded-full mr-3"></span>
               On-chain Transparency
             </h4>
@@ -360,7 +360,7 @@ const HowItWorks: React.FC = () => {
           </div>
           
           <div className="bg-white/5 p-6 rounded-xl border border-white/10">
-            <h4 className="font-bold text-white mb-4 text-lg flex items-center">
+            <h4 className="font-bold text-gray-700 mb-4 text-lg flex items-center">
               <span className="bg-red-400 w-2 h-2 rounded-full mr-3"></span>
               Progress Monitoring
             </h4>
@@ -399,7 +399,7 @@ const HowItWorks: React.FC = () => {
         <div className="space-y-6">
           <div className="bg-white/5 p-6 rounded-xl border border-white/10">
             <div className="flex justify-between items-center mb-4">
-              <span className="font-bold text-white text-lg">Ocean Cleanup Initiative</span>
+              <span className="font-bold text-gray-700 text-lg">Ocean Cleanup Initiative</span>
               <span className="font-bold text-green-400 text-xl">$47,500</span>
             </div>
             <div className="w-full bg-gray-600/50 rounded-full h-3 mb-3">
@@ -416,7 +416,7 @@ const HowItWorks: React.FC = () => {
           
           <div className="bg-white/5 p-6 rounded-xl border border-white/10">
             <div className="flex justify-between items-center mb-4">
-              <span className="font-bold text-white text-lg">Education for All</span>
+              <span className="font-bold text-gray-700 text-lg">Education for All</span>
               <span className="font-bold text-blue-400 text-xl">$32,000</span>
             </div>
             <div className="w-full bg-gray-600/50 rounded-full h-3 mb-3">
@@ -476,7 +476,7 @@ const HowItWorks: React.FC = () => {
               }`}
             >
               <div className="text-4xl mb-4">{step.icon}</div>
-              <h3 className="font-bold text-white mb-3">{step.title}</h3>
+              <h3 className="font-bold text-gray-700 mb-3">{step.title}</h3>
               <p className="text-sm text-purple-300">{step.description}</p>
             </button>
           ))}
