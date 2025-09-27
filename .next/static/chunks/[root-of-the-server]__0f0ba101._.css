@@ -3119,6 +3119,10 @@
     color: var(--color-gray-400);
   }
 
+  .text-gray-500 {
+    color: var(--color-gray-500);
+  }
+
   .text-gray-600 {
     color: var(--color-gray-600);
   }
@@ -3607,6 +3611,12 @@
   }
 
   @media (hover: hover) {
+    .hover\:bg-gray-900:hover {
+      background-color: var(--color-gray-900);
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:bg-pink-500:hover {
       background-color: var(--color-pink-500);
     }
@@ -3621,6 +3631,12 @@
   @media (hover: hover) {
     .hover\:bg-pink-800:hover {
       background-color: var(--color-pink-800);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-pink-900:hover {
+      background-color: var(--color-pink-900);
     }
   }
 
