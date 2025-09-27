@@ -89,5 +89,13 @@
     "smartAccountAddress": "0xff525f798c089a11C98a62c8991dc5504744fa36",
     "createdAt": "2025-09-24T16:26:09.565Z",
     "ownedNFTs": []
+  },
+  {
+    "username": "San",
+    "password": "12345678",
+    "privateKey": "0x20541c298656116ce897da679466e280cf2d144ff3c88982ecf3afd9fd7669a9",
+    "smartAccountAddress": "0x754cD163c0cc46188faec1009AA44eEB6EBd46A3",
+    "createdAt": "2025-09-27T13:23:21.849Z",
+    "ownedNFTs": []
   }
 ]
