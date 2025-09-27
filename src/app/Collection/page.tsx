@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar'; // Make sure this path is correct
+import Navbar from '@/components/Navbar'; 
 
 interface Charity {
   id: number;
@@ -29,16 +29,7 @@ export default function NFTExplorePage() {
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Add login state
 
-  // Login/Logout handlers
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    // Add your actual login logic here
-  };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    // Add your actual logout logic here
-  };
 
   const fetchCharities = async (): Promise<Charity[]> => {
     try {
@@ -100,9 +91,6 @@ export default function NFTExplorePage() {
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900">
       {/* Navbar */}
       <Navbar 
-        isLoggedIn={isLoggedIn} 
-        onLogin={handleLogin} 
-        onLogout={handleLogout} 
       />
       
       {/* Add padding-top to account for fixed navbar */}
