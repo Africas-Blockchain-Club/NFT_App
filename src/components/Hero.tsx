@@ -23,7 +23,7 @@ export default function Hero() {
             <div className="absolute top-0 left-0 w-full h-full bg-white rounded-2xl shadow-2xl transform rotate-6"></div>
             <div className="absolute top-0 left-0 w-full h-full bg-pink-500 rounded-2xl shadow-2xl transform -rotate-6"></div>
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-pink-500 to-white rounded-2xl shadow-2xl flex items-center justify-center p-4">
-              <div className="text-center text-white">
+              <div className="text-center text-gray-700">
                 <span className="text-5xl mb-4">❤️</span>
                 <h3 className="text-2xl font-bold mb-2">Hope for Children</h3>
                 <p className="text-sm">100% of proceeds go to support education initiatives</p>
@@ -31,6 +31,7 @@ export default function Hero() {
             </div>
           </div>
         </div>
+        
       </div>
     </section>
   );
