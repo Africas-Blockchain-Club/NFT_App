@@ -12,7 +12,7 @@ export default function Hero() {
           <div className="flex flex-wrap gap-4">
             <button 
               onClick={() => window.location.href = '/Collection'}
-              className="bg-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition flex items-center"
+              className="bg-gradient-to-r from-pink-600 to-pink-700 text-white px-8 py-4 rounded-xl font-semibold hover:from-pink-700 hover:to-pink-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
             >
                Explore NFTs
             </button>
