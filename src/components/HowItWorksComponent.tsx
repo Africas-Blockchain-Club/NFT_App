@@ -12,16 +12,25 @@ interface Charity {
   nftCollection: string;
 }
 
+type TabType = 'nomination' | 'voting' | 'purchase' | 'tracking';
+
 interface VotingPeriod {
-  id: 'nomination' | 'voting' | 'purchase' | 'tracking';
+  id: string;
   startDate: Date;
   endDate: Date;
   status: string;
   nominatedCharities: Charity[];
 }
 
+interface ProcessStep {
+  id: TabType;
+  title: string;
+  description: string;
+  icon: string;
+}
+
 const HowItWorks: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<ProcessStep['id']>('nomination');
+  const [activeTab, setActiveTab] = useState<TabType>('nomination');
 
   const charities: Charity[] = [
     {
@@ -52,7 +61,7 @@ const HowItWorks: React.FC = () => {
     nominatedCharities: charities
   };
 
-  const processSteps = [
+  const processSteps: ProcessStep[] = [
     {
       id: 'nomination',
       title: '1. Charity Nomination',
@@ -455,7 +464,6 @@ const HowItWorks: React.FC = () => {
           </p>
         </div>
 
-        {/* Process Steps */}
         <div className="grid md:grid-cols-4 gap-6 mb-16">
           {processSteps.map(step => (
             <button
