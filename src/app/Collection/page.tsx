@@ -27,7 +27,6 @@ interface NFT {
 export default function NFTExplorePage() {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add login state
 
 
 
@@ -71,9 +70,6 @@ export default function NFTExplorePage() {
   useEffect(() => {
     fetchNFTs();
     
-    // Check if user is already logged in (from localStorage, context, etc.)
-    // Example: const loggedIn = localStorage.getItem('userToken');
-    // setIsLoggedIn(!!loggedIn);
   }, []);
 
   if (loading) {
