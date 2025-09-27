@@ -1992,6 +1992,10 @@
     }
   }
 
+  .bg-pink-600 {
+    background-color: var(--color-pink-600);
+  }
+
   .bg-pink-600\/30 {
     background-color: rgba(227, 0, 118, .3);
   }
@@ -2004,6 +2008,16 @@
 
   .bg-pink-700 {
     background-color: var(--color-pink-700);
+  }
+
+  .bg-pink-800\/30 {
+    background-color: rgba(162, 0, 76, .3);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-pink-800\/30 {
+      background-color: color-mix(in oklab, var(--color-pink-800) 30%, transparent);
+    }
   }
 
   .bg-purple-300 {
@@ -2141,6 +2155,26 @@
   @supports (color: color-mix(in lab, red, red)) {
     .bg-white\/20 {
       background-color: color-mix(in oklab, var(--color-white) 20%, transparent);
+    }
+  }
+
+  .bg-white\/50 {
+    background-color: rgba(255, 255, 255, .5);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-white\/50 {
+      background-color: color-mix(in oklab, var(--color-white) 50%, transparent);
+    }
+  }
+
+  .bg-white\/80 {
+    background-color: rgba(255, 255, 255, .8);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-white\/80 {
+      background-color: color-mix(in oklab, var(--color-white) 80%, transparent);
     }
   }
 
@@ -2985,6 +3019,10 @@
 
   .text-pink-400 {
     color: var(--color-pink-400);
+  }
+
+  .text-pink-600 {
+    color: var(--color-pink-600);
   }
 
   .text-pink-700 {
