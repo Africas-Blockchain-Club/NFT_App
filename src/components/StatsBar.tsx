@@ -2,12 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 
-const AnimatedCounter = ({ end, duration = 2000, prefix = "", suffix = "" }) => {
+interface AnimatedCounterProps {
+  end: number;
+  duration?: number;
+  prefix?: string;
+  suffix?: string;
+}
+
+const AnimatedCounter = ({ end, duration = 2000, prefix = "", suffix = "" }: AnimatedCounterProps) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     let start = 0;
-    const increment = end / (duration / 36);
+    const increment = end / (duration / 60); // 60fps
     const timer = setInterval(() => {
       start += increment;
       if (start >= end) {
@@ -52,11 +59,12 @@ export default function StatsSection() {
   }, []);
 
   return (
-    <div id="stats-section" >
+    <div id="stats-section">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-pink-400/30 to-transparent animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-pink-300/20 to-transparent animate-pulse delay-1000"></div>
+        
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
@@ -105,6 +113,8 @@ export default function StatsSection() {
             <div className="w-12 h-1 bg-gradient-to-r from-fuchsia-500 to-pink-500 mx-auto mt-3 rounded-full group-hover:w-16 transition-all duration-300"></div>
           </div>
         </div>
+
+  
       </div>
     </div>
   );
