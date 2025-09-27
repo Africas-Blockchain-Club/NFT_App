@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 py-12 text-gray-400">
+    <footer className="bg-pink-900 py-12 text-gray-400">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
@@ -8,9 +8,9 @@ export default function Footer() {
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 flex items-center justify-center">
                 <span className="text-white">❤️</span>
               </div>
-              <span className="text-white text-xl font-bold">CharityNFT</span>
+              <span className="text-gray-200 text-xl font-bold">CharityNFT</span>
             </div>
-            <p className="mt-2">Making charitable giving accessible through technology</p>
+            <p className="text-gray-200 mt-2">Making charitable giving accessible through technology</p>
           </div>
           
           <div className="flex space-x-6">
@@ -60,7 +60,7 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="border-t border-gray-700 mt-8 pt-8 text-sm text-center">
+        <div className="border-t border-gray-200 mt-8 pt-8 text-sm text-center text-gray-200">
           <p>© 2023 CharityNFT. All rights reserved. Built with ❤️ for a better world.</p>
         </div>
       </div>

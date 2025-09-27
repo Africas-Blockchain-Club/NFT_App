@@ -105,7 +105,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900 flex items-center justify-center p-4">
+    <div className="min-h-screen  bg-gradient-to-br from-[#F7C6D9] to-[#FFEFF3] flex items-center justify-center p-4">
       <div className="relative w-full max-w-md">
         {/* Decorative elements */}
         <div className="absolute -top-16 -left-16 w-32 h-32 bg-pink-500 rounded-full opacity-20 blur-xl"></div>
@@ -116,11 +116,11 @@ export default function Signup() {
           <div className="bg-gradient-to-r from-purple-600 to-pink-500 p-6 text-center">
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
-                <span className="text-white text-2xl">🎉</span>
+                <span className="text-gray-700 text-2xl">🎉</span>
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-white">Create Your Account</h1>
-            <p className="text-white/90 mt-2">Join us in supporting charitable causes</p>
+            <h1 className="text-2xl font-bold text-gray-700">Create Your Account</h1>
+            <p className="text-gray-700/90 mt-2">Join us in supporting charitable causes</p>
           </div>
           
           <div className="p-8">
@@ -145,7 +145,7 @@ export default function Signup() {
             {!success && (
               <form onSubmit={handleSignup} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Username</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <svg className="h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
@@ -156,7 +156,7 @@ export default function Signup() {
                       type="text"
                       value={formData.username}
                       onChange={(e) => setFormData({...formData, username: e.target.value})}
-                      className="bg-white/10 border border-white/20 text-white placeholder-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent block w-full pl-10 p-3"
+                      className="bg-white/80 border border-white/20 text-gray-700 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent block w-full pl-10 p-3"
                       placeholder="Choose a username"
                       required
                       minLength={3}
@@ -166,7 +166,7 @@ export default function Signup() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Password</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <svg className="h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
@@ -177,7 +177,7 @@ export default function Signup() {
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({...formData, password: e.target.value})}
-                      className="bg-white/10 border border-white/20 text-white placeholder-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent block w-full pl-10 p-3"
+                      className="bg-white/80 border border-white/20 text-gray-700 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent block w-full pl-10 p-3"
                       placeholder="Create a password"
                       required
                       minLength={6}
@@ -189,11 +189,11 @@ export default function Signup() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-gray-700 py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
                 >
                   {loading ? (
                     <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
@@ -207,8 +207,8 @@ export default function Signup() {
             )}
             
             {accountDetails && (
-              <div className="mt-6 p-6 bg-white/5 border border-white/10 rounded-lg">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+              <div className="mt-6 p-6 bg-gray-700 border border-gray-800 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm6 7a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-3 3a1 1 0 100 2h.01a1 1 0 100-2H10zm-4 1a1 1 0 011-1h.01a1 1 0 110 2H7a1 1 0 01-1-1zm1-4a1 1 0 100 2h.01a1 1 0 100-2H7zm2 1a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zm4-4a1 1 0 100 2h.01a1 1 0 100-2H13zM9 9a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zM7 8a1 1 0 000 2h.01a1 1 0 000-2H7z" clipRule="evenodd" />
                   </svg>
@@ -216,18 +216,18 @@ export default function Signup() {
                 </h3>
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="text-white font-medium">Username:</p>
-                    <p className="text-purple-200">{accountDetails.username}</p>
+                    <p className="text-gray-700 font-medium">Username:</p>
+                    <p className="text-gray-900">{accountDetails.username}</p>
                   </div>
                   <div>
-                    <p className="text-white font-medium">Smart Account:</p>
-                    <p className="font-mono text-xs text-purple-200 truncate bg-white/5 p-2 rounded">
+                    <p className="text-gray-700 font-medium">Smart Account:</p>
+                    <p className="font-mono text-xs text-gray-900 truncate bg-white/5 p-2 rounded">
                       {accountDetails.smartAccountAddress}
                     </p>
                   </div>
                   {accountDetails.privateKey && (
                     <div>
-                      <p className="text-white font-medium">Private Key:</p>
+                      <p className="text-gray-700 font-medium">Private Key:</p>
                       <p className="font-mono text-xs text-red-200 bg-red-500/10 p-2 rounded border border-red-500/20">
                         {accountDetails.privateKey}
                       </p>
@@ -255,7 +255,7 @@ export default function Signup() {
             <div className="mt-8 text-center">
              
               <p className="mt-4">
-                <Link href="/" className="text-purple-200 hover:text-white transition flex items-center justify-center text-sm">
+                <Link href="/" className="text-gray-700 hover:text-gray-900 transition flex items-center justify-center text-sm">
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                   </svg>
@@ -264,14 +264,14 @@ export default function Signup() {
               </p>
             </div>
 
-            <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <h4 className="text-sm font-semibold text-white mb-2 flex items-center">
+            <div className="mt-6 p-4 bg-gray-700/10 border border-blue-500/20 rounded-lg">
+              <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
                 How it works:
               </h4>
-              <ul className="text-xs text-blue-200 space-y-1">
+              <ul className="text-xs text-pink-600 space-y-1">
                 <li className="flex items-center">• Creates a new Ethereum wallet using ZeroDev</li>
                 <li className="flex items-center">• Saves your account to the database</li>
                 <li className="flex items-center">• Redirects you to login after creation</li>
