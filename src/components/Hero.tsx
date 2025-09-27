@@ -4,7 +4,7 @@ export default function Hero() {
       <div className="container mx-auto flex flex-col md:flex-row items-center">
         <div className="md:w-1/2 mb-10 md:mb-0">
           <h1 className="text-5xl font-bold text-gray-900 leading-tight mb-6">
-            Support Charities with <span className="text-pink-800">Zero-Friction</span> NFT Purchases
+            Support Charities with <span className="text-white bg-gradient-to-r from-pink-600 to-pink-800 px-2 rounded-lg shadow-lg">Zero-Friction</span> NFT Purchases
           </h1>
           <p className="text-xl text-gray-900 mb-8">
             Buy beautiful digital art NFTs while supporting your favorite causes. We cover gas fees so you can donate seamlessly.
