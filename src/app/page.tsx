@@ -5,8 +5,8 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import TechnologyStack from '@/components/TechnologyStack';
 import Footer from '@/components/Footer';
-import HowItWorksComponent from '@/components/HowItWorksComponent'
-import StarBar from '@/components/StatsBar'
+import HowItWorksComponent from '@/components/HowItWorksComponent';
+import StarBar from '@/components/StatsBar';
 
 export default function CharityNFTLanding() {
 
