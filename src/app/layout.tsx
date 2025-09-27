@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserProvider> {/* Wrap children with UserProvider */}
+        <UserProvider> 
           {children}
 
         </UserProvider>

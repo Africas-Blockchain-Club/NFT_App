@@ -13,11 +13,11 @@ export default function CharityNFTLanding() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F7C6D9] to-[#FFEFF3]">
       <Navbar />
-      <Hero />
-<StarBar/>
-      <HowItWorksComponent />
-      <TechnologyStack />
-      <Footer />
+      <Hero/>
+      <StarBar/>
+      <HowItWorksComponent/>
+      <TechnologyStack/>
+      <Footer/>
     </div>
   );
 }

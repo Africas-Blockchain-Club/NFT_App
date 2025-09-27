@@ -10,7 +10,7 @@ export default function Navbar() {
           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 flex items-center justify-center">
             <span className="text-white">❤️</span>
           </div>
-          <span className="text-white text-xl font-bold">CharityNFT</span>
+          <span className="text-gray-700 text-xl font-bold">CharityNFT</span>
         </div>
         <div className="flex space-x-4">
            
@@ -18,13 +18,13 @@ export default function Navbar() {
             <>
               <button 
                 onClick={() => window.location.href = '/signup'}
-                className="bg-white text-purple-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition"
+                className="bg-gradient-to-r from-pink-400 to-pink-500 text-white px-5 py-2 rounded-xl font-semibold hover:from-pink-700 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center"
               >
                 Sign Up
               </button>
               <button 
                 onClick={() => window.location.href = '/login'}
-                className="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition"
+                className="bg-gradient-to-r from-pink-400 to-pink-500 text-white px-5 py-2 rounded-xl font-semibold hover:from-pink-700 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center"
               >
                 Login
               </button>
