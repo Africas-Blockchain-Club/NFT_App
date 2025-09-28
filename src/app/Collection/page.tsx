@@ -74,8 +74,8 @@ export default function NFTExplorePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900 flex items-center justify-center">
-        <div className="text-white text-xl flex items-center">
+      <div className="min-h-screen bg-gradient-to-r from-pink-600 to-pink-800  flex items-center justify-center">
+        <div className="text-gray-700 text-xl flex items-center">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
           Loading NFT collection...
         </div>
@@ -84,36 +84,36 @@ export default function NFTExplorePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-800 to-purple-900">
+    <div className="min-h-screen bg-gradient-to-br from-[#F7C6D9] to-[#FFEFF3]">
       {/* Navbar */}
       <Navbar 
       />
       
       {/* Add padding-top to account for fixed navbar */}
       <div className="pt-16"> {/* Adjust this value based on your navbar height */}
-        <div className="container mx-auto px-4 py-8">
-          <header className="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-8 text-center border border-white/20">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">🌊 NFT Charity Collection</h1>
+        <div className="container mx-auto px-4 py-8 ">
+          <header className="bg-pink-500 backdrop-blur-md rounded-xl p-6 mb-8 text-center border border-white/20">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-700 mb-2">🌊 NFT Charity Collection</h1>
             <p className="text-purple-200 text-lg">Explore and support charitable causes through digital collectibles</p>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
             {nfts.map((nft) => (
               <div
                 key={nft.id}
-                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-[400px] flex flex-col"
+                className=" bg-white/50 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-[400px] flex flex-col"
               >
                 <div className={`h-3/5 bg-gradient-to-br ${nft.color} flex items-center justify-center`}>
                   <span className="text-6xl">{nft.emoji}</span>
                 </div>
                 
                 <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold text-white mb-2">{nft.name}</h3>
-                  <p className="text-purple-200 text-sm mb-4 flex-grow">{nft.description}</p>
+                  <h3 className="text-xl font-bold text-gray-700 mb-2">{nft.name}</h3>
+                  <p className="text-gray-700 text-sm mb-4 flex-grow">{nft.description}</p>
                   
                   <div className="flex justify-between items-center">
-                    <span className="text-white font-bold">{nft.price}</span>
-                    <span className="bg-white/10 text-white text-xs px-3 py-1 rounded-full">
+                    <span className="text-gray-700 font-bold">{nft.price}</span>
+                    <span className="bg-white/90 text-gray-700 text-xs px-3 py-1 rounded-full">
                       {nft.charity}
                     </span>
                   </div>
