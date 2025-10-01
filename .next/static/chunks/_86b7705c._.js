@@ -2,7 +2,6 @@
 "[project]/src/context/UserContext.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// context/UserContext.tsx
 __turbopack_context__.s([
     "UserProvider",
     ()=>UserProvider,
@@ -27,16 +26,39 @@ function UserProvider(param) {
             loadUsersData();
         }
     }["UserProvider.useEffect"], []);
-    // NEW: Function to load users data
     const loadUsersData = async ()=>{
         try {
-            const response = await fetch('data/users.json');
-            const usersData = await response.json();
-            setUsers(usersData);
+            // First, try to get users from localStorage (your updated data)
+            const localUserData = localStorage.getItem('userData');
+            if (localUserData) {
+                // Use localStorage data if available (most recent)
+                const usersData = JSON.parse(localUserData);
+                setUsers(usersData);
+            } else {
+                // Fallback to the initial JSON file (first load)
+                const response = await fetch('data/users.json');
+                const usersData = await response.json();
+                setUsers(usersData);
+                // Save initial data to localStorage
+                localStorage.setItem('userData', JSON.stringify(usersData));
+            }
             // Check if there's a logged-in user in localStorage
             const savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
-                setCurrentUser(JSON.parse(savedUser));
+                const parsedUser = JSON.parse(savedUser);
+                // IMPORTANT: Sync with the latest user data from localStorage
+                if (localUserData) {
+                    const currentUsers = JSON.parse(localUserData);
+                    const latestUserData = currentUsers.find((u)=>u.username === parsedUser.username);
+                    if (latestUserData) {
+                        setCurrentUser(latestUserData);
+                        localStorage.setItem('currentUser', JSON.stringify(latestUserData));
+                    } else {
+                        setCurrentUser(parsedUser);
+                    }
+                } else {
+                    setCurrentUser(parsedUser);
+                }
             }
         } catch (error) {
             console.error('Error loading users:', error);
@@ -47,16 +69,20 @@ function UserProvider(param) {
         await loadUsersData();
     };
     const updateUserNFTs = async (nftId)=>{
+        console.log("Got into UserContext.tsx");
+        console.log("Current username: ", currentUser === null || currentUser === void 0 ? void 0 : currentUser.username);
+        console.log("Current user nfts:", currentUser === null || currentUser === void 0 ? void 0 : currentUser.ownedNFTs);
         if (!currentUser) return false;
         try {
-            // 1. Update local state immediately
+            console.log("Get in current user matching");
             const updatedUser = {
                 ...currentUser,
                 ownedNFTs: [
                     ...currentUser.ownedNFTs,
                     nftId
-                ] // Add the new NFT ID
+                ]
             };
+            console.log("curent user dont match user in user.json");
             setCurrentUser(updatedUser);
             localStorage.setItem('currentUser', JSON.stringify(updatedUser));
             // 2. Update the users array - match by username
@@ -66,8 +92,7 @@ function UserProvider(param) {
                         ...user.ownedNFTs,
                         nftId
                     ]
-                } // Add the new NFT ID
-                 : user);
+                } : user);
             setUsers(updatedUsers);
             // 3. Store updated users in localStorage
             localStorage.setItem('userData', JSON.stringify(updatedUsers));
@@ -107,7 +132,7 @@ function UserProvider(param) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/UserContext.tsx",
-        lineNumber: 118,
+        lineNumber: 145,
         columnNumber: 5
     }, this);
 }

@@ -1,4 +1,3 @@
-// context/UserContext.tsx
 'use client';
 
 import Navbar from '@/components/Navbar';
@@ -37,47 +36,75 @@ export function UserProvider({ children }: { children: ReactNode }) {
     loadUsersData();
   }, []);
 
-  // NEW: Function to load users data
-  const loadUsersData = async () => {
-    try {
+const loadUsersData = async () => {
+  try {
+    // First, try to get users from localStorage (your updated data)
+    const localUserData = localStorage.getItem('userData');
+    
+    if (localUserData) {
+      // Use localStorage data if available (most recent)
+      const usersData = JSON.parse(localUserData);
+      setUsers(usersData);
+    } else {
+      // Fallback to the initial JSON file (first load)
       const response = await fetch('data/users.json');
       const usersData = await response.json();
       setUsers(usersData);
-      
-      // Check if there's a logged-in user in localStorage
-      const savedUser = localStorage.getItem('currentUser');
-      if (savedUser) {
-        setCurrentUser(JSON.parse(savedUser));
-      }
-    } catch (error) {
-      console.error('Error loading users:', error);
+      // Save initial data to localStorage
+      localStorage.setItem('userData', JSON.stringify(usersData));
     }
-  };
-
+    
+    // Check if there's a logged-in user in localStorage
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+      
+      // IMPORTANT: Sync with the latest user data from localStorage
+      if (localUserData) {
+        const currentUsers = JSON.parse(localUserData);
+        const latestUserData = currentUsers.find((u: User) => u.username === parsedUser.username);
+        if (latestUserData) {
+          setCurrentUser(latestUserData);
+          localStorage.setItem('currentUser', JSON.stringify(latestUserData));
+        } else {
+          setCurrentUser(parsedUser);
+        }
+      } else {
+        setCurrentUser(parsedUser);
+      }
+    }
+  } catch (error) {
+    console.error('Error loading users:', error);
+  }
+};
   // NEW: Function to refresh users data
   const refreshUsers = async () => {
     await loadUsersData();
   };
 
 const updateUserNFTs = async (nftId: number): Promise<boolean> => {
+  console.log("Got into UserContext.tsx");
+  console.log("Current username: ",currentUser?.username);
+  console.log("Current user nfts:", currentUser?.ownedNFTs)
   if (!currentUser) return false;
 
   try {
-    // 1. Update local state immediately
+    console.log("Get in current user matching")
     const updatedUser = {
       ...currentUser,
-      ownedNFTs: [...currentUser.ownedNFTs, nftId] // Add the new NFT ID
+      ownedNFTs: [...currentUser.ownedNFTs, nftId]
     };
-    
+    console.log("curent user dont match user in user.json")
     setCurrentUser(updatedUser);
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
     // 2. Update the users array - match by username
     const updatedUsers = users.map(user => 
       user.username === currentUser.username
-        ? { ...user, ownedNFTs: [...user.ownedNFTs, nftId] } // Add the new NFT ID
+        ? { ...user, ownedNFTs: [...user.ownedNFTs, nftId] }
         : user
     );
+
     
     setUsers(updatedUsers);
 
