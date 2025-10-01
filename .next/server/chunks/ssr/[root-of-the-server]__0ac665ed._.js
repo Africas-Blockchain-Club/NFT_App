@@ -75,7 +75,12 @@ function UserProvider({ children }) {
         console.log("Current user nfts:", currentUser?.ownedNFTs);
         if (!currentUser) return false;
         try {
-            console.log("Get in current user matching");
+            if (currentUser.ownedNFTs.includes(nftId)) {
+                console.log("NFT already owned by user");
+                return true;
+            }
+            console.log("Updating NFTs for user:", currentUser.username);
+            // 1. Update currentUser
             const updatedUser = {
                 ...currentUser,
                 ownedNFTs: [
@@ -83,10 +88,10 @@ function UserProvider({ children }) {
                     nftId
                 ]
             };
-            console.log("curent user dont match user in user.json");
+            console.log("Updated user:", updatedUser);
             setCurrentUser(updatedUser);
             localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-            // 2. Update the users array - match by username
+            // 2. Update the users array
             const updatedUsers = users.map((user)=>user.username === currentUser.username ? {
                     ...user,
                     ownedNFTs: [
@@ -95,8 +100,9 @@ function UserProvider({ children }) {
                     ]
                 } : user);
             setUsers(updatedUsers);
-            // 3. Store updated users in localStorage
+            // 3. Store updated users in localStorage (this is your main data source now)
             localStorage.setItem('userData', JSON.stringify(updatedUsers));
+            console.log("Successfully updated user NFTs in localStorage");
             return true;
         } catch (error) {
             console.error('Error updating NFTs:', error);
@@ -133,7 +139,7 @@ function UserProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/UserContext.tsx",
-        lineNumber: 145,
+        lineNumber: 154,
         columnNumber: 5
     }, this);
 }

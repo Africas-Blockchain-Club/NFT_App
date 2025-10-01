@@ -84,33 +84,42 @@ const loadUsersData = async () => {
 
 const updateUserNFTs = async (nftId: number): Promise<boolean> => {
   console.log("Got into UserContext.tsx");
-  console.log("Current username: ",currentUser?.username);
-  console.log("Current user nfts:", currentUser?.ownedNFTs)
+  console.log("Current username: ", currentUser?.username);
+  console.log("Current user nfts:", currentUser?.ownedNFTs);
+  
   if (!currentUser) return false;
 
   try {
-    console.log("Get in current user matching")
+    if (currentUser.ownedNFTs.includes(nftId)) {
+      console.log("NFT already owned by user");
+      return true;
+    }
+
+    console.log("Updating NFTs for user:", currentUser.username);
+    
+    // 1. Update currentUser
     const updatedUser = {
       ...currentUser,
       ownedNFTs: [...currentUser.ownedNFTs, nftId]
     };
-    console.log("curent user dont match user in user.json")
+    
+    console.log("Updated user:", updatedUser);
     setCurrentUser(updatedUser);
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
-    // 2. Update the users array - match by username
+    // 2. Update the users array
     const updatedUsers = users.map(user => 
       user.username === currentUser.username
         ? { ...user, ownedNFTs: [...user.ownedNFTs, nftId] }
         : user
     );
 
-    
     setUsers(updatedUsers);
-
-    // 3. Store updated users in localStorage
+    
+    // 3. Store updated users in localStorage (this is your main data source now)
     localStorage.setItem('userData', JSON.stringify(updatedUsers));
 
+    console.log("Successfully updated user NFTs in localStorage");
     return true;
   } catch (error) {
     console.error('Error updating NFTs:', error);
