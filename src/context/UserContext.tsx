@@ -95,7 +95,7 @@ const updateUserNFTs = async (nftId: number): Promise<boolean> => {
       return true;
     }
 
-    console.log("Updating NFTs for user:", currentUser.username);
+    console.log("Updating   NFTs for user:", currentUser.username);
     
     // 1. Update currentUser
     const updatedUser = {

@@ -79,7 +79,7 @@ function UserProvider({ children }) {
                 console.log("NFT already owned by user");
                 return true;
             }
-            console.log("Updating NFTs for user:", currentUser.username);
+            console.log("Updating   NFTs for user:", currentUser.username);
             // 1. Update currentUser
             const updatedUser = {
                 ...currentUser,
