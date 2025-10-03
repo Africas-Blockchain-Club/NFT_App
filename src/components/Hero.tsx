@@ -44,11 +44,11 @@ export default function Hero() {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 py-20 bg-gradient-to-br from-white via-pink-50 to-purple-50 relative overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center px-4 py-20 relative overflow-hidden">
       {/* Background Elements */}
-      <div className="absolute top-10 left-10 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div className="absolute top-40 right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-20 left-20 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+      <div className="absolute top-40 right-10 w-72 h-72 bg-gradient-to-r from-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+      <div className="absolute bottom-20 left-20 w-72 h-72 bg-gradient-to-r from-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
 
       <div className="container mx-auto max-w-7xl">
         <motion.div 
@@ -64,10 +64,10 @@ export default function Hero() {
               variants={itemVariants}
             >
               Support Charities with{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600 relative">
+              <span className="text-white bg-gradient-to-r from-pink-600 to-pink-800 px-2 rounded-lg shadow-lg relative">
                 Zero-Friction
                 <motion.div 
-                  className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"
+                  className="absolute -bottom-1 left-0 w-full h-1 bg-pink-600 rounded-full"
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ delay: 0.8, duration: 0.8 }}
@@ -77,7 +77,7 @@ export default function Hero() {
             </motion.h1>
             
             <motion.p 
-              className="text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed"
+              className="text-xl lg:text-2xl text-gray-900 mb-8 leading-relaxed"
               variants={itemVariants}
             >
               Buy beautiful digital art NFTs while supporting your favorite causes. 
@@ -90,7 +90,7 @@ export default function Hero() {
             >
               <motion.button 
                 onClick={() => router.push('/Collection')}
-                className="group bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-pink-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-3 cursor-pointer relative overflow-hidden"
+                className="group bg-gradient-to-r from-pink-600 to-pink-700 text-white px-8 py-4 rounded-xl font-semibold hover:from-pink-700 hover:to-pink-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-3 cursor-pointer relative overflow-hidden"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -145,7 +145,7 @@ export default function Hero() {
             >
               {/* Card Background Layers */}
               <div className="absolute top-0 left-0 w-full h-full bg-white rounded-3xl shadow-2xl transform rotate-3 transition-transform duration-300 hover:rotate-6"></div>
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-pink-500 to-purple-600 rounded-3xl shadow-2xl transform -rotate-3 transition-transform duration-300 hover:-rotate-6"></div>
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-pink-500 to-pink-600 rounded-3xl shadow-2xl transform -rotate-3 transition-transform duration-300 hover:-rotate-6"></div>
               
               {/* Main Card */}
               <motion.div 
@@ -180,7 +180,7 @@ export default function Hero() {
                 </div>
 
                 {/* NFT Badge */}
-                <div className="absolute top-4 right-4 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                <div className="absolute top-4 right-4 bg-gradient-to-r from-pink-600 to-pink-700 text-white text-xs font-bold px-3 py-1 rounded-full">
                   LIMITED NFT
                 </div>
               </motion.div>
@@ -188,6 +188,24 @@ export default function Hero() {
           </div>
         </motion.div>
       </div>
+
+      <style jsx>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </section>
   );
 }
