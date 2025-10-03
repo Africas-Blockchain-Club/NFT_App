@@ -27,7 +27,7 @@ export default function Hero() {
         
         <div className="md:w-1/2 flex justify-center">
           <div className="relative w-80 h-80">
-            <div className="absolute top-0 left-0 w-full h-full bg-white rounded-2xl shadow-2xl transform rotate-6"></div>
+            <div className="-0 w-full h-full bg-white rounded-2xl shadow-2xl transform rotate-6"></div>
             <div className="absolute top-0 left-0 w-full h-full bg-pink-500 rounded-2xl shadow-2xl transform -rotate-6"></div>
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-pink-500 to-white rounded-2xl shadow-2xl flex items-center justify-center p-4">
               <div className="text-center text-gray-700">
