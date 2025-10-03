@@ -101,14 +101,6 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               </motion.button>
 
-              <motion.button 
-                onClick={() => router.push('/About')}
-                className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:border-pink-500 hover:text-pink-600 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 cursor-pointer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Learn More
-              </motion.button>
             </motion.div>
 
             {/* Stats */}
@@ -141,11 +133,11 @@ export default function Hero() {
             >
               {/* Card Background Layers */}
               <div className="absolute top-0 left-0 w-full h-full bg-white rounded-3xl shadow-2xl transform rotate-3 transition-transform duration-300 hover:rotate-6"></div>
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-pink-500 to-pink-600 rounded-3xl shadow-2xl transform -rotate-3 transition-transform duration-300 hover:-rotate-6"></div>
+              <div className="absolute top-0 left-0 w-full h-full bg-white to-pink-600 rounded-3xl shadow-2xl transform -rotate-3 transition-transform duration-300 hover:-rotate-6"></div>
               
               {/* Main Card */}
               <motion.div 
-                className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white to-pink-50 rounded-3xl shadow-2xl border-2 border-white/20 backdrop-blur-sm flex flex-col items-center justify-center p-8"
+                className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-pink-500 rounded-3xl shadow-2xl border-2 border-white/20 backdrop-blur-sm flex flex-col items-center justify-center p-8"
                 whileHover={{ y: -5 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
