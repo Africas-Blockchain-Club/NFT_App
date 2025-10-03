@@ -195,11 +195,11 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-center mb-3">
                   <div className="w-6 h-6 bg-pink-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">2</div>
-                  <span className="text-gray-700">Find your transaction history</span>
+                  <span className="text-gray-700">Click on NFT Transfers</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-6 h-6 bg-pink-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">3</div>
-                  <span className="text-gray-700">Look for NFT mint transactions</span>
+                  <span className="text-gray-700">NFT Transfers Token Transfer Events</span>
                 </div>
               </div>
 
