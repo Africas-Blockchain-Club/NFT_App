@@ -45,11 +45,7 @@ export default function Hero() {
 
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-20 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div className="absolute top-40 right-10 w-72 h-72 bg-gradient-to-r from-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-20 left-20 w-72 h-72 bg-gradient-to-r from-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-
+     
       <div className="container mx-auto max-w-7xl">
         <motion.div 
           className="flex flex-col lg:flex-row items-center justify-between gap-12"
