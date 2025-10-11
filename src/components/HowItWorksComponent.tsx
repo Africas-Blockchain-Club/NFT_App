@@ -483,7 +483,7 @@ const HowItWorks: React.FC = () => {
         </div>
 
         {/* Content Area */}
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-8">
+        <div className="backdrop-blur-md rounded-3xl border border-white/20 p-8">
           {renderContent()}
         </div>
       </div>
