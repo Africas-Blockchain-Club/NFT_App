@@ -69,6 +69,7 @@ export default function TechnologyStack() {
               </div>
               <div>
                 <h4 className="text-gray-700 text-lg font-bold mb-2">Batch Transactions</h4>
+                <p className="text-gray-700">Multiple actions combined into one transaction for efficiency and simplicity.</p>
               </div>
             </div>
           </div>
