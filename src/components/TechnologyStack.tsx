@@ -1,13 +1,13 @@
 export default function TechnologyStack() {
   return (
     <section id="tech" className="py-20">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-9">
         <h2 className="text-4xl font-bold text-center text-gray-700 mb-4">Powered by Cutting-Edge Technology</h2>
         <p className="text-xl text-gray-800 text-center max-w-3xl mx-auto mb-16">
           We use the latest blockchain innovations to make charitable giving seamless and secure.
         </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-4 gap-8">
           <div className="bg-white/50 backdrop-blur-md rounded-2xl p-6 text-center text-gray-700 transition hover:shadow-xl hover:-translate-y-1">
             <div className="text-4xl mb-4">⚒️</div>
             <h3 className="text-2xl font-bold mb-4">Foundry</h3>
