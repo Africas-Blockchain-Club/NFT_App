@@ -11,7 +11,7 @@ export default function TechnologyStack() {
           <div className="bg-white/50 backdrop-blur-md rounded-2xl p-6 text-center text-gray-700 transition hover:shadow-xl hover:-translate-y-1">
             <div className="text-4xl mb-4">⚒️</div>
             <h3 className="text-2xl font-bold mb-4">Foundry</h3>
-            <p>Smart contract development framework for secure, tested, and gas-efficient contracts.</p>
+            <p>Smart contract  framework for secure, tested, and gas-efficient contracts.</p>
           </div>
           
           <div className="bg-white/50 backdrop-blur-md rounded-2xl p-6 text-center text-gray-700 transition hover:shadow-xl hover:-translate-y-1">

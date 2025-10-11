@@ -36,7 +36,7 @@ export const handleSignup = async () => {
     // Save user to database
     const user: User = {
       username,
-      password, // In production, hash this password!
+      password,
       privateKey,
       smartAccountAddress,
       createdAt: new Date()
