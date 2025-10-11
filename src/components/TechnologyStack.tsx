@@ -38,6 +38,7 @@ export default function TechnologyStack() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex items-start">
               <div className="bg-gradient-to-br from-pink-600 to-pink-700 rounded-full p-3 mr-4 flex-shrink-0">
+                <span className="text-white text-lg">⛽</span>
               </div>
               <div>
                 <h4 className="text-gray-800 text-lg font-bold mb-2">Gasless Transactions</h4>
