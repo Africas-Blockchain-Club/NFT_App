@@ -110,7 +110,6 @@ const HowItWorks: React.FC = () => {
             <ul className="space-y-3 text-gray-700">
               <li className="flex items-start bg-white/20 p-3 rounded-lg">
                 <span className="text-pink-700 font-bold mr-3">✓</span>
-                Token holders with minimum 100 tokens
               </li>
               <li className="flex items-start bg-white/20 p-3 rounded-lg">
                 <span className="text-pink-700 font-bold mr-3">✓</span>
